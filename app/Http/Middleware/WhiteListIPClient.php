@@ -15,7 +15,7 @@ class WhiteListIPClient
         $dataIp = Whitelist_Ip_Dns::all();
 
         //tmp ip whitelist from database
-        $whitelist = ['127.0.0.1', '::1','https://be-trisakti.amisbudi.cloud','202.46.68.61'];
+        $whitelist = ['127.0.0.1', '::1','https://be-trisakti.amisbudi.cloud','202.46.68.61','https://fe-trisakti.amisbudi.cloud'];
 
         foreach ($dataIp as $key => $value) {
             array_push($whitelist, $value['ip_address']);
