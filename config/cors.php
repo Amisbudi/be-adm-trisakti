@@ -23,6 +23,7 @@ return [
             'https://dev-gateway.telkomuniversity.ac.id',
             'https://gateway.telkomuniversity.ac.id',
             'https://be-trisakti.amisbudi.cloud',
+            'https://fe-trisakti.amisbudi.cloud'
         ],
 
         'allow_methods' => [
