@@ -1,4 +1,4 @@
-# Captcha for Laravel 5/6/7
+# Captcha for Laravel 5/6/7/8/9
 
 [![Build Status](https://travis-ci.org/mewebstudio/captcha.svg?branch=master)](https://travis-ci.org/mewebstudio/captcha) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/mewebstudio/captcha/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/mewebstudio/captcha/?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/mews/captcha/v/stable.svg)](https://packagist.org/packages/mews/captcha)
@@ -18,9 +18,11 @@ for Laravel 4 [Captcha for Laravel Laravel 4](https://github.com/mewebstudio/cap
   * [Installation](#installation)
   * [Usage](#usage)
   * [Configuration](#configuration)
+    + [Custom settings:](#custom-settings)
+    + [Disable validation:](#disable-validation)
   * [Example Usage](#example-usage)
-    + [Session Mode:](#session-mode-)
-    + [Stateless Mode:](#stateless-mode-)
+    + [Session Mode:](#session-mode)
+    + [Stateless Mode:](#stateless-mode)
 - [Return Image](#return-image)
 - [Return URL](#return-url)
 - [Return HTML](#return-html)
@@ -39,7 +41,7 @@ project's `composer.json`.
         "laravel/framework": "5.0.*",
         "mews/captcha": "~2.0"
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "stable"
 }
 ```
 
@@ -94,8 +96,9 @@ for Laravel 5.1+
     ]
 ```
 
-## Configuration
 
+## Configuration
+### Custom settings:
 To use your own settings, publish config.
 
 ```$ php artisan vendor:publish```
@@ -110,11 +113,18 @@ return [
         'height'    => 36,
         'quality'   => 90,
         'math'      => true,  //Enable Math Captcha
-        'expire'    => 60,    //Stateless/API captcha expiration
+        'expire'    => 60,    //Captcha expiration
     ],
     // ...
 ];
 ```
+### Disable validation:
+To disable the captcha validation use `CAPTCHA_DISABLE` environment variable. e.g. **.env** config:
+
+```php
+CAPTCHA_DISABLE=true
+```
+
 
 ## Example Usage
 ### Session Mode:
