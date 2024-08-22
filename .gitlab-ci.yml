@@ -1,0 +1,11 @@
+stages:
+  - deploy
+
+deploy-job:     
+  stage: deploy
+  script:
+    # - cd /home/gitlab-runner/builds/21Q22szQ/0/external-request/backend-adm-trisakti/
+    # - composer install
+    - rsync -avze ssh /home/gitlab-runner/builds/21Q22szQ/0/external-request/backend-adm-trisakti/ root@10.252.252.115:/client/backend-adm-trisakti/
+    - ssh root@10.252.252.115 'chown -R nginx:nginx /client/backend-adm-trisakti'
+    - echo "service successfully sync & deployed"

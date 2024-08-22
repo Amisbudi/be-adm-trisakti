@@ -1,0 +1,19 @@
+{
+    "name": "sisfo/dynamicrouting",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "zehan,",
+            "email": "zehantn@gmail.com"
+        }
+    ],
+    "minimum-stability": "1.0",
+    "require": {},
+    "extra": {
+    "laravel": {
+            "providers": [
+                "Package\\DR\\DRServiceProvider"
+            ]
+        }
+    },
+}
