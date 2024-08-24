@@ -20,7 +20,7 @@
         "mews/captcha": "^3.0",
         "milon/barcode": "^6.0",
         "simplesoftwareio/simple-qrcode": "~4",
-        "spatie/laravel-cors": "^1.6",
+        "spatie/laravel-cors": "^1.7",
         "yajra/laravel-datatables-oracle": "~9.0",
         "zanysoft/laravel-zip": "^1.0"
     },
