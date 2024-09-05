@@ -24,7 +24,8 @@ return [
             'https://gateway.telkomuniversity.ac.id',
             'https://be-trisakti.amisbudi.cloud',
             'https://fe-trisakti.amisbudi.cloud',
-            'http://localhost:4200'
+            'http://localhost:4200', 
+            'https://admission.amisbudi.cloud'
         ],
 
         'allow_methods' => [
