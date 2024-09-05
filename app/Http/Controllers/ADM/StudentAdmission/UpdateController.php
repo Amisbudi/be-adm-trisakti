@@ -55,6 +55,9 @@ use App\Http\Models\ADM\StudentAdmission\Document_Transcript;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Transcript_Participant;
 use App\Http\Models\ADM\StudentAdmission\New_Student;
 use App\Http\Models\ADM\StudentAdmission\Participant_Document;
+use App\Http\Models\ADM\StudentAdmission\Document_Categories;
+use App\Http\Models\ADM\StudentAdmission\Selection_Categories;
+use App\Http\Models\ADM\StudentAdmission\Student_Interest;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
@@ -2615,7 +2618,7 @@ class UpdateController extends Controller
 
 		try {
 			$dc = Document_Transcript::find($req->document_transcript_id);
-			
+
 			//update mapping document transcript
 			$datas = json_decode($req->json, true);
 
@@ -2641,6 +2644,69 @@ class UpdateController extends Controller
 				'message' => 'Mohon maaf, data gagal disimpan',
 				'error' => $th->getMessage()
 			], 500);
+		}
+	}
+
+	public function UpdateDocumentCategories(Request $req, $id)
+	{
+		try {
+			$schedule = Document_Categories::findOrFail($id);
+			$schedule->update([
+				'name' => $req->name,
+				'status' => $req->status,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			],  500);
+		}
+	}
+
+	public function UpdateSelectionCategories(Request $req, $id)
+	{
+		try {
+			$schedule = Selection_Categories::findOrFail($id);
+			$schedule->update([
+				'name' => $req->name,
+				'status' => $req->status,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			],  500);
+		}
+	}
+
+	public function UpdateStudentInterest(Request $req, $id)
+	{
+		try {
+			$schedule = Student_Interest::findOrFail($id);
+			$schedule->update([
+				'interest_type' => $req->interest_type,
+				'status' => $req->status,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			],  500);
 		}
 	}
 }

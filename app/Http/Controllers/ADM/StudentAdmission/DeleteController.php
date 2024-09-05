@@ -30,7 +30,10 @@ use App\Http\Models\ADM\StudentAdmission\Participant_Family;
 use App\Http\Models\ADM\StudentAdmission\Participant_Work_Data;
 use App\Http\Models\ADM\StudentAdmission\Pin_Voucher;
 use App\Http\Models\ADM\StudentAdmission\Registration_History;
+use App\Http\Models\ADM\StudentAdmission\Document_Categories;
+use App\Http\Models\ADM\StudentAdmission\Selection_Categories;
 use App\Http\Models\ADM\StudentAdmission\Selection_Path;
+use App\Http\Models\ADM\StudentAdmission\Student_Interest;
 use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Database\QueryException;
@@ -1031,42 +1034,42 @@ class DeleteController extends Controller
       ->where('id', '=', $req->document_transcript_id)
       ->first();
 
-      try {
-        //get id document
-        $doc_id = $document_transcript->document_id;
-  
-        //delete mapping transcript item
-        Mapping_Transcript_Participant::where('document_transcript_id', '=', $req->document_transcript_id)->delete();
+    try {
+      //get id document
+      $doc_id = $document_transcript->document_id;
 
-        //delete document transcript
-        Document_Transcript::find($req->document_transcript_id)->delete();
+      //delete mapping transcript item
+      Mapping_Transcript_Participant::where('document_transcript_id', '=', $req->document_transcript_id)->delete();
 
-        //delete document
-        Document::find($doc_id)->delete();
-  
-        DB::commit();
-  
-        return response()->json([
-          "status" => "Success",
-          "message" => "Document deleted successfully",
-        ], 200);
-      } catch (Exception $e) {
-  
-        DB::rollBack();
-        return response()->json([
-          "status" => "Failed",
-          "message" => "Document failed to delete",
-          "error" => $e->getMessage()
-        ], 500);
-      } catch (QueryException $qe) {
-  
-        DB::rollBack();
-        return response()->json([
-          "status" => "Failed",
-          "message" => "Failed to delete document. Server Problem",
-          "error" => $qe->getMessage()
-        ], 500);
-      }
+      //delete document transcript
+      Document_Transcript::find($req->document_transcript_id)->delete();
+
+      //delete document
+      Document::find($doc_id)->delete();
+
+      DB::commit();
+
+      return response()->json([
+        "status" => "Success",
+        "message" => "Document deleted successfully",
+      ], 200);
+    } catch (Exception $e) {
+
+      DB::rollBack();
+      return response()->json([
+        "status" => "Failed",
+        "message" => "Document failed to delete",
+        "error" => $e->getMessage()
+      ], 500);
+    } catch (QueryException $qe) {
+
+      DB::rollBack();
+      return response()->json([
+        "status" => "Failed",
+        "message" => "Failed to delete document. Server Problem",
+        "error" => $qe->getMessage()
+      ], 500);
+    }
   }
 
   //function for delete document publication
@@ -1118,7 +1121,7 @@ class DeleteController extends Controller
         "message" => "Document publication deleted successfully",
       ], 200);
     } catch (Exception $e) {
-      
+
       DB::rollBack();
       return response()->json([
         "status" => "Failed",
@@ -1132,6 +1135,64 @@ class DeleteController extends Controller
         "status" => "Failed",
         "message" => "Failed to delete document publication. Server Problem",
         "error" => $qe->getMessage()
+      ], 500);
+    }
+  }
+
+
+  public function DeleteDocumentCategories($id)
+  {
+    try {
+      $documentCategory = Document_Categories::findOrFail($id);
+      $documentCategory->delete();
+
+      return response()->json([
+        'status' => 'Success',
+        'message' => 'Document category has been deleted successfully',
+      ], 200);
+    } catch (\Exception $e) {
+      return response()->json([
+        'status' => 'Failed',
+        'message' => 'Failed to delete the document category',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteSelectionCategories($id)
+  {
+    try {
+      $documentCategory = Selection_Categories::findOrFail($id);
+      $documentCategory->delete();
+
+      return response()->json([
+        'status' => 'Success',
+        'message' => 'Document category has been deleted successfully',
+      ], 200);
+    } catch (\Exception $e) {
+      return response()->json([
+        'status' => 'Failed',
+        'message' => 'Failed to delete the document category',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteStudentInterest($id)
+  {
+    try {
+      $documentCategory = Student_Interest::findOrFail($id);
+      $documentCategory->delete();
+
+      return response()->json([
+        'status' => 'Success',
+        'message' => 'Document category has been deleted successfully',
+      ], 200);
+    } catch (\Exception $e) {
+      return response()->json([
+        'status' => 'Failed',
+        'message' => 'Failed to delete the document category',
+        'error' => $e->getMessage()
       ], 500);
     }
   }
