@@ -109,6 +109,9 @@ use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
 use App\Http\Models\ADM\StudentAdmission\University;
 use App\Http\Models\ADM\StudentAdmission\Publication_Type;
 use App\Http\Models\ADM\StudentAdmission\Publication_Writer_Position;
+use App\Http\Models\ADM\StudentAdmission\Category;
+use App\Http\Models\ADM\StudentAdmission\Form;
+use App\Http\Models\ADM\StudentAdmission\Schedule;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
 use DataTables;
@@ -9260,5 +9263,23 @@ class ReadController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function GetCategories(Request $req)
+    {
+        $data = Category::all();
+        return response()->json($data);
+    }
+
+    public function GetForms(Request $req)
+    {
+        $data = Form::all();
+        return response()->json($data);
+    }
+
+    public function GetSchedules(Request $req)
+    {
+        $data = Schedule::all();
+        return response()->json($data);
     }
 }

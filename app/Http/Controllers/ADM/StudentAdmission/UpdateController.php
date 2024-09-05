@@ -55,6 +55,9 @@ use App\Http\Models\ADM\StudentAdmission\Document_Transcript;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Transcript_Participant;
 use App\Http\Models\ADM\StudentAdmission\New_Student;
 use App\Http\Models\ADM\StudentAdmission\Participant_Document;
+use App\Http\Models\ADM\StudentAdmission\Category;
+use App\Http\Models\ADM\StudentAdmission\Form;
+use App\Http\Models\ADM\StudentAdmission\Schedule;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
@@ -2631,6 +2634,72 @@ class UpdateController extends Controller
 						'approval_by' => $by
 					]);
 			}
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateCategory(Request $req, $id)
+	{
+		try {
+			$category = Category::findOrFail($id);
+			$category->update([
+				'name' => $req->name,
+				'status' => $req->status,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateForm(Request $req, $id)
+	{
+		try {
+			$form = Form::findOrFail($id);
+			$form->update([
+				'name' => $req->name,
+				'status' => $req->status,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateSchedule(Request $req, $id)
+	{
+		try {
+			$schedule = Schedule::findOrFail($id);
+			$schedule->update([
+				'selection_path_id' => $req->selection_path_id,
+				'category_id' => $req->category_id,
+				'session' => $req->session,
+				'date' => $req->date,
+				'status' => $req->status,
+			]);
 			return response([
 				'status' => 'Success',
 				'message' => 'Data Tersimpan'

@@ -74,6 +74,9 @@ use App\Http\Models\ADM\StudentAdmission\Mapping_New_Student_Document_Type;
 use App\Http\Models\ADM\StudentAdmission\Mapping_New_Student_Step;
 use App\Http\Models\ADM\StudentAdmission\New_Student;
 use App\Http\Models\ADM\StudentAdmission\Transaction_Billing;
+use App\Http\Models\ADM\StudentAdmission\Category;
+use App\Http\Models\ADM\StudentAdmission\Form;
+use App\Http\Models\ADM\StudentAdmission\Schedule;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
@@ -3648,6 +3651,72 @@ class CreateController extends Controller
 				'status' => 'Failed',
 				'message' => 'Error generating new billing',
 				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function InsertCategory(Request $req)
+	{
+		try {
+			Category::create([
+				'name' => $req->name,
+				'status' => $req->status,
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan'
+			], 500);
+		}
+	}
+
+	public function InsertForm(Request $req)
+	{
+		try {
+			Form::create([
+				'name' => $req->name,
+				'status' => $req->status,
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan'
+			], 500);
+		}
+	}
+
+	public function InsertSchedule(Request $req)
+	{
+		try {
+			Schedule::create([
+				'selection_path_id' => $req->selection_path_id,
+				'category_id' => $req->category_id,
+				'session' => $req->session,
+				'date' => $req->date,
+				'status' => $req->status,
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan'
 			], 500);
 		}
 	}
