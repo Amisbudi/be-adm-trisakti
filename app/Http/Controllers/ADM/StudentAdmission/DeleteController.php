@@ -32,6 +32,9 @@ use App\Http\Models\ADM\StudentAdmission\Pin_Voucher;
 use App\Http\Models\ADM\StudentAdmission\Registration_History;
 use App\Http\Models\ADM\StudentAdmission\Document_Categories;
 use App\Http\Models\ADM\StudentAdmission\Selection_Categories;
+use App\Http\Models\ADM\StudentAdmission\Category;
+use App\Http\Models\ADM\StudentAdmission\Form;
+use App\Http\Models\ADM\StudentAdmission\Schedule;
 use App\Http\Models\ADM\StudentAdmission\Selection_Path;
 use App\Http\Models\ADM\StudentAdmission\Student_Interest;
 use Exception;
@@ -1139,7 +1142,62 @@ class DeleteController extends Controller
     }
   }
 
+  public function DeleteCategory($id)
+  {
+    try {
+      $category = Category::findOrFail($id);
+      $category->delete();
 
+      return response([
+        'status' => 'Success',
+        'message' => 'Data kategori ujian telah dihapus',
+      ], 200);
+    } catch (\Exception $e) {
+      return response([
+        'status' => 'Failed',
+        'message' => 'Gagal menghapus kategori ujian',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+  
+  public function DeleteForm($id)
+  {
+    try {
+      $form = Form::findOrFail($id);
+      $form->delete();
+
+      return response([
+        'status' => 'Success',
+        'message' => 'Data formulir telah dihapus',
+      ], 200);
+    } catch (\Exception $e) {
+      return response([
+        'status' => 'Failed',
+        'message' => 'Gagal menghapus formulir ujian',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteSchedule($id)
+  {
+    try {
+      $schedule = Schedule::findOrFail($id);
+      $schedule->delete();
+
+      return response([
+        'status' => 'Success',
+        'message' => 'Data jadwal ujian telah dihapus',
+      ], 200);
+    } catch (\Exception $e) {
+      return response([
+        'status' => 'Failed',
+        'message' => 'Gagal menghapus jadwal ujian ujian',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
   public function DeleteDocumentCategories($id)
   {
     try {
