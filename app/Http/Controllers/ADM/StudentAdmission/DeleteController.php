@@ -30,6 +30,9 @@ use App\Http\Models\ADM\StudentAdmission\Participant_Family;
 use App\Http\Models\ADM\StudentAdmission\Participant_Work_Data;
 use App\Http\Models\ADM\StudentAdmission\Pin_Voucher;
 use App\Http\Models\ADM\StudentAdmission\Registration_History;
+use App\Http\Models\ADM\StudentAdmission\Category;
+use App\Http\Models\ADM\StudentAdmission\Form;
+use App\Http\Models\ADM\StudentAdmission\Schedule;
 use App\Http\Models\ADM\StudentAdmission\Selection_Path;
 use Exception;
 use GuzzleHttp\Client;
@@ -1132,6 +1135,62 @@ class DeleteController extends Controller
         "status" => "Failed",
         "message" => "Failed to delete document publication. Server Problem",
         "error" => $qe->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteCategory($id)
+  {
+    try {
+      $category = Category::findOrFail($id);
+      $category->delete();
+
+      return response([
+        'status' => 'Success',
+        'message' => 'Data kategori ujian telah dihapus',
+      ], 200);
+    } catch (\Exception $e) {
+      return response([
+        'status' => 'Failed',
+        'message' => 'Gagal menghapus kategori ujian',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+  public function DeleteForm($id)
+  {
+    try {
+      $form = Form::findOrFail($id);
+      $form->delete();
+
+      return response([
+        'status' => 'Success',
+        'message' => 'Data formulir telah dihapus',
+      ], 200);
+    } catch (\Exception $e) {
+      return response([
+        'status' => 'Failed',
+        'message' => 'Gagal menghapus formulir ujian',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteSchedule($id)
+  {
+    try {
+      $schedule = Schedule::findOrFail($id);
+      $schedule->delete();
+
+      return response([
+        'status' => 'Success',
+        'message' => 'Data jadwal ujian telah dihapus',
+      ], 200);
+    } catch (\Exception $e) {
+      return response([
+        'status' => 'Failed',
+        'message' => 'Gagal menghapus jadwal ujian ujian',
+        'error' => $e->getMessage()
       ], 500);
     }
   }

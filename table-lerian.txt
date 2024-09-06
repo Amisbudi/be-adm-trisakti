@@ -1,0 +1,29 @@
+// Table categories
+CREATE TABLE categories (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    status BOOLEAN NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+// Table forms
+CREATE TABLE forms (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    status BOOLEAN NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+// Table schedules
+CREATE TABLE schedules (
+    id SERIAL PRIMARY KEY,
+    selection_path_id INTEGER NOT NULL,
+    category_id INTEGER NOT NULL,
+    session CHAR(1) NOT NULL,
+    date DATE NOT NULL,
+    status BOOLEAN NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
