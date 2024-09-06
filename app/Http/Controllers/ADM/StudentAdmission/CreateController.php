@@ -74,6 +74,9 @@ use App\Http\Models\ADM\StudentAdmission\Mapping_New_Student_Document_Type;
 use App\Http\Models\ADM\StudentAdmission\Mapping_New_Student_Step;
 use App\Http\Models\ADM\StudentAdmission\New_Student;
 use App\Http\Models\ADM\StudentAdmission\Transaction_Billing;
+use App\Http\Models\ADM\StudentAdmission\Document_Categories;
+use App\Http\Models\ADM\StudentAdmission\Selection_Categories;
+use App\Http\Models\ADM\StudentAdmission\Student_Interest;
 use App\Http\Models\ADM\StudentAdmission\Category;
 use App\Http\Models\ADM\StudentAdmission\Form;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
@@ -152,9 +155,9 @@ class CreateController extends Controller
 
 		//get tmp link
 		$link = URL::temporarySignedRoute(
-			'af3ac15a0392e10afbf3feb197ffed24', 
-			now()->addHour(60), 
-			['id' => $uid], 
+			'af3ac15a0392e10afbf3feb197ffed24',
+			now()->addHour(60),
+			['id' => $uid],
 			false
 		);
 
@@ -2212,7 +2215,7 @@ class CreateController extends Controller
 
 			if ($response['status'] == true) {
 				// validate id
-				if($response['data'][0]['id'] == 0 || $response['data'][0]['id'] == "0" || $response['data'][0]['id'] == null) {
+				if ($response['data'][0]['id'] == 0 || $response['data'][0]['id'] == "0" || $response['data'][0]['id'] == null) {
 					$id = $response['data'][0]['idnumber'];
 				} else {
 					$id = $response['data'][0]['id'];
@@ -3581,7 +3584,7 @@ class CreateController extends Controller
 				->leftJoin('transaction_billings as tb', 'registration_result.registration_number', '=', 'tb.registration_number')
 				->where('registration_result.registration_number', '=', $req->registration_number)
 				->first();
-			
+
 			//validate registration
 			if ($registration == null) {
 				throw new Exception("Registration result not found");
@@ -3718,6 +3721,69 @@ class CreateController extends Controller
 				'status' => 'Failed',
 				'message' => 'Mohon maaf, data gagal disimpan'
 			], 500);
+		}
+	}
+  
+  public function InsertDocumentCategories(Request $req)
+	{
+		try {
+			Document_Categories::create([
+				'name' => $req->name,
+				'status' => $req->status,
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan'
+			],  500);
+		}
+	}
+
+	public function InsertSelectionCategories(Request $req)
+	{
+		try {
+			Selection_Categories::create([
+				'name' => $req->name,
+				'status' => $req->status,
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan'
+			],  500);
+		}
+	}
+
+	public function InsertStudentInterest(Request $req)
+	{
+		try {
+			Student_Interest::create([
+				'interest_type' => $req->interest_type,
+				'status' => $req->status,
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan'
+			],  500);
 		}
 	}
 }

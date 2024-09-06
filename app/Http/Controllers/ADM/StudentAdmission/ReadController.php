@@ -109,6 +109,9 @@ use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
 use App\Http\Models\ADM\StudentAdmission\University;
 use App\Http\Models\ADM\StudentAdmission\Publication_Type;
 use App\Http\Models\ADM\StudentAdmission\Publication_Writer_Position;
+use App\Http\Models\ADM\StudentAdmission\Document_Categories;
+use App\Http\Models\ADM\StudentAdmission\Selection_Categories;
+use App\Http\Models\ADM\StudentAdmission\Student_Interest;
 use App\Http\Models\ADM\StudentAdmission\Category;
 use App\Http\Models\ADM\StudentAdmission\Form;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
@@ -3696,8 +3699,6 @@ class ReadController extends Controller
             ]);
 
             return response()->json(['urls' => $path], 200);
-
-
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => 'Failed',
@@ -9252,10 +9253,9 @@ class ReadController extends Controller
 
             return response()->json([
                 'status' => 'Success',
-                'grade' => (double) $grade / $total,
+                'grade' => (float) $grade / $total,
                 'message' => null
             ], 200);
-
         } catch (\Exception $e) {
             return response([
                 'status' => 'Failed',
@@ -9280,6 +9280,24 @@ class ReadController extends Controller
     public function GetSchedules(Request $req)
     {
         $data = Schedule::all();
+        return response()->json($data);
+    }
+  
+    public function GetDocumentCategories(Request $req)
+    {
+        $data = Document_Categories::all();
+        return response()->json($data);
+    }
+
+    public function GetSelectionCategories(Request $req)
+    {
+        $data = Selection_Categories::all();
+        return response()->json($data);
+    }
+
+    public function GetStudentInterest(Request $req)
+    {
+        $data = Student_Interest::all();
         return response()->json($data);
     }
 }
