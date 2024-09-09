@@ -34,10 +34,12 @@ use App\Http\Models\ADM\StudentAdmission\Document_Categories;
 use app\Http\Models\ADM\StudentAdmission\Education_Degree;
 use App\Http\Models\ADM\StudentAdmission\Selection_Categories;
 use App\Http\Models\ADM\StudentAdmission\Category;
+use App\Http\Models\ADM\StudentAdmission\Education_Major;
 use App\Http\Models\ADM\StudentAdmission\Form;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
 use App\Http\Models\ADM\StudentAdmission\Selection_Path;
 use App\Http\Models\ADM\StudentAdmission\Student_Interest;
+use app\Http\Models\ADM\StudentAdmission\Study_Program;
 use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Database\QueryException;
@@ -1240,7 +1242,7 @@ class DeleteController extends Controller
   public function DeleteStudentInterest($id)
   {
     try {
-      $documentCategory = Student_Interest::findOrFail($id);
+      $documentCategory = Education_Major::findOrFail($id);
       $documentCategory->delete();
 
       return response()->json([
@@ -1261,6 +1263,25 @@ class DeleteController extends Controller
     try {
       $educationDegree = Education_Degree::findOrFail($id);
       $educationDegree->delete();
+
+      return response()->json([
+        'status' => 'Success',
+        'message' => 'Education Degree has been deleted successfully',
+      ], 200);
+    } catch (\Exception $e) {
+      return response()->json([
+        'status' => 'Failed',
+        'message' => 'Failed to delete the education degree',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+  
+  public function DeleteStudyProgram($id)
+  {
+    try {
+      $studyProgram = Study_Program::findOrFail($id);
+      $studyProgram->delete();
 
       return response()->json([
         'status' => 'Success',

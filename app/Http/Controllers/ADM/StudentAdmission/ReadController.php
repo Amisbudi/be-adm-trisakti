@@ -9297,7 +9297,14 @@ class ReadController extends Controller
 
     public function GetStudentInterest(Request $req)
     {
-        $data = Student_Interest::all();
+        $data = Education_Major::all();
         return response()->json($data);
     }
+
+    // public function GetStudyPrograms(Request $req)
+    // {
+    //     $data = Study_Program::all();
+    //     return response()->json($data);
+    // }
+
 }

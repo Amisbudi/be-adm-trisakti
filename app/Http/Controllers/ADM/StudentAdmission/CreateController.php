@@ -79,8 +79,10 @@ use App\Http\Models\ADM\StudentAdmission\Education_Degree;
 use App\Http\Models\ADM\StudentAdmission\Selection_Categories;
 use App\Http\Models\ADM\StudentAdmission\Student_Interest;
 use App\Http\Models\ADM\StudentAdmission\Category;
+use App\Http\Models\ADM\StudentAdmission\Education_Major;
 use App\Http\Models\ADM\StudentAdmission\Form;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
+use App\Http\Models\ADM\StudentAdmission\Study_Program;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
@@ -3724,8 +3726,8 @@ class CreateController extends Controller
 			], 500);
 		}
 	}
-  
-  public function InsertDocumentCategories(Request $req)
+
+	public function InsertDocumentCategories(Request $req)
 	{
 		try {
 			Document_Categories::create([
@@ -3770,9 +3772,14 @@ class CreateController extends Controller
 	public function InsertStudentInterest(Request $req)
 	{
 		try {
-			Student_Interest::create([
-				'interest_type' => $req->interest_type,
-				'status' => $req->status,
+			Education_Major::create([
+				'major' => $req->major,
+				'education_degree_id' => $req->education_degree_id,
+				'created_by' => $req->created_by,
+				'updated_by' => $req->updated_by,
+				'created_at' => $req->created_at,
+				'updated_at' => $req->updated_at,
+				'is_technic' => $req->is_technic,
 			]);
 			DB::connection('pgsql')->commit();
 			return response([
@@ -3784,7 +3791,7 @@ class CreateController extends Controller
 			return response([
 				'status' => 'Failed',
 				'message' => 'Mohon maaf, data gagal disimpan'
-			],  500);
+			], 500);
 		}
 	}
 
@@ -3800,6 +3807,38 @@ class CreateController extends Controller
 				'created_at' => $req->created_at,
 				'updated_at' => $req->updated_at,
 				'type' => $req->type
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			response()->json();
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan'
+			], 500);
+		}
+	}
+
+	public function InsertStudyProgram(Request $req)
+	{
+		// return response()->json($req->all());
+		try {
+			Study_Program::create([
+				'program_study_id' => $req->program_study_id,
+				'faculty_id' => $req->faculty_id,
+				'category' => $req->category,
+				'classification_name' => $req->classification_name,
+				'study_program_branding_name' => $req->study_program_branding_name,
+				'study_program_name' => $req->study_program_name,
+				'study_program_name_en' => $req->study_program_name_en,
+				'study_program_acronim' => $req->study_program_acronim,
+				'faculty_name' => $req->faculty_name,
+				'acronim' => $req->acronim,
+				'acreditation' => $req->acreditation
 			]);
 			DB::connection('pgsql')->commit();
 			return response([
