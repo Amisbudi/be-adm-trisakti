@@ -32,5 +32,12 @@ Route::post('/studentinterest', 'ADM\StudentAdmission\CreateController@InsertStu
 Route::put('/studentinterest/{id}', 'ADM\StudentAdmission\UpdateController@UpdateStudentInterest');
 Route::delete('/studentinterest/{id}', 'ADM\StudentAdmission\DeleteController@DeleteStudentInterest');
 
+Route::get('/educationdegrees', 'ADM\StudentAdmission\ReadController@GetEducationDegree');
+Route::post('/educationdegrees', 'ADM\StudentAdmission\CreateController@InsertEducationDegree');
+Route::put('/educationdegrees/{id}', 'ADM\StudentAdmission\UpdateController@UpdateEducationDegree');
+Route::delete('/educationdegrees/{id}', 'ADM\StudentAdmission\DeleteController@DeleteEducationDegree');
+
+
+
 
 

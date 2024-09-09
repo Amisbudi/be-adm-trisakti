@@ -31,6 +31,7 @@ use App\Http\Models\ADM\StudentAdmission\Participant_Work_Data;
 use App\Http\Models\ADM\StudentAdmission\Pin_Voucher;
 use App\Http\Models\ADM\StudentAdmission\Registration_History;
 use App\Http\Models\ADM\StudentAdmission\Document_Categories;
+use app\Http\Models\ADM\StudentAdmission\Education_Degree;
 use App\Http\Models\ADM\StudentAdmission\Selection_Categories;
 use App\Http\Models\ADM\StudentAdmission\Selection_Path;
 use App\Http\Models\ADM\StudentAdmission\Student_Interest;
@@ -1192,6 +1193,25 @@ class DeleteController extends Controller
       return response()->json([
         'status' => 'Failed',
         'message' => 'Failed to delete the document category',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteEducationDegree($id)
+  {
+    try {
+      $educationDegree = Education_Degree::findOrFail($id);
+      $educationDegree->delete();
+
+      return response()->json([
+        'status' => 'Success',
+        'message' => 'Education Degree has been deleted successfully',
+      ], 200);
+    } catch (\Exception $e) {
+      return response()->json([
+        'status' => 'Failed',
+        'message' => 'Failed to delete the education degree',
         'error' => $e->getMessage()
       ], 500);
     }

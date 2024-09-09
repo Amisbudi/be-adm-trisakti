@@ -56,6 +56,7 @@ use App\Http\Models\ADM\StudentAdmission\Mapping_Transcript_Participant;
 use App\Http\Models\ADM\StudentAdmission\New_Student;
 use App\Http\Models\ADM\StudentAdmission\Participant_Document;
 use App\Http\Models\ADM\StudentAdmission\Document_Categories;
+use App\Http\Models\ADM\StudentAdmission\Education_Degree;
 use App\Http\Models\ADM\StudentAdmission\Selection_Categories;
 use App\Http\Models\ADM\StudentAdmission\Student_Interest;
 use Exception;
@@ -2707,6 +2708,32 @@ class UpdateController extends Controller
 				'message' => 'Mohon maaf, data gagal disimpan',
 				'error' => $th->getMessage()
 			],  500);
+		}
+	}
+
+	public function UpdateEducationDegree(Request $req, $id)
+	{
+		try {
+			$schedule = Education_Degree::findOrFail($id);
+			$schedule->update([
+				'level' => $req->level,
+				'description' => $req->description,
+				'created_by' => $req->created_by,
+				'updated_by' => $req->updated_by,
+				'created_at' => $req->created_at,
+				'updated_at' => $req->updated_at,
+				'type' => $req->type
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
 		}
 	}
 }

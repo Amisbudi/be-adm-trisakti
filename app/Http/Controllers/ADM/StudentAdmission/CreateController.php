@@ -75,6 +75,7 @@ use App\Http\Models\ADM\StudentAdmission\Mapping_New_Student_Step;
 use App\Http\Models\ADM\StudentAdmission\New_Student;
 use App\Http\Models\ADM\StudentAdmission\Transaction_Billing;
 use App\Http\Models\ADM\StudentAdmission\Document_Categories;
+use App\Http\Models\ADM\StudentAdmission\Education_Degree;
 use App\Http\Models\ADM\StudentAdmission\Selection_Categories;
 use App\Http\Models\ADM\StudentAdmission\Student_Interest;
 use Exception;
@@ -3715,6 +3716,34 @@ class CreateController extends Controller
 				'status' => 'Failed',
 				'message' => 'Mohon maaf, data gagal disimpan'
 			],  500);
+		}
+	}
+
+	public function InsertEducationDegree(Request $req)
+	{
+		// return response()->json($req->all());
+		try {
+			Education_Degree::create([
+				'level' => $req->level,
+				'description' => $req->description,
+				'created_by' => $req->created_by,
+				'updated_by' => $req->updated_by,
+				'created_at' => $req->created_at,
+				'updated_at' => $req->updated_at,
+				'type' => $req->type
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			response()->json();
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan'
+			], 500);
 		}
 	}
 }
