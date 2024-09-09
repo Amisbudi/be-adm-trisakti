@@ -112,6 +112,9 @@ use App\Http\Models\ADM\StudentAdmission\Publication_Writer_Position;
 use App\Http\Models\ADM\StudentAdmission\Document_Categories;
 use App\Http\Models\ADM\StudentAdmission\Selection_Categories;
 use App\Http\Models\ADM\StudentAdmission\Student_Interest;
+use App\Http\Models\ADM\StudentAdmission\Category;
+use App\Http\Models\ADM\StudentAdmission\Form;
+use App\Http\Models\ADM\StudentAdmission\Schedule;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
 use DataTables;
@@ -9262,6 +9265,24 @@ class ReadController extends Controller
         }
     }
 
+    public function GetCategories(Request $req)
+    {
+        $data = Category::all();
+        return response()->json($data);
+    }
+
+    public function GetForms(Request $req)
+    {
+        $data = Form::all();
+        return response()->json($data);
+    }
+
+    public function GetSchedules(Request $req)
+    {
+        $data = Schedule::all();
+        return response()->json($data);
+    }
+  
     public function GetDocumentCategories(Request $req)
     {
         $data = Document_Categories::all();

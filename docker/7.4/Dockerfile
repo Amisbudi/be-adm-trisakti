@@ -42,5 +42,6 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 WORKDIR /var/www
 
 RUN chmod +x /usr/local/bin/start-container
-
+CMD php artisan key:generate
+CMD php artisan serve --host=0.0.0.0 --port=8001
 EXPOSE 8001

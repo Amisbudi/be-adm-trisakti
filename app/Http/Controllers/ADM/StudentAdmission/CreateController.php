@@ -78,6 +78,9 @@ use App\Http\Models\ADM\StudentAdmission\Document_Categories;
 use App\Http\Models\ADM\StudentAdmission\Education_Degree;
 use App\Http\Models\ADM\StudentAdmission\Selection_Categories;
 use App\Http\Models\ADM\StudentAdmission\Student_Interest;
+use App\Http\Models\ADM\StudentAdmission\Category;
+use App\Http\Models\ADM\StudentAdmission\Form;
+use App\Http\Models\ADM\StudentAdmission\Schedule;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
@@ -3656,7 +3659,73 @@ class CreateController extends Controller
 		}
 	}
 
-	public function InsertDocumentCategories(Request $req)
+	public function InsertCategory(Request $req)
+	{
+		try {
+			Category::create([
+				'name' => $req->name,
+				'status' => $req->status,
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan'
+			], 500);
+		}
+	}
+
+	public function InsertForm(Request $req)
+	{
+		try {
+			Form::create([
+				'name' => $req->name,
+				'status' => $req->status,
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan'
+			], 500);
+		}
+	}
+
+	public function InsertSchedule(Request $req)
+	{
+		try {
+			Schedule::create([
+				'selection_path_id' => $req->selection_path_id,
+				'category_id' => $req->category_id,
+				'session' => $req->session,
+				'date' => $req->date,
+				'status' => $req->status,
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan'
+			], 500);
+		}
+	}
+  
+  public function InsertDocumentCategories(Request $req)
 	{
 		try {
 			Document_Categories::create([
