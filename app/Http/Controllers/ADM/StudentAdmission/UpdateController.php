@@ -62,6 +62,8 @@ use App\Http\Models\ADM\StudentAdmission\Student_Interest;
 use App\Http\Models\ADM\StudentAdmission\Category;
 use App\Http\Models\ADM\StudentAdmission\Education_Major;
 use App\Http\Models\ADM\StudentAdmission\Form;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Category;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Formulir;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
@@ -2827,6 +2829,54 @@ class UpdateController extends Controller
 				'faculty_name' => $req->faculty_name,
 				'acronim' => $req->acronim,
 				'acreditation' => $req->acreditation
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateMappingProdiCategory(Request $req, $id)
+	{
+		try {
+			$mappingprodicategory = Mapping_Prodi_Category::findOrFail($id);
+			$mappingprodicategory->update([
+				'prodi_fk' => $req->prodi_fk,
+				'nama_prodi' => $req->nama_prodi,
+				'dokumen_fk' => $req->dokumen_fk,
+				'nama_dokumen' => $req->nama_dokumen,
+				'selectedstatus' => $req->selectedstatus,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateMappingProdiFormulir(Request $req, $id)
+	{
+		try {
+			$mappingprodiformulir = Mapping_Prodi_Formulir::findOrFail($id);
+			$mappingprodiformulir->update([
+				'prodi_fk' => $req->prodi_fk,
+				'nama_prodi' => $req->nama_prodi,
+				'nama_formulir' => $req->nama_formulir,
+				'harga' => $req->harga,
+				'kategori_formulir' => $req->kategori_formulir,
 			]);
 			return response([
 				'status' => 'Success',

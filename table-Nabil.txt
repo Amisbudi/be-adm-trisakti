@@ -24,3 +24,27 @@ CREATE TABLE student_interest (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- TABLE MAPPING_PRODI_CATEGORY
+CREATE TABLE mapping_prodi_category(
+    id SERIAL PRIMARY KEY,
+    prodi_fk INT NOT NULL,
+    nama_prodi VARCHAR(100) NOT NULL,
+    dokumen_fk INT NOT NULL,
+    nama_dokumen VARCHAR(100) NOT NULL,
+    selectedstatus INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- TABLE MAPPING_PRODI_FORMULIR
+CREATE TABLE mapping_prodi_formulir(
+    id SERIAL PRIMARY KEY,
+    prodi_fk INT NOT NULL,
+    nama_prodi VARCHAR(100) NOT NULL,
+    nama_formulir VARCHAR(255) NOT NULL,
+    harga INT NOT NULL,
+    kategori_formulir INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

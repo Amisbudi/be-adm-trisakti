@@ -62,3 +62,14 @@ Route::post('/schedules', 'ADM\StudentAdmission\CreateController@InsertSchedule'
 Route::put('/schedules/{id}', 'ADM\StudentAdmission\UpdateController@UpdateSchedule');
 Route::delete('/schedules/{id}', 'ADM\StudentAdmission\DeleteController@DeleteSchedule');
 
+// Mapping Prodi Category
+Route::get('/mappingprodicategory', 'ADM\StudentAdmission\ReadController@GetMappingProdiCategory');
+Route::post('/mappingprodicategory', 'ADM\StudentAdmission\CreateController@InsertMappingProdiCategory');
+Route::put('/mappingprodicategory/{id}', 'ADM\StudentAdmission\UpdateController@UpdateMappingProdiCategory');
+Route::delete('/mappingprodicategory/{id}', 'ADM\StudentAdmission\DeleteController@DeleteMappingProdiCategory');
+
+// Mapping Prodi Formulir
+Route::get('/mappingprodiformulir', 'ADM\StudentAdmission\ReadController@GetMappingProdiFormulir');
+Route::post('/mappingprodiformulir', 'ADM\StudentAdmission\CreateController@InsertMappingProdiFormulir');
+Route::put('/mappingprodiformulir/{id}', 'ADM\StudentAdmission\UpdateController@UpdateMappingProdiFormulir');
+Route::delete('/mappingprodiformulir/{id}', 'ADM\StudentAdmission\DeleteController@DeleteMappingProdiFormulir');

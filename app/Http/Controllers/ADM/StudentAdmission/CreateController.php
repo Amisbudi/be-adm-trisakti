@@ -81,6 +81,8 @@ use App\Http\Models\ADM\StudentAdmission\Student_Interest;
 use App\Http\Models\ADM\StudentAdmission\Category;
 use App\Http\Models\ADM\StudentAdmission\Education_Major;
 use App\Http\Models\ADM\StudentAdmission\Form;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Category;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Formulir;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
 use App\Http\Models\ADM\StudentAdmission\Study_Program;
 use Exception;
@@ -3847,6 +3849,54 @@ class CreateController extends Controller
 			], 200);
 		} catch (\Exception $e) {
 			response()->json();
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan'
+			], 500);
+		}
+	}
+
+	public function InsertMappingProdiCategory(Request $req)
+	{
+		try {
+			Mapping_Prodi_Category::create([
+				'prodi_fk' => $req->prodi_fk,
+				'nama_prodi' => $req->nama_prodi,
+				'dokumen_fk' => $req->dokumen_fk,
+				'nama_dokumen' => $req->nama_dokumen,
+				'selectedstatus' => $req->selectedstatus,
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan'
+			], 500);
+		}
+	}
+
+	public function InsertMappingProdiFormulir(Request $req)
+	{
+		try {
+			Mapping_Prodi_Formulir::create([
+				'prodi_fk' => $req->prodi_fk,
+				'nama_prodi' => $req->nama_prodi,
+				'nama_formulir' => $req->nama_formulir,
+				'harga' => $req->harga,
+				'kategori_formulir' => $req->kategori_formulir,
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
 			DB::connection('pgsql')->rollBack();
 			return response([
 				'status' => 'Failed',

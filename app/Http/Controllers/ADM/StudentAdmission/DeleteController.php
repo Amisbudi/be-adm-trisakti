@@ -36,6 +36,8 @@ use App\Http\Models\ADM\StudentAdmission\Selection_Categories;
 use App\Http\Models\ADM\StudentAdmission\Category;
 use App\Http\Models\ADM\StudentAdmission\Education_Major;
 use App\Http\Models\ADM\StudentAdmission\Form;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Category;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Formulir;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
 use App\Http\Models\ADM\StudentAdmission\Selection_Path;
 use App\Http\Models\ADM\StudentAdmission\Student_Interest;
@@ -1163,7 +1165,7 @@ class DeleteController extends Controller
       ], 500);
     }
   }
-  
+
   public function DeleteForm($id)
   {
     try {
@@ -1276,7 +1278,7 @@ class DeleteController extends Controller
       ], 500);
     }
   }
-  
+
   public function DeleteStudyProgram($id)
   {
     try {
@@ -1291,6 +1293,44 @@ class DeleteController extends Controller
       return response()->json([
         'status' => 'Failed',
         'message' => 'Failed to delete the education degree',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteMappingProdiCategory($id)
+  {
+    try {
+      $mappingProdiCategory = Mapping_Prodi_Category::findOrFail($id);
+      $mappingProdiCategory->delete();
+
+      return response()->json([
+        'status' => 'Success',
+        'message' => 'Mapping Prodi Category has been deleted successfully',
+      ], 200);
+    } catch (\Exception $e) {
+      return response()->json([
+        'status' => 'Failed',
+        'message' => 'Failed to delete the Mapping Prodi Category',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteMappingProdiFormulir($id)
+  {
+    try {
+      $mappingProdiFormulir = Mapping_Prodi_Formulir::findOrFail($id);
+      $mappingProdiFormulir->delete();
+
+      return response()->json([
+        'status' => 'Success',
+        'message' => 'Mapping Prodi Formulir has been deleted successfully',
+      ], 200);
+    } catch (\Exception $e) {
+      return response()->json([
+        'status' => 'Failed',
+        'message' => 'Failed to delete the Mapping Prodi Formulir',
         'error' => $e->getMessage()
       ], 500);
     }

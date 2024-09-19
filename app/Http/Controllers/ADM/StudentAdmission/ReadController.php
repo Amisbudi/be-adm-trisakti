@@ -114,6 +114,8 @@ use App\Http\Models\ADM\StudentAdmission\Selection_Categories;
 use App\Http\Models\ADM\StudentAdmission\Student_Interest;
 use App\Http\Models\ADM\StudentAdmission\Category;
 use App\Http\Models\ADM\StudentAdmission\Form;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Category;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Formulir;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
@@ -9282,7 +9284,7 @@ class ReadController extends Controller
         $data = Schedule::all();
         return response()->json($data);
     }
-  
+
     public function GetDocumentCategories(Request $req)
     {
         $data = Document_Categories::all();
@@ -9298,6 +9300,18 @@ class ReadController extends Controller
     public function GetStudentInterest(Request $req)
     {
         $data = Education_Major::all();
+        return response()->json($data);
+    }
+
+    public function GetMappingProdiCategory(Request $req)
+    {
+        $data = Mapping_Prodi_Category::all();
+        return response()->json($data);
+    }
+
+    public function GetMappingProdiFormulir(Request $req)
+    {
+        $data = Mapping_Prodi_Formulir::all();
         return response()->json($data);
     }
 
