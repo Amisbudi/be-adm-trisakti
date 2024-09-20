@@ -27,12 +27,21 @@ Route::get('/selectioncategories', 'ADM\StudentAdmission\ReadController@GetSelec
 Route::post('/selectioncategories', 'ADM\StudentAdmission\CreateController@InsertSelectionCategories');
 Route::put('/selectioncategories/{id}', 'ADM\StudentAdmission\UpdateController@UpdateSelectionCategories');
 Route::delete('/selectioncategories/{id}', 'ADM\StudentAdmission\DeleteController@DeleteSelectionCategories');
-Route::get('/studentinterest', 'ADM\StudentAdmission\ReadController@GetStudentInterest');
-Route::post('/studentinterest', 'ADM\StudentAdmission\CreateController@InsertStudentInterest');
-Route::put('/studentinterest/{id}', 'ADM\StudentAdmission\UpdateController@UpdateStudentInterest');
-Route::delete('/studentinterest/{id}', 'ADM\StudentAdmission\DeleteController@DeleteStudentInterest');
 
+Route::get('/educationmajors', 'ADM\StudentAdmission\ReadController@GetStudentInterest');
+Route::post('/educationmajors', 'ADM\StudentAdmission\CreateController@InsertStudentInterest');
+Route::put('/educationmajors/{id}', 'ADM\StudentAdmission\UpdateController@UpdateStudentInterest');
+Route::delete('/educationmajors/{id}', 'ADM\StudentAdmission\DeleteController@DeleteStudentInterest');
 
+Route::get('/educationdegrees', 'ADM\StudentAdmission\ReadController@GetEducationDegree');
+Route::post('/educationdegrees', 'ADM\StudentAdmission\CreateController@InsertEducationDegree');
+Route::put('/educationdegrees/{id}', 'ADM\StudentAdmission\UpdateController@UpdateEducationDegree');
+Route::delete('/educationdegrees/{id}', 'ADM\StudentAdmission\DeleteController@DeleteEducationDegree');
+
+Route::get('/studyprogram', 'ADM\StudentAdmission\ReadController@GetStudyProgram');
+Route::post('/studyprogram', 'ADM\StudentAdmission\CreateController@InsertStudyProgram');
+Route::put('/studyprogram/{id}', 'ADM\StudentAdmission\UpdateController@UpdateStudyProgram');
+Route::delete('/studyprogram/{id}', 'ADM\StudentAdmission\DeleteController@DeleteStudyProgram');
 
 // Category
 Route::get('/categories', 'ADM\StudentAdmission\ReadController@GetCategories');
@@ -53,3 +62,14 @@ Route::post('/schedules', 'ADM\StudentAdmission\CreateController@InsertSchedule'
 Route::put('/schedules/{id}', 'ADM\StudentAdmission\UpdateController@UpdateSchedule');
 Route::delete('/schedules/{id}', 'ADM\StudentAdmission\DeleteController@DeleteSchedule');
 
+// Mapping Prodi Category
+Route::get('/mappingprodicategory', 'ADM\StudentAdmission\ReadController@GetMappingProdiCategory');
+Route::post('/mappingprodicategory', 'ADM\StudentAdmission\CreateController@InsertMappingProdiCategory');
+Route::put('/mappingprodicategory/{id}', 'ADM\StudentAdmission\UpdateController@UpdateMappingProdiCategory');
+Route::delete('/mappingprodicategory/{id}', 'ADM\StudentAdmission\DeleteController@DeleteMappingProdiCategory');
+
+// Mapping Prodi Formulir
+Route::get('/mappingprodiformulir', 'ADM\StudentAdmission\ReadController@GetMappingProdiFormulir');
+Route::post('/mappingprodiformulir', 'ADM\StudentAdmission\CreateController@InsertMappingProdiFormulir');
+Route::put('/mappingprodiformulir/{id}', 'ADM\StudentAdmission\UpdateController@UpdateMappingProdiFormulir');
+Route::delete('/mappingprodiformulir/{id}', 'ADM\StudentAdmission\DeleteController@DeleteMappingProdiFormulir');

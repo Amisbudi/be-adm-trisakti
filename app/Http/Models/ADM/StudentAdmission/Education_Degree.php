@@ -9,9 +9,14 @@ class Education_Degree extends Model {
     protected $connection = 'pgsql';
     protected $table = 'education_degrees';
     protected $primaryKey = 'id';
-    protected $fillable = [ 
-        'level',      
+    protected $fillable = [
+        'level',
         'description',
+        'created_by',
+        'updated_by',
+        'created_at',
+        'updated_at',
+        'type'
     ];
     public $timestamps = true;
 
