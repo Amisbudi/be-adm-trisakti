@@ -1147,10 +1147,10 @@ class DeleteController extends Controller
     }
   }
 
-  public function DeleteCategory($id)
+  public function DeleteCategory(Request $req)
   {
     try {
-      $category = Category::findOrFail($id);
+      $category = Category::findOrFail($req->id);
       $category->delete();
 
       return response([
@@ -1166,10 +1166,10 @@ class DeleteController extends Controller
     }
   }
 
-  public function DeleteForm($id)
+  public function DeleteForm(Request $req)
   {
     try {
-      $form = Form::findOrFail($id);
+      $form = Form::findOrFail($req->id);
       $form->delete();
 
       return response([
@@ -1185,10 +1185,10 @@ class DeleteController extends Controller
     }
   }
 
-  public function DeleteSchedule($id)
+  public function DeleteSchedule(Request $req)
   {
     try {
-      $schedule = Schedule::findOrFail($id);
+      $schedule = Schedule::findOrFail($req->id);
       $schedule->delete();
 
       return response([
