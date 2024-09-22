@@ -1203,10 +1203,10 @@ class DeleteController extends Controller
       ], 500);
     }
   }
-  public function DeleteDocumentCategories($id)
+  public function DeleteDocumentCategories(Request $req)
   {
     try {
-      $documentCategory = Document_Categories::findOrFail($id);
+      $documentCategory = Document_Categories::findOrFail($req->id);
       $documentCategory->delete();
 
       return response()->json([
@@ -1222,10 +1222,10 @@ class DeleteController extends Controller
     }
   }
 
-  public function DeleteSelectionCategories($id)
+  public function DeleteSelectionCategories(Request $req)
   {
     try {
-      $documentCategory = Selection_Categories::findOrFail($id);
+      $documentCategory = Selection_Categories::findOrFail($req->id);
       $documentCategory->delete();
 
       return response()->json([
@@ -1241,10 +1241,10 @@ class DeleteController extends Controller
     }
   }
 
-  public function DeleteStudentInterest($id)
+  public function DeleteStudentInterest(Request $req)
   {
     try {
-      $documentCategory = Education_Major::findOrFail($id);
+      $documentCategory = Education_Major::findOrFail($req->id);
       $documentCategory->delete();
 
       return response()->json([
@@ -1260,10 +1260,10 @@ class DeleteController extends Controller
     }
   }
 
-  public function DeleteEducationDegree($id)
+  public function DeleteEducationDegree(Request $req)
   {
     try {
-      $educationDegree = Education_Degree::findOrFail($id);
+      $educationDegree = Education_Degree::findOrFail($req->id);
       $educationDegree->delete();
 
       return response()->json([
@@ -1279,10 +1279,10 @@ class DeleteController extends Controller
     }
   }
 
-  public function DeleteStudyProgram($id)
+  public function DeleteStudyProgram(Request $req)
   {
     try {
-      $studyProgram = Study_Program::findOrFail($id);
+      $studyProgram = Study_Program::findOrFail($req->id);
       $studyProgram->delete();
 
       return response()->json([
@@ -1298,10 +1298,10 @@ class DeleteController extends Controller
     }
   }
 
-  public function DeleteMappingProdiCategory($id)
+  public function DeleteMappingProdiCategory(Request $req)
   {
     try {
-      $mappingProdiCategory = Mapping_Prodi_Category::findOrFail($id);
+      $mappingProdiCategory = Mapping_Prodi_Category::findOrFail($req->id);
       $mappingProdiCategory->delete();
 
       return response()->json([
@@ -1317,10 +1317,10 @@ class DeleteController extends Controller
     }
   }
 
-  public function DeleteMappingProdiFormulir($id)
+  public function DeleteMappingProdiFormulir(Request $req)
   {
     try {
-      $mappingProdiFormulir = Mapping_Prodi_Formulir::findOrFail($id);
+      $mappingProdiFormulir = Mapping_Prodi_Formulir::findOrFail($req->id);
       $mappingProdiFormulir->delete();
 
       return response()->json([
