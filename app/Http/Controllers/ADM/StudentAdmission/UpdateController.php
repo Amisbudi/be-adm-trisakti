@@ -2654,10 +2654,11 @@ class UpdateController extends Controller
 		}
 	}
 
-	public function UpdateCategory(Request $req, $id)
+	public function UpdateCategory(Request $req)
 	{
+		$by = $req->header("X-I");
 		try {
-			$category = Category::findOrFail($id);
+			$category = Category::findOrFail($req->id);
 			$category->update([
 				'name' => $req->name,
 				'status' => $req->status,
@@ -2675,10 +2676,11 @@ class UpdateController extends Controller
 		}
 	}
 
-	public function UpdateForm(Request $req, $id)
+	public function UpdateForm(Request $req)
 	{
+		$by = $req->header("X-I");
 		try {
-			$form = Form::findOrFail($id);
+			$form = Form::findOrFail($req->id);
 			$form->update([
 				'name' => $req->name,
 				'status' => $req->status,
@@ -2696,10 +2698,11 @@ class UpdateController extends Controller
 		}
 	}
 
-	public function UpdateSchedule(Request $req, $id)
+	public function UpdateSchedule(Request $req)
 	{
+		$by = $req->header("X-I");
 		try {
-			$schedule = Schedule::findOrFail($id);
+			$schedule = Schedule::findOrFail($req->id);
 			$schedule->update([
 				'selection_path_id' => $req->selection_path_id,
 				'category_id' => $req->category_id,
