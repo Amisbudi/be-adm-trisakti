@@ -2654,10 +2654,11 @@ class UpdateController extends Controller
 		}
 	}
 
-	public function UpdateCategory(Request $req, $id)
+	public function UpdateCategory(Request $req)
 	{
+		$by = $req->header("X-I");
 		try {
-			$category = Category::findOrFail($id);
+			$category = Category::findOrFail($req->id);
 			$category->update([
 				'name' => $req->name,
 				'status' => $req->status,
@@ -2675,10 +2676,11 @@ class UpdateController extends Controller
 		}
 	}
 
-	public function UpdateForm(Request $req, $id)
+	public function UpdateForm(Request $req)
 	{
+		$by = $req->header("X-I");
 		try {
-			$form = Form::findOrFail($id);
+			$form = Form::findOrFail($req->id);
 			$form->update([
 				'name' => $req->name,
 				'status' => $req->status,
@@ -2696,10 +2698,11 @@ class UpdateController extends Controller
 		}
 	}
 
-	public function UpdateSchedule(Request $req, $id)
+	public function UpdateSchedule(Request $req)
 	{
+		$by = $req->header("X-I");
 		try {
-			$schedule = Schedule::findOrFail($id);
+			$schedule = Schedule::findOrFail($req->id);
 			$schedule->update([
 				'selection_path_id' => $req->selection_path_id,
 				'category_id' => $req->category_id,
@@ -2719,10 +2722,11 @@ class UpdateController extends Controller
 			], 500);
 		}
 	}
-	public function UpdateDocumentCategories(Request $req, $id)
+	public function UpdateDocumentCategories(Request $req)
 	{
+		$by = $req->header("X-I");
 		try {
-			$schedule = Document_Categories::findOrFail($id);
+			$schedule = Document_Categories::findOrFail($req->id);
 			$schedule->update([
 				'name' => $req->name,
 				'status' => $req->status,
@@ -2740,10 +2744,11 @@ class UpdateController extends Controller
 		}
 	}
 
-	public function UpdateSelectionCategories(Request $req, $id)
+	public function UpdateSelectionCategories(Request $req)
 	{
+		$by = $req->header("X-I");
 		try {
-			$schedule = Selection_Categories::findOrFail($id);
+			$schedule = Selection_Categories::findOrFail($req->id);
 			$schedule->update([
 				'name' => $req->name,
 				'status' => $req->status,
@@ -2761,10 +2766,11 @@ class UpdateController extends Controller
 		}
 	}
 
-	public function UpdateStudentInterest(Request $req, $id)
+	public function UpdateStudentInterest(Request $req)
 	{
+		$by = $req->header("X-I");
 		try {
-			$schedule = Education_Major::findOrFail($id);
+			$schedule = Education_Major::findOrFail($req->id);
 			$schedule->update([
 				'major' => $req->major,
 				'education_degree_id' => $req->education_degree_id,
@@ -2787,10 +2793,11 @@ class UpdateController extends Controller
 		}
 	}
 
-	public function UpdateEducationDegree(Request $req, $id)
+	public function UpdateEducationDegree(Request $req)
 	{
+		$by = $req->header("X-I");
 		try {
-			$schedule = Education_Degree::findOrFail($id);
+			$schedule = Education_Degree::findOrFail($req->id);
 			$schedule->update([
 				'level' => $req->level,
 				'description' => $req->description,
@@ -2813,10 +2820,11 @@ class UpdateController extends Controller
 		}
 	}
 
-	public function UpdateStudyProgram(Request $req, $id)
+	public function UpdateStudyProgram(Request $req)
 	{
+		$by = $req->header("X-I");
 		try {
-			$schedule = Study_Program::findOrFail($id);
+			$schedule = Study_Program::findOrFail($req->id);
 			$schedule->update([
 				'program_study_id' => $req->program_study_id,
 				'faculty_id' => $req->faculty_id,
@@ -2843,10 +2851,11 @@ class UpdateController extends Controller
 		}
 	}
 
-	public function UpdateMappingProdiCategory(Request $req, $id)
+	public function UpdateMappingProdiCategory(Request $req)
 	{
+		$by = $req->header("X-I");
 		try {
-			$mappingprodicategory = Mapping_Prodi_Category::findOrFail($id);
+			$mappingprodicategory = Mapping_Prodi_Category::findOrFail($req->id);
 			$mappingprodicategory->update([
 				'prodi_fk' => $req->prodi_fk,
 				'nama_prodi' => $req->nama_prodi,
@@ -2867,11 +2876,11 @@ class UpdateController extends Controller
 		}
 	}
 
-	public function UpdateMappingProdiFormulir(Request $req, $id)
+	public function UpdateMappingProdiFormulir(Request $req)
 	{
+		$by = $req->header("X-I");
 		try {
-			$by = $req->header("X-I");
-			$mappingprodiformulir = Mapping_Prodi_Formulir::findOrFail(id: $req->id);
+			$mappingprodiformulir = Mapping_Prodi_Formulir::findOrFail($req->id);
 			$mappingprodiformulir->update([
 				'prodi_fk' => $req->prodi_fk,
 				'nama_prodi' => $req->nama_prodi,
