@@ -2870,7 +2870,8 @@ class UpdateController extends Controller
 	public function UpdateMappingProdiFormulir(Request $req, $id)
 	{
 		try {
-			$mappingprodiformulir = Mapping_Prodi_Formulir::findOrFail($id);
+			$by = $req->header("X-I");
+			$mappingprodiformulir = Mapping_Prodi_Formulir::findOrFail(id: $req->id);
 			$mappingprodiformulir->update([
 				'prodi_fk' => $req->prodi_fk,
 				'nama_prodi' => $req->nama_prodi,

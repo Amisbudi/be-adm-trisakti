@@ -55,7 +55,6 @@ Route::post('/forms', 'ADM\StudentAdmission\CreateController@InsertForm');
 Route::put('/forms/{id}', 'ADM\StudentAdmission\UpdateController@UpdateForm');
 Route::delete('/forms/{id}', 'ADM\StudentAdmission\DeleteController@DeleteForm');
 
-
 // Schedule
 Route::get('/schedules', 'ADM\StudentAdmission\ReadController@GetSchedules');
 Route::post('/schedules', 'ADM\StudentAdmission\CreateController@InsertSchedule');
