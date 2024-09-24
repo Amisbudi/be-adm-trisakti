@@ -8,6 +8,7 @@ use DB;
 class Exam_Type extends Model {
     protected $connection = 'pgsql';
     protected $table = 'exam_type';
+    protected $fillable = ['id','name', 'active_status'];
 
     public static function GetExamType(){
         $data = Exam_Type::select('id','name','active_status')

@@ -52,9 +52,11 @@ use App\Http\Models\ADM\StudentAdmission\Registration_Result;
 use App\Http\Models\ADM\StudentAdmission\Study_Program;
 use App\Http\Models\ADM\StudentAdmission\Document_Publication;
 use App\Http\Models\ADM\StudentAdmission\Document_Transcript;
+use App\Http\Models\ADM\StudentAdmission\Exam_Type;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Transcript_Participant;
 use App\Http\Models\ADM\StudentAdmission\New_Student;
 use App\Http\Models\ADM\StudentAdmission\Participant_Document;
+use App\Http\Models\ADM\StudentAdmission\Selection_Category;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
@@ -2615,7 +2617,7 @@ class UpdateController extends Controller
 
 		try {
 			$dc = Document_Transcript::find($req->document_transcript_id);
-			
+
 			//update mapping document transcript
 			$datas = json_decode($req->json, true);
 
@@ -2640,6 +2642,55 @@ class UpdateController extends Controller
 				'status' => 'Failed',
 				'message' => 'Mohon maaf, data gagal disimpan',
 				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateExamType(Request $req)
+	{
+		try {
+			$by = $req->header("X-I");
+			$id = Exam_Type::select('id')->where('id', '=', $req->id)->first();
+			$update = Exam_Type::find($id->id)->update([
+				'id' => $req->id,
+				'name' => $req->name,
+				'active_status' => $req->active_status,
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan'
+			], 500);
+		}
+	}
+
+	public function UpdateSelectionCategory(Request $req)
+	{
+		try {
+			$by = $req->header("X-I");
+			$id = Selection_Category::select('id')->where('id', '=', $req->id)->first();
+			$update = Selection_Category::find($id->id)->update([
+				'id' => $req->id,
+				'name' => $req->name,
+				'description' => $req->description,
+				'active_status' => $req->active_status
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan'
 			], 500);
 		}
 	}

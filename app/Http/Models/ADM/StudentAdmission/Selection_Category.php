@@ -9,6 +9,7 @@ class Selection_Category extends Model {
     protected $connection = 'pgsql';
     protected $table = 'selection_category';
     protected $primaryKey = 'id';
+    protected $fillable = ['id','name', 'description', 'active_status'];
     public $timestamps = true;
 
     public static function GetSelectionCategory(){
