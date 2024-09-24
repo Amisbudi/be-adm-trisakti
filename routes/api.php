@@ -23,10 +23,6 @@ Route::get('/documentcategories', 'ADM\StudentAdmission\ReadController@GetDocume
 Route::post('/documentcategories', 'ADM\StudentAdmission\CreateController@InsertDocumentCategories');
 Route::put('/documentcategories/{id}', 'ADM\StudentAdmission\UpdateController@UpdateDocumentCategories');
 Route::delete('/documentcategories/{id}', 'ADM\StudentAdmission\DeleteController@DeleteDocumentCategories');
-Route::get('/selectioncategories', 'ADM\StudentAdmission\ReadController@GetSelectionCategories');
-Route::post('/selectioncategories', 'ADM\StudentAdmission\CreateController@InsertSelectionCategories');
-Route::put('/selectioncategories/{id}', 'ADM\StudentAdmission\UpdateController@UpdateSelectionCategories');
-Route::delete('/selectioncategories/{id}', 'ADM\StudentAdmission\DeleteController@DeleteSelectionCategories');
 
 Route::get('/educationmajors', 'ADM\StudentAdmission\ReadController@GetStudentInterest');
 Route::post('/educationmajors', 'ADM\StudentAdmission\CreateController@InsertStudentInterest');
@@ -72,3 +68,12 @@ Route::get('/mappingprodiformulir', 'ADM\StudentAdmission\ReadController@GetMapp
 Route::post('/mappingprodiformulir', 'ADM\StudentAdmission\CreateController@InsertMappingProdiFormulir');
 Route::put('/mappingprodiformulir/{id}', 'ADM\StudentAdmission\UpdateController@UpdateMappingProdiFormulir');
 Route::delete('/mappingprodiformulir/{id}', 'ADM\StudentAdmission\DeleteController@DeleteMappingProdiFormulir');
+
+// Examp Type
+Route::get('/examType', 'ADM\StudentAdmission\ReadController@GetExamType');
+Route::post('/examType', 'ADM\StudentAdmission\CreateController@InsertExamType');
+Route::put('/examType/{id}', 'ADM\StudentAdmission\UpdateController@UpdateExamType');
+Route::delete('/examType/{id}', 'ADM\StudentAdmission\DeleteController@DeleteExamType');
+
+
+

@@ -61,6 +61,7 @@ use App\Http\Models\ADM\StudentAdmission\Selection_Categories;
 use App\Http\Models\ADM\StudentAdmission\Student_Interest;
 use App\Http\Models\ADM\StudentAdmission\Category;
 use App\Http\Models\ADM\StudentAdmission\Education_Major;
+use App\Http\Models\ADM\StudentAdmission\Exam_Type;
 use App\Http\Models\ADM\StudentAdmission\Form;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Category;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Formulir;
@@ -2740,27 +2741,6 @@ class UpdateController extends Controller
 		}
 	}
 
-	public function UpdateSelectionCategories(Request $req, $id)
-	{
-		try {
-			$schedule = Selection_Categories::findOrFail($id);
-			$schedule->update([
-				'name' => $req->name,
-				'status' => $req->status,
-			]);
-			return response([
-				'status' => 'Success',
-				'message' => 'Data Tersimpan'
-			], 200);
-		} catch (\Throwable $th) {
-			return response([
-				'status' => 'Failed',
-				'message' => 'Mohon maaf, data gagal disimpan',
-				'error' => $th->getMessage()
-			],  500);
-		}
-	}
-
 	public function UpdateStudentInterest(Request $req, $id)
 	{
 		try {
@@ -2870,14 +2850,37 @@ class UpdateController extends Controller
 	public function UpdateMappingProdiFormulir(Request $req, $id)
 	{
 		try {
-			$by = $req->header("X-I");
-			$mappingprodiformulir = Mapping_Prodi_Formulir::findOrFail(id: $req->id);
+			// $by = $req->header("X-I");
+			$mappingprodiformulir = Mapping_Prodi_Formulir::findOrFail($id);
 			$mappingprodiformulir->update([
 				'prodi_fk' => $req->prodi_fk,
 				'nama_prodi' => $req->nama_prodi,
 				'nama_formulir' => $req->nama_formulir,
 				'harga' => $req->harga,
 				'kategori_formulir' => $req->kategori_formulir,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateExamType(Request $req, $id)
+	{
+		try {
+			$by = $req->header("X-I");
+			$mappingprodiformulir = Exam_Type::findOrFail($id);
+			$mappingprodiformulir->update([
+				'id' => $req->id,
+				'name' => $req->name,
+				'active_status' => $req->active_status,
 			]);
 			return response([
 				'status' => 'Success',

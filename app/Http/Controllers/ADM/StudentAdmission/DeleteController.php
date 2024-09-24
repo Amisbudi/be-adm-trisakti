@@ -35,6 +35,7 @@ use app\Http\Models\ADM\StudentAdmission\Education_Degree;
 use App\Http\Models\ADM\StudentAdmission\Selection_Categories;
 use App\Http\Models\ADM\StudentAdmission\Category;
 use App\Http\Models\ADM\StudentAdmission\Education_Major;
+use App\Http\Models\ADM\StudentAdmission\Exam_Type;
 use App\Http\Models\ADM\StudentAdmission\Form;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Category;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Formulir;
@@ -1222,25 +1223,6 @@ class DeleteController extends Controller
     }
   }
 
-  public function DeleteSelectionCategories($id)
-  {
-    try {
-      $documentCategory = Selection_Categories::findOrFail($id);
-      $documentCategory->delete();
-
-      return response()->json([
-        'status' => 'Success',
-        'message' => 'Document category has been deleted successfully',
-      ], 200);
-    } catch (\Exception $e) {
-      return response()->json([
-        'status' => 'Failed',
-        'message' => 'Failed to delete the document category',
-        'error' => $e->getMessage()
-      ], 500);
-    }
-  }
-
   public function DeleteStudentInterest($id)
   {
     try {
@@ -1322,6 +1304,25 @@ class DeleteController extends Controller
     try {
       $mappingProdiFormulir = Mapping_Prodi_Formulir::findOrFail($id);
       $mappingProdiFormulir->delete();
+
+      return response()->json([
+        'status' => 'Success',
+        'message' => 'Mapping Prodi Formulir has been deleted successfully',
+      ], 200);
+    } catch (\Exception $e) {
+      return response()->json([
+        'status' => 'Failed',
+        'message' => 'Failed to delete the Mapping Prodi Formulir',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteExamType($id)
+  {
+    try {
+      $examType = Exam_Type::findOrFail($id);
+      $examType->delete();
 
       return response()->json([
         'status' => 'Success',

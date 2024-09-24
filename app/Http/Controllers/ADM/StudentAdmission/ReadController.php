@@ -9291,12 +9291,6 @@ class ReadController extends Controller
         return response()->json($data);
     }
 
-    public function GetSelectionCategories(Request $req)
-    {
-        $data = Selection_Categories::all();
-        return response()->json($data);
-    }
-
     public function GetStudentInterest(Request $req)
     {
         $data = Education_Major::all();
