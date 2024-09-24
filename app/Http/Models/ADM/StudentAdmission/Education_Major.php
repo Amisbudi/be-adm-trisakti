@@ -9,8 +9,14 @@ class Education_Major extends Model {
     protected $connection = 'pgsql';
     protected $table = 'education_majors';
     protected $primaryKey = 'id';
-    protected $fillable = [ 
-        'major'
+    protected $fillable = [
+        'major',
+        'education_degree_id',
+        'created_by',
+        'updated_by',
+        'created_at',
+        'updated_at',
+        'is_technic'
     ];
     public $timestamps = true;
 

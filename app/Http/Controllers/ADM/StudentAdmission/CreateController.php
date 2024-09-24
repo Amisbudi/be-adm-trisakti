@@ -76,6 +76,17 @@ use App\Http\Models\ADM\StudentAdmission\Mapping_New_Student_Step;
 use App\Http\Models\ADM\StudentAdmission\New_Student;
 use App\Http\Models\ADM\StudentAdmission\Selection_Category;
 use App\Http\Models\ADM\StudentAdmission\Transaction_Billing;
+use App\Http\Models\ADM\StudentAdmission\Document_Categories;
+use App\Http\Models\ADM\StudentAdmission\Education_Degree;
+use App\Http\Models\ADM\StudentAdmission\Selection_Categories;
+use App\Http\Models\ADM\StudentAdmission\Student_Interest;
+use App\Http\Models\ADM\StudentAdmission\Category;
+use App\Http\Models\ADM\StudentAdmission\Education_Major;
+use App\Http\Models\ADM\StudentAdmission\Form;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Category;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Formulir;
+use App\Http\Models\ADM\StudentAdmission\Schedule;
+use App\Http\Models\ADM\StudentAdmission\Study_Program;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
@@ -151,9 +162,9 @@ class CreateController extends Controller
 
 		//get tmp link
 		$link = URL::temporarySignedRoute(
-			'af3ac15a0392e10afbf3feb197ffed24', 
-			now()->addHour(60), 
-			['id' => $uid], 
+			'af3ac15a0392e10afbf3feb197ffed24',
+			now()->addHour(60),
+			['id' => $uid],
 			false
 		);
 
@@ -2211,7 +2222,7 @@ class CreateController extends Controller
 
 			if ($response['status'] == true) {
 				// validate id
-				if($response['data'][0]['id'] == 0 || $response['data'][0]['id'] == "0" || $response['data'][0]['id'] == null) {
+				if ($response['data'][0]['id'] == 0 || $response['data'][0]['id'] == "0" || $response['data'][0]['id'] == null) {
 					$id = $response['data'][0]['idnumber'];
 				} else {
 					$id = $response['data'][0]['id'];
@@ -3580,7 +3591,7 @@ class CreateController extends Controller
 				->leftJoin('transaction_billings as tb', 'registration_result.registration_number', '=', 'tb.registration_number')
 				->where('registration_result.registration_number', '=', $req->registration_number)
 				->first();
-			
+
 			//validate registration
 			if ($registration == null) {
 				throw new Exception("Registration result not found");
@@ -3665,7 +3676,24 @@ class CreateController extends Controller
 				'name' => $req->name,
 				'active_status' => $req->active_status,
 			]);
+    } catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			\Log::error('Error: ', ['exception' => $e->getMessage()]); // Tambahkan log untuk kesalahan
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
+			], 500);
+		}
+	}
 	
+	public function InsertCategory(Request $req)
+	{
+		try {
+			Category::create([
+				'name' => $req->name,
+				'status' => $req->status,
+			]);
 			DB::connection('pgsql')->commit();
 			return response([
 				'status' => 'Success',
@@ -3694,7 +3722,204 @@ class CreateController extends Controller
 				'description' => $req->description,
 				'active_status' => $req->active_status,
 			]);
+      
+    } catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			\Log::error('Error: ', ['exception' => $e->getMessage()]); // Tambahkan log untuk kesalahan
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
+			], 500);
+		}
+  }
 	
+	public function InsertForm(Request $req)
+	{
+		try {
+			Form::create([
+				'name' => $req->name,
+				'status' => $req->status,
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan'
+			], 500);
+		}
+	}
+
+	public function InsertSchedule(Request $req)
+	{
+		try {
+			Schedule::create([
+				'selection_path_id' => $req->selection_path_id,
+				'category_id' => $req->category_id,
+				'session' => $req->session,
+				'date' => $req->date,
+				'status' => $req->status,
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan'
+			], 500);
+		}
+	}
+
+	public function InsertDocumentCategories(Request $req)
+	{
+		try {
+			Document_Categories::create([
+				'name' => $req->name,
+				'status' => $req->status,
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan'
+			],  500);
+		}
+	}
+
+	public function InsertStudentInterest(Request $req)
+	{
+		try {
+			Education_Major::create([
+				'major' => $req->major,
+				'education_degree_id' => $req->education_degree_id,
+				'created_by' => $req->created_by,
+				'updated_by' => $req->updated_by,
+				'created_at' => $req->created_at,
+				'updated_at' => $req->updated_at,
+				'is_technic' => $req->is_technic,
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan'
+			], 500);
+		}
+	}
+
+	public function InsertEducationDegree(Request $req)
+	{
+		// return response()->json($req->all());
+		try {
+			Education_Degree::create([
+				'level' => $req->level,
+				'description' => $req->description,
+				'created_by' => $req->created_by,
+				'updated_by' => $req->updated_by,
+				'created_at' => $req->created_at,
+				'updated_at' => $req->updated_at,
+				'type' => $req->type
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			response()->json();
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan'
+			], 500);
+		}
+	}
+
+	public function InsertStudyProgram(Request $req)
+	{
+		// return response()->json($req->all());
+		try {
+			Study_Program::create([
+				'program_study_id' => $req->program_study_id,
+				'faculty_id' => $req->faculty_id,
+				'category' => $req->category,
+				'classification_name' => $req->classification_name,
+				'study_program_branding_name' => $req->study_program_branding_name,
+				'study_program_name' => $req->study_program_name,
+				'study_program_name_en' => $req->study_program_name_en,
+				'study_program_acronim' => $req->study_program_acronim,
+				'faculty_name' => $req->faculty_name,
+				'acronim' => $req->acronim,
+				'acreditation' => $req->acreditation
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			response()->json();
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan'
+			], 500);
+		}
+	}
+
+	public function InsertMappingProdiCategory(Request $req)
+	{
+		try {
+			Mapping_Prodi_Category::create([
+				'prodi_fk' => $req->prodi_fk,
+				'nama_prodi' => $req->nama_prodi,
+				'dokumen_fk' => $req->dokumen_fk,
+				'nama_dokumen' => $req->nama_dokumen,
+				'selectedstatus' => $req->selectedstatus,
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan'
+			], 500);
+		}
+	}
+
+	public function InsertMappingProdiFormulir(Request $req)
+	{
+		try {
+			Mapping_Prodi_Formulir::create([
+				'prodi_fk' => $req->prodi_fk,
+				'nama_prodi' => $req->nama_prodi,
+				'nama_formulir' => $req->nama_formulir,
+				'harga' => $req->harga,
+				'kategori_formulir' => $req->kategori_formulir,
+			]);
 			DB::connection('pgsql')->commit();
 			return response([
 				'status' => 'Success',

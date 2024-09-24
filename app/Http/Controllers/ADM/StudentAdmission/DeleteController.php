@@ -32,7 +32,18 @@ use App\Http\Models\ADM\StudentAdmission\Participant_Work_Data;
 use App\Http\Models\ADM\StudentAdmission\Pin_Voucher;
 use App\Http\Models\ADM\StudentAdmission\Registration_History;
 use app\Http\Models\ADM\StudentAdmission\Selection_Category;
+use App\Http\Models\ADM\StudentAdmission\Document_Categories;
+use app\Http\Models\ADM\StudentAdmission\Education_Degree;
+use App\Http\Models\ADM\StudentAdmission\Selection_Categories;
+use App\Http\Models\ADM\StudentAdmission\Category;
+use App\Http\Models\ADM\StudentAdmission\Education_Major;
+use App\Http\Models\ADM\StudentAdmission\Form;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Category;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Formulir;
+use App\Http\Models\ADM\StudentAdmission\Schedule;
 use App\Http\Models\ADM\StudentAdmission\Selection_Path;
+use App\Http\Models\ADM\StudentAdmission\Student_Interest;
+use app\Http\Models\ADM\StudentAdmission\Study_Program;
 use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Database\QueryException;
@@ -1149,9 +1160,179 @@ class DeleteController extends Controller
         'message' => 'Mapping Exam Type has been deleted successfully',
       ], 200);
     } catch (\Exception $e) {
+      return response([
+        'status' => 'Failed',
+        'message' => 'Gagal menghapus kategori ujian',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+  
+  public function DeleteCategory(Request $req)
+  {
+    try {
+      $category = Category::findOrFail($req->id);
+      $category->delete();
+
+      return response([
+        'status' => 'Success',
+        'message' => 'Data kategori ujian telah dihapus',
+      ], 200);
+    } catch (\Exception $e) {
+      return response([
+        'status' => 'Failed',
+        'message' => 'Gagal menghapus kategori ujian',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteForm(Request $req)
+  {
+    try {
+      $form = Form::findOrFail($req->id);
+      $form->delete();
+
+      return response([
+        'status' => 'Success',
+        'message' => 'Data formulir telah dihapus',
+      ], 200);
+    } catch (\Exception $e) {
+      return response([
+        'status' => 'Failed',
+        'message' => 'Gagal menghapus formulir ujian',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteSchedule(Request $req)
+  {
+    try {
+      $schedule = Schedule::findOrFail($req->id);
+      $schedule->delete();
+
+      return response([
+        'status' => 'Success',
+        'message' => 'Data jadwal ujian telah dihapus',
+      ], 200);
+    } catch (\Exception $e) {
+      return response([
+        'status' => 'Failed',
+        'message' => 'Gagal menghapus jadwal ujian ujian',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+  public function DeleteDocumentCategories(Request $req)
+  {
+    try {
+      $documentCategory = Document_Categories::findOrFail($req->id);
+      $documentCategory->delete();
+
+      return response()->json([
+        'status' => 'Success',
+        'message' => 'Document category has been deleted successfully',
+      ], 200);
+    } catch (\Exception $e) {
       return response()->json([
         'status' => 'Failed',
-        'message' => 'Failed to delete the Exam Type',
+        'message' => 'Failed to delete the document category',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteSelectionCategories(Request $req)
+  {
+    try {
+      $documentCategory = Selection_Categories::findOrFail($req->id);
+      $documentCategory->delete();
+
+      return response()->json([
+        'status' => 'Success',
+        'message' => 'Document category has been deleted successfully',
+      ], 200);
+    } catch (\Exception $e) {
+      return response()->json([
+        'status' => 'Failed',
+        'message' => 'Failed to delete the document category',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteStudentInterest(Request $req)
+  {
+    try {
+      $documentCategory = Education_Major::findOrFail($req->id);
+      $documentCategory->delete();
+
+      return response()->json([
+        'status' => 'Success',
+        'message' => 'Document category has been deleted successfully',
+      ], 200);
+    } catch (\Exception $e) {
+      return response()->json([
+        'status' => 'Failed',
+        'message' => 'Failed to delete the document category',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteEducationDegree(Request $req)
+  {
+    try {
+      $educationDegree = Education_Degree::findOrFail($req->id);
+      $educationDegree->delete();
+
+      return response()->json([
+        'status' => 'Success',
+        'message' => 'Education Degree has been deleted successfully',
+      ], 200);
+    } catch (\Exception $e) {
+      return response()->json([
+        'status' => 'Failed',
+        'message' => 'Failed to delete the education degree',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteStudyProgram(Request $req)
+  {
+    try {
+      $studyProgram = Study_Program::findOrFail($req->id);
+      $studyProgram->delete();
+
+      return response()->json([
+        'status' => 'Success',
+        'message' => 'Education Degree has been deleted successfully',
+      ], 200);
+    } catch (\Exception $e) {
+      return response()->json([
+        'status' => 'Failed',
+        'message' => 'Failed to delete the education degree',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteMappingProdiCategory(Request $req)
+  {
+    try {
+      $mappingProdiCategory = Mapping_Prodi_Category::findOrFail($req->id);
+      $mappingProdiCategory->delete();
+
+      return response()->json([
+        'status' => 'Success',
+        'message' => 'Mapping Prodi Category has been deleted successfully',
+      ], 200);
+    } catch (\Exception $e) {
+      return response()->json([
+        'status' => 'Failed',
+        'message' => 'Failed to delete the Mapping Prodi Category',
         'error' => $e->getMessage()
       ], 500);
     }
@@ -1166,6 +1347,25 @@ class DeleteController extends Controller
       return response()->json([
         'status' => 'Success',
         'message' => 'Mapping Selection Category has been deleted successfully',
+      ], 200);
+    } catch (\Exception $e) {
+      return response()->json([
+        'status' => 'Failed',
+        'message' => 'Failed to delete the Selection Category',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+  
+  public function DeleteMappingProdiFormulir(Request $req)
+  {
+    try {
+      $mappingProdiFormulir = Mapping_Prodi_Formulir::findOrFail($req->id);
+      $mappingProdiFormulir->delete();
+
+      return response()->json([
+        'status' => 'Success',
+        'message' => 'Mapping Prodi Formulir has been deleted successfully',
       ], 200);
     } catch (\Exception $e) {
       return response()->json([
