@@ -2667,18 +2667,18 @@ class UpdateController extends Controller
 				'active_status' => $req->active_status,
 			]);
 			DB::connection('pgsql')->commit();
-      return response([
-				'status' => 'Success',
-				'message' => 'Data Tersimpan'
-			], 200);
-    } catch (\Throwable $th) {
+			return response([
+						'status' => 'Success',
+						'message' => 'Data Tersimpan'
+					], 200);
+    	} catch (\Throwable $th) {
 			return response([
 				'status' => 'Failed',
 				'message' => 'Mohon maaf, data gagal disimpan',
 				'error' => $th->getMessage()
 			], 500);
 		}
-  }
+  	}
   
 	public function UpdateCategory(Request $req)
 	{
@@ -2727,7 +2727,7 @@ class UpdateController extends Controller
 		}
 	}
 
-  public function UpdateForm(Request $req)
+  	public function UpdateForm(Request $req)
 	{
 		$by = $req->header("X-I");
 		try {
@@ -2947,7 +2947,7 @@ class UpdateController extends Controller
 			DB::connection('pgsql')->rollBack();
 			return response([
 				'status' => 'Failed',
-				'message' => 'Mohon maaf, data gagal disimpan'
+				'message' => 'Mohon maaf, data gagal disimpan',
 				'error' => $th->getMessage()
 			], 500);
 		}
