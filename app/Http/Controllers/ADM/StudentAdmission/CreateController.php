@@ -70,9 +70,11 @@ use App\Http\Models\ADM\StudentAdmission\Transaction_Request;
 use App\Http\Models\ADM\StudentAdmission\Transaction_Result;
 use App\Http\Models\ADM\StudentAdmission\Transaction_Voucher;
 use App\Http\Models\ADM\StudentAdmission\Document_Publication;
+use App\Http\Models\ADM\StudentAdmission\Exam_Type;
 use App\Http\Models\ADM\StudentAdmission\Mapping_New_Student_Document_Type;
 use App\Http\Models\ADM\StudentAdmission\Mapping_New_Student_Step;
 use App\Http\Models\ADM\StudentAdmission\New_Student;
+use App\Http\Models\ADM\StudentAdmission\Selection_Category;
 use App\Http\Models\ADM\StudentAdmission\Transaction_Billing;
 use App\Http\Models\ADM\StudentAdmission\Document_Categories;
 use App\Http\Models\ADM\StudentAdmission\Education_Degree;
@@ -3663,6 +3665,28 @@ class CreateController extends Controller
 		}
 	}
 
+	public function InsertExamType(Request $req) {
+		try {
+			DB::connection('pgsql')->beginTransaction();
+	
+			\Log::info('Request data: ', $req->all()); // Tambahkan log untuk melihat input JSON
+	
+			Exam_Type::create([
+				'id' => $req->id,
+				'name' => $req->name,
+				'active_status' => $req->active_status,
+			]);
+    } catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			\Log::error('Error: ', ['exception' => $e->getMessage()]); // Tambahkan log untuk kesalahan
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
+			], 500);
+		}
+	}
+	
 	public function InsertCategory(Request $req)
 	{
 		try {
@@ -3677,13 +3701,39 @@ class CreateController extends Controller
 			], 200);
 		} catch (\Exception $e) {
 			DB::connection('pgsql')->rollBack();
+			\Log::error('Error: ', ['exception' => $e->getMessage()]); // Tambahkan log untuk kesalahan
 			return response([
 				'status' => 'Failed',
-				'message' => 'Mohon maaf, data gagal disimpan'
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
 			], 500);
 		}
 	}
 
+	public function InsertSelectionCategory(Request $req) {
+		try {
+			DB::connection('pgsql')->beginTransaction();
+	
+			\Log::info('Request data: ', $req->all()); // Tambahkan log untuk melihat input JSON
+	
+			Selection_Category::create([
+				'id' => $req->id,
+				'name' => $req->name,
+				'description' => $req->description,
+				'active_status' => $req->active_status,
+			]);
+      
+    } catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			\Log::error('Error: ', ['exception' => $e->getMessage()]); // Tambahkan log untuk kesalahan
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
+			], 500);
+		}
+  }
+	
 	public function InsertForm(Request $req)
 	{
 		try {
@@ -3733,27 +3783,6 @@ class CreateController extends Controller
 	{
 		try {
 			Document_Categories::create([
-				'name' => $req->name,
-				'status' => $req->status,
-			]);
-			DB::connection('pgsql')->commit();
-			return response([
-				'status' => 'Success',
-				'message' => 'Data Tersimpan'
-			], 200);
-		} catch (\Exception $e) {
-			DB::connection('pgsql')->rollBack();
-			return response([
-				'status' => 'Failed',
-				'message' => 'Mohon maaf, data gagal disimpan'
-			],  500);
-		}
-	}
-
-	public function InsertSelectionCategories(Request $req)
-	{
-		try {
-			Selection_Categories::create([
 				'name' => $req->name,
 				'status' => $req->status,
 			]);
@@ -3898,9 +3927,11 @@ class CreateController extends Controller
 			], 200);
 		} catch (\Exception $e) {
 			DB::connection('pgsql')->rollBack();
+			\Log::error('Error: ', ['exception' => $e->getMessage()]); // Tambahkan log untuk kesalahan
 			return response([
 				'status' => 'Failed',
-				'message' => 'Mohon maaf, data gagal disimpan'
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
 			], 500);
 		}
 	}

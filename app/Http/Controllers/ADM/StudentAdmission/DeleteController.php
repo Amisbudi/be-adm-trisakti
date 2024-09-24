@@ -13,6 +13,7 @@ use App\Http\Models\ADM\StudentAdmission\Document_Transcript;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Path_Year;
 use Illuminate\Http\Request;
 use App\Http\Models\ADM\StudentAdmission\Document_Publication;
+use App\Http\Models\ADM\StudentAdmission\Exam_Type;
 use App\Http\Models\ADM\StudentAdmission\Mapping_New_Student_Document_Type;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Registration_Program_Study;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Transcript_Participant;
@@ -30,6 +31,7 @@ use App\Http\Models\ADM\StudentAdmission\Participant_Family;
 use App\Http\Models\ADM\StudentAdmission\Participant_Work_Data;
 use App\Http\Models\ADM\StudentAdmission\Pin_Voucher;
 use App\Http\Models\ADM\StudentAdmission\Registration_History;
+use app\Http\Models\ADM\StudentAdmission\Selection_Category;
 use App\Http\Models\ADM\StudentAdmission\Document_Categories;
 use app\Http\Models\ADM\StudentAdmission\Education_Degree;
 use App\Http\Models\ADM\StudentAdmission\Selection_Categories;
@@ -1147,6 +1149,25 @@ class DeleteController extends Controller
     }
   }
 
+  public function DeleteExamType($id)
+  {
+    try {
+      $examType = Exam_Type::findOrFail($id);
+      $examType->delete();
+
+      return response()->json([
+        'status' => 'Success',
+        'message' => 'Mapping Exam Type has been deleted successfully',
+      ], 200);
+    } catch (\Exception $e) {
+      return response([
+        'status' => 'Failed',
+        'message' => 'Gagal menghapus kategori ujian',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+  
   public function DeleteCategory(Request $req)
   {
     try {
@@ -1317,6 +1338,25 @@ class DeleteController extends Controller
     }
   }
 
+  public function DeleteSelectionCategory($id)
+  {
+    try {
+      $selectionCategory = Selection_Category::findOrFail($id);
+      $selectionCategory->delete();
+
+      return response()->json([
+        'status' => 'Success',
+        'message' => 'Mapping Selection Category has been deleted successfully',
+      ], 200);
+    } catch (\Exception $e) {
+      return response()->json([
+        'status' => 'Failed',
+        'message' => 'Failed to delete the Selection Category',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+  
   public function DeleteMappingProdiFormulir(Request $req)
   {
     try {
@@ -1330,7 +1370,7 @@ class DeleteController extends Controller
     } catch (\Exception $e) {
       return response()->json([
         'status' => 'Failed',
-        'message' => 'Failed to delete the Mapping Prodi Formulir',
+        'message' => 'Failed to delete the Selection Category',
         'error' => $e->getMessage()
       ], 500);
     }
