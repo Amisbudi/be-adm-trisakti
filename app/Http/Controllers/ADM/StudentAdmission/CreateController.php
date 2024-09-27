@@ -3723,7 +3723,6 @@ class CreateController extends Controller
 			\Log::info('Request data: ', $req->all()); // Tambahkan log untuk melihat input JSON
 	
 			Selection_Category::create([
-				'id' => $req->id,
 				'name' => $req->name,
 				'description' => $req->description,
 				'active_status' => $req->active_status,
