@@ -3672,10 +3672,16 @@ class CreateController extends Controller
 			\Log::info('Request data: ', $req->all()); // Tambahkan log untuk melihat input JSON
 	
 			Exam_Type::create([
-				'id' => $req->id,
 				'name' => $req->name,
 				'active_status' => $req->active_status,
 			]);
+
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+
     } catch (\Exception $e) {
 			DB::connection('pgsql')->rollBack();
 			\Log::error('Error: ', ['exception' => $e->getMessage()]); // Tambahkan log untuk kesalahan
@@ -3722,6 +3728,12 @@ class CreateController extends Controller
 				'description' => $req->description,
 				'active_status' => $req->active_status,
 			]);
+			
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
       
     } catch (\Exception $e) {
 			DB::connection('pgsql')->rollBack();
@@ -3796,7 +3808,7 @@ class CreateController extends Controller
 			return response([
 				'status' => 'Failed',
 				'message' => 'Mohon maaf, data gagal disimpan'
-			],  500);
+			], 500);
 		}
 	}
 
