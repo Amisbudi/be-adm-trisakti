@@ -2665,8 +2665,7 @@ class UpdateController extends Controller
 				'id' => $req->id,
 				'name' => $req->name,
 				'active_status' => $req->active_status,
-			]);
-			DB::connection('pgsql')->commit();
+			])->save();
 			return response([
 				'status' => 'Success',
 				'message' => 'Data Tersimpan'
@@ -2688,8 +2687,7 @@ class UpdateController extends Controller
 			$category->update([
 				'name' => $req->name,
 				'status' => $req->status,
-			]);
-			DB::connection('pgsql')->commit();
+			])->save();
 			return response([
 				'status' => 'Success',
 				'message' => 'Data Tersimpan'
@@ -2713,9 +2711,9 @@ class UpdateController extends Controller
 				'name' => $req->name,
 				'description' => $req->description,
 				'active_status' => $req->active_status
-			]);
-			DB::connection('pgsql')->commit();
-      return response([
+			])->save();
+			// DB::connection('pgsql')->commit();
+      		return response([
 				'status' => 'Success',
 				'message' => 'Data Tersimpan'
 			], 200);
@@ -2736,8 +2734,8 @@ class UpdateController extends Controller
 			$form->update([
 				'name' => $req->name,
 				'status' => $req->status,
-			]);
-			DB::connection('pgsql')->commit();
+			])->save();
+			// DB::connection('pgsql')->commit();
 
 			return response([
 				'status' => 'Success',
@@ -2763,8 +2761,8 @@ class UpdateController extends Controller
 				'session' => $req->session,
 				'date' => $req->date,
 				'status' => $req->status,
-			]);
-			DB::connection('pgsql')->commit();
+			])->save();
+			// DB::connection('pgsql')->commit();
 
 			return response([
 				'status' => 'Success',

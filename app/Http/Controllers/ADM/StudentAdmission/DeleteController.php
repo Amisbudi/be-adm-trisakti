@@ -1149,15 +1149,15 @@ class DeleteController extends Controller
     }
   }
 
-  public function DeleteExamType($id)
+  public function DeleteExamType(Request $req)
   {
     try {
-      $examType = Exam_Type::findOrFail($id);
+      $examType = Exam_Type::findOrFail($req->id);
       $examType->delete();
 
       return response()->json([
         'status' => 'Success',
-        'message' => 'Mapping Exam Type has been deleted successfully',
+        'message' => 'Exam Type has been deleted successfully',
       ], 200);
     } catch (\Exception $e) {
       return response([
