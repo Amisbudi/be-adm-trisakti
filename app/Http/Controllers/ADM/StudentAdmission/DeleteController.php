@@ -1338,15 +1338,15 @@ class DeleteController extends Controller
     }
   }
 
-  public function DeleteSelectionCategory($id)
+  public function DeleteSelectionCategory(Request $req)
   {
     try {
-      $selectionCategory = Selection_Category::findOrFail($id);
+      $selectionCategory = Selection_Category::findOrFail($req->id);
       $selectionCategory->delete();
 
       return response()->json([
         'status' => 'Success',
-        'message' => 'Mapping Selection Category has been deleted successfully',
+        'message' => 'Selection Category has been deleted successfully',
       ], 200);
     } catch (\Exception $e) {
       return response()->json([
