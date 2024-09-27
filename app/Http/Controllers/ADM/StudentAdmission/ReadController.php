@@ -116,6 +116,8 @@ use App\Http\Models\ADM\StudentAdmission\Category;
 use App\Http\Models\ADM\StudentAdmission\Form;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Category;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Formulir;
+use App\Http\Models\ADM\StudentAdmission\Master_kelas;
+use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
@@ -9315,10 +9317,15 @@ class ReadController extends Controller
         return response()->json($data);
     }
 
-    // public function GetStudyPrograms(Request $req)
-    // {
-    //     $data = Study_Program::all();
-    //     return response()->json($data);
-    // }
+    public function GetMasterMataPelajaran(Request $req)
+    {
+        $data = Master_Matpel::all();
+        return response()->json($data);
+    }
 
+    public function GetMasterKelas(Request $req)
+    {
+        $data = Master_kelas::all();
+        return response()->json($data);
+    }
 }

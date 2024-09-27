@@ -31,23 +31,26 @@ use App\Http\Models\ADM\StudentAdmission\Participant_Family;
 use App\Http\Models\ADM\StudentAdmission\Participant_Work_Data;
 use App\Http\Models\ADM\StudentAdmission\Pin_Voucher;
 use App\Http\Models\ADM\StudentAdmission\Registration_History;
-use app\Http\Models\ADM\StudentAdmission\Selection_Category;
+use App\Http\Models\ADM\StudentAdmission\Selection_Category;
 use App\Http\Models\ADM\StudentAdmission\Document_Categories;
-use app\Http\Models\ADM\StudentAdmission\Education_Degree;
+use App\Http\Models\ADM\StudentAdmission\Education_Degree;
 use App\Http\Models\ADM\StudentAdmission\Selection_Categories;
 use App\Http\Models\ADM\StudentAdmission\Category;
 use App\Http\Models\ADM\StudentAdmission\Education_Major;
 use App\Http\Models\ADM\StudentAdmission\Form;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Category;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Formulir;
+use App\Http\Models\ADM\StudentAdmission\Master_kelas;
+use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
 use App\Http\Models\ADM\StudentAdmission\Selection_Path;
 use App\Http\Models\ADM\StudentAdmission\Student_Interest;
-use app\Http\Models\ADM\StudentAdmission\Study_Program;
+use App\Http\Models\ADM\StudentAdmission\Study_Program;
 use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use SebastianBergmann\Environment\Console;
 
 class DeleteController extends Controller
 {
@@ -1375,4 +1378,43 @@ class DeleteController extends Controller
       ], 500);
     }
   }
+
+  public function DeleteMasterMataPelajaran(Request $req)
+  {
+    try {
+      $masterMataPelajaran = Master_Matpel::findOrFail($req->id);
+      $masterMataPelajaran->delete();
+
+      return response()->json([
+        'status' => 'Success',
+        'message' => 'Mata Pelajaran has been deleted successfully',
+      ], 200);
+    } catch (\Exception $e) {
+      return response()->json([
+        'status' => 'Failed',
+        'message' => 'Failed to delete the Mata Pelajaran',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteMasterKelas(Request $req)
+  {
+    try {
+      $masterKelas = Master_kelas::findOrFail($req->id);
+      $masterKelas->delete();
+
+      return response()->json([
+        'status' => 'Success',
+        'message' => 'Class has been deleted successfully',
+      ], 200);
+    } catch (\Exception $e) {
+      return response()->json([
+        'status' => 'Failed',
+        'message' => 'Failed to delete the Class',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+  
 }
