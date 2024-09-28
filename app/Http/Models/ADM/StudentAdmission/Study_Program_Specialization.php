@@ -25,6 +25,5 @@ class Study_Program_Specialization extends Model {
         'acronim'
     ];
     public $timestamps = true;
-
 }
 ?>
