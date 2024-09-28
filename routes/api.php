@@ -65,9 +65,9 @@ Route::post('/categories', 'ADM\StudentAdmission\DeleteController@DeleteCategory
 
 // Form
 Route::get('/forms', 'ADM\StudentAdmission\ReadController@GetForms');
-Route::post('/forms', 'ADM\StudentAdmission\CreateController@InsertForm');
-Route::post('/forms', 'ADM\StudentAdmission\UpdateController@UpdateForm');
-Route::post('/forms', 'ADM\StudentAdmission\DeleteController@DeleteForm');
+Route::post('/forms/insert', 'ADM\StudentAdmission\CreateController@InsertForm');
+Route::post('/forms/update', 'ADM\StudentAdmission\UpdateController@UpdateForm');
+Route::post('/forms/delete', 'ADM\StudentAdmission\DeleteController@DeleteForm');
 
 // Schedule
 Route::get('/schedules', 'ADM\StudentAdmission\ReadController@GetSchedules');
@@ -98,3 +98,9 @@ Route::get('/masterKelas', 'ADM\StudentAdmission\ReadController@GetStudyProgramS
 Route::post('/masterKelas', 'ADM\StudentAdmission\CreateController@InsertStudyProgramSpecialization');
 Route::post('/masterKelas/{id}', 'ADM\StudentAdmission\UpdateController@UpdateStudyProgramSpecialization');
 Route::post('/masterKelas/{id}', 'ADM\StudentAdmission\DeleteController@DeleteStudyProgramSpecialization');
+
+// Mapping Prodi Mata Pelajaran
+Route::get('/mappingprodiMatapelajaran', 'ADM\StudentAdmission\ReadController@GetMappingProdiMatapelajaran');
+Route::post('/mappingprodiMatapelajaran', 'ADM\StudentAdmission\CreateController@InsertMappingProdiMatapelajaran');
+Route::post('/mappingprodiMatapelajaran/update', 'ADM\StudentAdmission\UpdateController@UpdateMappingProdiMatapelajaran');
+Route::post('/mappingprodiMatapelajaran/delete', 'ADM\StudentAdmission\DeleteController@DeleteMappingProdiMatapelajaran');

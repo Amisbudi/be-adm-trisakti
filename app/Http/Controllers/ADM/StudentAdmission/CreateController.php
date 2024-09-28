@@ -86,6 +86,7 @@ use App\Http\Models\ADM\StudentAdmission\Education_Major;
 use App\Http\Models\ADM\StudentAdmission\Form;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Category;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Formulir;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Matapelajaran;
 use App\Http\Models\ADM\StudentAdmission\Master_kelas;
 use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
@@ -4019,16 +4020,16 @@ class CreateController extends Controller
 		try {
 			Study_Program::create([
 				'program_study_id' => $req->program_study_id,
-        'faculty_id' => $req->faculty_id,
-        'category' => $req->category,
-        'classification_name' => $req->classification_name,
-        'study_program_branding_name' => $req->study_program_branding_name,
-        'study_program_name' => $req->study_program_name,
-        'study_program_name_en' => $req->study_program_name_en,
-        'study_program_acronim' => $req->study_program_acronim,
-        'faculty_name' => $req->faculty_name,
-        'acronim' => $req->acronim,
-        'acreditation' => $req->acreditation,
+				'faculty_id' => $req->faculty_id,
+				'category' => $req->category,
+				'classification_name' => $req->classification_name,
+				'study_program_branding_name' => $req->study_program_branding_name,
+				'study_program_name' => $req->study_program_name,
+				'study_program_name_en' => $req->study_program_name_en,
+				'study_program_acronim' => $req->study_program_acronim,
+				'faculty_name' => $req->faculty_name,
+				'acronim' => $req->acronim,
+				'acreditation' => $req->acreditation,
 			]);
 			DB::connection('pgsql')->commit();
 			return response([
@@ -4066,6 +4067,31 @@ class CreateController extends Controller
 			], 500);
 		}
 	}
+
+	public function InsertMappingProdiMatapelajaran(Request $req)
+	{
+		try {
+			Mapping_Prodi_Matapelajaran::create([
+				'fakultas' => $req->fakultas,
+				'fakultas_id' => $req->fakultas_id,
+				'prodi_id' => $req->prodi_id,
+				'nama_prodi' => $req->nama_prodi,
+				'mata_pelajaran' => $req->mata_pelajaran,
+				'pelajaran_id' => $req->pelajaran_id,
+				'status' => $req->status
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
+			], 500);
+		}
+	}
 }
-
-

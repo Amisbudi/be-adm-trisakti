@@ -3066,4 +3066,31 @@ class UpdateController extends Controller
 			], 500);
 		}
 	}
+
+	public function UpdateMappingProdiMatapelajaran(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$document = Document_Type::where('id', $req->id)->first();
+			$document->update([
+				'fakultas' => $req->fakultas,
+				'fakultas_id' => $req->fakultas_id,
+				'prodi_id' => $req->prodi_id,
+				'nama_prodi' => $req->nama_prodi,
+				'mata_pelajaran' => $req->mata_pelajaran,
+				'pelajaran_id' => $req->pelajaran_id,
+				'status' => $req->status
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
 }

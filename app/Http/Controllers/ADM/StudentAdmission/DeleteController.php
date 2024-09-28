@@ -45,6 +45,7 @@ use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
 use App\Http\Models\ADM\StudentAdmission\Selection_Path;
 use App\Http\Models\ADM\StudentAdmission\Document_Type;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Matapelajaran;
 use App\Http\Models\ADM\StudentAdmission\Study_Program;
 use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
 use Exception;
@@ -102,7 +103,7 @@ class DeleteController extends Controller
       DB::rollBack();
       return response()->json([
         "status" => "Failed",
-        "message" => "Participant Family failed to delete",,
+        "message" => "Participant Family failed to delete",
 				'error' => $e->getMessage()
       ], 403);
     } catch (QueryException $qe) {
@@ -176,7 +177,7 @@ class DeleteController extends Controller
       DB::rollBack();
       return response()->json([
         "status" => "Failed",
-        "message" => "Participant Work Data failed to delete",,
+        "message" => "Participant Work Data failed to delete",
 				'error' => $e->getMessage()
       ], 403);
     } catch (QueryException $qe) {
@@ -1458,6 +1459,25 @@ class DeleteController extends Controller
       return response([
         'status' => 'Failed',
         'message' => 'Gagal menghapus dokumen',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteMappingProdiMatapelajaran(Request $req)
+  {
+    try {
+      $mapping_prodi_matapellajaran = Mapping_Prodi_Matapelajaran::where('id', $req->id)->first();
+      $mapping_prodi_matapellajaran->delete();
+
+      return response([
+        'status' => 'Success',
+        'message' => 'Mapping Prodi Mata Pelajaran telah dihapus',
+      ], 200);
+    } catch (\Exception $e) {
+      return response([
+        'status' => 'Failed',
+        'message' => 'Gagal menghapus Mapping Prodi Mata Pelajaran',
         'error' => $e->getMessage()
       ], 500);
     }
