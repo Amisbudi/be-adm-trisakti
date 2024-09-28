@@ -1654,6 +1654,7 @@ class ReadController extends Controller
             'path_exam_details.session_two_end',
             'path_exam_details.session_three_end',
             'path_exam_details.exam_type_id',
+            'path_exam_details.class_type',
             'le.city',
             'le.location',
             'le.address',
