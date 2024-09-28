@@ -71,7 +71,8 @@ class DeleteController extends Controller
       DB::connection('pgsql')->rollBack();
       return response()->json([
         'status' => 'Failed',
-        'Message' => 'Cant delete data'
+        'Message' => 'Cant delete data',
+				'error' => $e->getMessage()
       ], 500);
     }
   }
@@ -100,7 +101,8 @@ class DeleteController extends Controller
       DB::rollBack();
       return response()->json([
         "status" => "Failed",
-        "message" => "Participant Family failed to delete",
+        "message" => "Participant Family failed to delete",,
+				'error' => $e->getMessage()
       ], 403);
     } catch (QueryException $qe) {
 
@@ -137,6 +139,7 @@ class DeleteController extends Controller
       return response()->json([
         "status" => "Failed",
         "message" => "Participant Education failed to delete",
+				'error' => $e->getMessage()
       ], 403);
     } catch (QueryException $qe) {
 
@@ -172,7 +175,8 @@ class DeleteController extends Controller
       DB::rollBack();
       return response()->json([
         "status" => "Failed",
-        "message" => "Participant Work Data failed to delete",
+        "message" => "Participant Work Data failed to delete",,
+				'error' => $e->getMessage()
       ], 403);
     } catch (QueryException $qe) {
 
@@ -210,6 +214,7 @@ class DeleteController extends Controller
       return response()->json([
         "status" => "Failed",
         "message" => "Mapping Registration failed to delete",
+				'error' => $e->getMessage()
       ], 500);
     } catch (QueryException $qe) {
       DB::rollBack();
@@ -246,6 +251,7 @@ class DeleteController extends Controller
       return response()->json([
         "status" => "Failed",
         "message" => "Voucher failed to delete",
+				'error' => $e->getMessage()
       ], 500);
     } catch (QueryException $qe) {
 
@@ -1227,6 +1233,7 @@ class DeleteController extends Controller
       ], 500);
     }
   }
+
   public function DeleteDocumentCategories(Request $req)
   {
     try {
@@ -1416,5 +1423,23 @@ class DeleteController extends Controller
       ], 500);
     }
   }
-  
+
+  public function DeleteFaculty(Request $req)
+  {
+    try {
+      $study_program = Study_Program::where('classification_id', $req->classification_id)->first();
+      $study_program->delete();
+
+      return response([
+        'status' => 'Success',
+        'message' => 'Study program telah dihapus',
+      ], 200);
+    } catch (\Exception $e) {
+      return response([
+        'status' => 'Failed',
+        'message' => 'Gagal menghapus jadwal study program',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
 }
