@@ -5905,6 +5905,20 @@ class ReadController extends Controller
         return response()->json($data, 200);
     }
 
+    public function OptionClassTypeSpecialization(Request $req)
+    {
+
+        $data = Study_Program_Specialization::select(
+            'class_type as id',
+            'class_type'
+        )
+        ->where('study_program_specializations.active_status', '=', true)
+        ->distinct()
+        ->get();
+
+        return response()->json($data, 200);
+    }
+
     public function ViewParticipantGradeComparePassingGrade(Request $req)
     {
         $filter = DB::raw('1');
