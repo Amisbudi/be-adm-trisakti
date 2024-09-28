@@ -46,6 +46,7 @@ use App\Http\Models\ADM\StudentAdmission\Schedule;
 use App\Http\Models\ADM\StudentAdmission\Selection_Path;
 use App\Http\Models\ADM\StudentAdmission\Student_Interest;
 use App\Http\Models\ADM\StudentAdmission\Study_Program;
+use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
 use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Database\QueryException;
@@ -1398,10 +1399,10 @@ class DeleteController extends Controller
     }
   }
 
-  public function DeleteMasterKelas(Request $req)
+  public function DeleteStudyProgramSpecialization(Request $req)
   {
     try {
-      $masterKelas = Master_kelas::findOrFail($req->id);
+      $masterKelas = Study_Program_Specialization::findOrFail($req->id);
       $masterKelas->delete();
 
       return response()->json([

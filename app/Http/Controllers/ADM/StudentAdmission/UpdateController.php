@@ -69,6 +69,7 @@ use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Formulir;
 use App\Http\Models\ADM\StudentAdmission\Master_kelas;
 use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
+use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
@@ -2673,15 +2674,15 @@ class UpdateController extends Controller
 				'status' => 'Success',
 				'message' => 'Data Tersimpan'
 			], 200);
-    	} catch (\Throwable $th) {
+		} catch (\Throwable $th) {
 			return response([
 				'status' => 'Failed',
 				'message' => 'Mohon maaf, data gagal disimpan',
 				'error' => $th->getMessage()
 			], 500);
 		}
-  	}
-  
+	}
+
 	public function UpdateCategory(Request $req)
 	{
 		$by = $req->header("X-I");
@@ -2716,7 +2717,7 @@ class UpdateController extends Controller
 				'active_status' => $req->active_status
 			]);
 			DB::connection('pgsql')->commit();
-      return response([
+			return response([
 				'status' => 'Success',
 				'message' => 'Data Tersimpan'
 			], 200);
@@ -2729,7 +2730,7 @@ class UpdateController extends Controller
 		}
 	}
 
-  	public function UpdateForm(Request $req)
+	public function UpdateForm(Request $req)
 	{
 		$by = $req->header("X-I");
 		try {
@@ -2977,13 +2978,18 @@ class UpdateController extends Controller
 		}
 	}
 
-	public function UpdateMasterKelas(Request $req)
+	public function UpdateStudyProgramSpecialization(Request $req)
 	{
 		$by = $req->header("X-I");
 		try {
-			$MasterKelas = Master_kelas::findOrFail($req->id);
+			$MasterKelas = Study_Program_Specialization::findOrFail($req->id);
 			$MasterKelas->update([
+				'classification_id' => $req->class_type,
+				'specialization_name' => $req->specialization_name,
+				'specialization_code' => $req->specialization_code,
+				'active_status' => $req->active_status,
 				'class_type' => $req->class_type,
+				'class_type_id' => $req->class_type_id,
 			]);
 			return response([
 				'status' => 'Success',

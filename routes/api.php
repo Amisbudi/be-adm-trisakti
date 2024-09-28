@@ -91,14 +91,11 @@ Route::delete('/mappingprodiformulir', 'ADM\StudentAdmission\DeleteController@De
 // Mapping Master Mata Pelajaran
 Route::get('/masterMataPelajaran', 'ADM\StudentAdmission\ReadController@GetMasterMataPelajaran');
 Route::post('/masterMataPelajaran', 'ADM\StudentAdmission\CreateController@InsertMasterMataPelajaran');
-Route::put('/masterMataPelajaran/{id}', 'ADM\StudentAdmission\UpdateController@UpdateMasterMataPelajaran');
-Route::delete('/masterMataPelajaran/{id}', 'ADM\StudentAdmission\DeleteController@DeleteMasterMataPelajaran');
+Route::post('/masterMataPelajaran/{id}', 'ADM\StudentAdmission\UpdateController@UpdateMasterMataPelajaran');
+Route::post('/masterMataPelajaran/{id}', 'ADM\StudentAdmission\DeleteController@DeleteMasterMataPelajaran');
 
 // Mapping Master Kelas
-Route::get('/masterKelas', 'ADM\StudentAdmission\ReadController@GetMasterKelas');
-Route::post('/masterKelas', 'ADM\StudentAdmission\CreateController@InsertMasterKelas');
-Route::put('/masterKelas/{id}', 'ADM\StudentAdmission\UpdateController@UpdateMasterKelas');
-Route::delete('/masterKelas/{id}', 'ADM\StudentAdmission\DeleteController@DeleteMasterKelas');
-
-
-
+Route::get('/masterKelas', 'ADM\StudentAdmission\ReadController@GetStudyProgramSpecialization');
+Route::post('/masterKelas', 'ADM\StudentAdmission\CreateController@InsertStudyProgramSpecialization');
+Route::post('/masterKelas/{id}', 'ADM\StudentAdmission\UpdateController@UpdateStudyProgramSpecialization');
+Route::post('/masterKelas/{id}', 'ADM\StudentAdmission\DeleteController@DeleteStudyProgramSpecialization');

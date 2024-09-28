@@ -89,6 +89,7 @@ use App\Http\Models\ADM\StudentAdmission\Master_kelas;
 use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
 use App\Http\Models\ADM\StudentAdmission\Study_Program;
+use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
@@ -3971,11 +3972,16 @@ class CreateController extends Controller
 		}
 	}
 
-	public function InsertMasterKelas(Request $req)
+	public function InsertStudyProgramSpecialization(Request $req)
 	{
 		try {
-			Master_kelas::create([
-				'class_type' => $req->class_type,
+			Study_Program_Specialization::create([
+				'classification_id'=> $req->class_type,
+				'specialization_name'=> $req->specialization_name,
+				'specialization_code'=> $req->specialization_code,
+				'active_status'=> $req->active_status,
+				'class_type'=> $req->class_type,
+				'class_type_id'=> $req->class_type_id,
 			]);
 			DB::connection('pgsql')->commit();
 			return response([
