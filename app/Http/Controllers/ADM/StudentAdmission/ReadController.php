@@ -117,6 +117,7 @@ use App\Http\Models\ADM\StudentAdmission\Form;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Category;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Formulir;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Biaya;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Matapelajaran;
 use App\Http\Models\ADM\StudentAdmission\Master_kelas;
 use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
@@ -9333,6 +9334,12 @@ class ReadController extends Controller
     public function GetMasterKelas(Request $req)
     {
         $data = Master_kelas::all();
+        return response()->json($data);
+    }
+
+    public function GetMappingProdiMatapelajaran(Request $req)
+    {
+        $data = Mapping_Prodi_Matapelajaran::all();
         return response()->json($data);
     }
 }

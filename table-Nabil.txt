@@ -81,3 +81,17 @@ CREATE TABLE master_kelas(
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- TABLE MAPPING_PRODI_MATAPELAJARAN
+CREATE TABLE mapping_prodi_matapelajaran(
+    id SERIAL PRIMARY KEY, 
+    fakultas VARCHAR(255) NOT NULL, 
+    fakultas_id INT NULL, 
+    prodi_id INT NULL, 
+    nama_prodi VARCHAR(225) NULL, 
+    mata_pelajaran VARCHAR(225) NULL, 
+    pelajaran_id INT NULL, 
+    status INT NULL, 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

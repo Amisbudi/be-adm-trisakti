@@ -10,14 +10,20 @@ class Study_Program_Specialization extends Model {
     protected $table = 'study_program_specializations';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'classification_id',
+        'specialization_name_ori ',
         'specialization_name',
         'specialization_code',
         'active_status',
         'class_type',
-        'class_type_id',
+        'program_study_id',
+        'faculty_id',
+        'faculty_name',
+        'category',
+        'classification_name',
+        'study_program_name',
+        'study_program_name_en',
+        'acronim'
     ];
     public $timestamps = true;
-
 }
 ?>
