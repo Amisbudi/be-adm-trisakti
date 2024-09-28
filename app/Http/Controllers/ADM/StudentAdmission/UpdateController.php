@@ -66,6 +66,8 @@ use App\Http\Models\ADM\StudentAdmission\Education_Major;
 use App\Http\Models\ADM\StudentAdmission\Form;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Category;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Formulir;
+use App\Http\Models\ADM\StudentAdmission\Master_kelas;
+use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
@@ -2938,6 +2940,50 @@ class UpdateController extends Controller
 				'nama_formulir' => $req->nama_formulir,
 				'harga' => $req->harga,
 				'kategori_formulir' => $req->kategori_formulir,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateMasterMataPelajaran(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$MasterMataPelajaran = Master_Matpel::findOrFail($req->id);
+			$MasterMataPelajaran->update([
+				'name' => $req->name,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateMasterKelas(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$MasterKelas = Master_kelas::findOrFail($req->id);
+			$MasterKelas->update([
+				'class_type' => $req->class_type,
 			]);
 			return response([
 				'status' => 'Success',

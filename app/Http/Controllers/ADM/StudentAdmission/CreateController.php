@@ -85,6 +85,8 @@ use App\Http\Models\ADM\StudentAdmission\Education_Major;
 use App\Http\Models\ADM\StudentAdmission\Form;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Category;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Formulir;
+use App\Http\Models\ADM\StudentAdmission\Master_kelas;
+use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
 use App\Http\Models\ADM\StudentAdmission\Study_Program;
 use Exception;
@@ -3665,12 +3667,13 @@ class CreateController extends Controller
 		}
 	}
 
-	public function InsertExamType(Request $req) {
+	public function InsertExamType(Request $req)
+	{
 		try {
 			DB::connection('pgsql')->beginTransaction();
-	
+
 			\Log::info('Request data: ', $req->all()); // Tambahkan log untuk melihat input JSON
-	
+
 			Exam_Type::create([
 				'name' => $req->name,
 				'active_status' => $req->active_status,
@@ -3681,8 +3684,7 @@ class CreateController extends Controller
 				'status' => 'Success',
 				'message' => 'Data Tersimpan'
 			], 200);
-
-    } catch (\Exception $e) {
+		} catch (\Exception $e) {
 			DB::connection('pgsql')->rollBack();
 			\Log::error('Error: ', ['exception' => $e->getMessage()]); // Tambahkan log untuk kesalahan
 			return response([
@@ -3692,7 +3694,7 @@ class CreateController extends Controller
 			], 500);
 		}
 	}
-	
+
 	public function InsertCategory(Request $req)
 	{
 		try {
@@ -3716,25 +3718,25 @@ class CreateController extends Controller
 		}
 	}
 
-	public function InsertSelectionCategory(Request $req) {
+	public function InsertSelectionCategory(Request $req)
+	{
 		try {
 			DB::connection('pgsql')->beginTransaction();
-	
+
 			\Log::info('Request data: ', $req->all()); // Tambahkan log untuk melihat input JSON
-	
+
 			Selection_Category::create([
 				'name' => $req->name,
 				'description' => $req->description,
 				'active_status' => $req->active_status,
 			]);
-			
+
 			DB::connection('pgsql')->commit();
 			return response([
 				'status' => 'Success',
 				'message' => 'Data Tersimpan'
 			], 200);
-      
-    } catch (\Exception $e) {
+		} catch (\Exception $e) {
 			DB::connection('pgsql')->rollBack();
 			\Log::error('Error: ', ['exception' => $e->getMessage()]); // Tambahkan log untuk kesalahan
 			return response([
@@ -3743,8 +3745,8 @@ class CreateController extends Controller
 				'error' => $e->getMessage()
 			], 500);
 		}
-  }
-	
+	}
+
 	public function InsertForm(Request $req)
 	{
 		try {
@@ -3930,6 +3932,50 @@ class CreateController extends Controller
 				'nama_formulir' => $req->nama_formulir,
 				'harga' => $req->harga,
 				'kategori_formulir' => $req->kategori_formulir,
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			\Log::error('Error: ', ['exception' => $e->getMessage()]); // Tambahkan log untuk kesalahan
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
+			], 500);
+		}
+	}
+
+	public function InsertMasterMataPelajaran(Request $req)
+	{
+		try {
+			Master_Matpel::create([
+				'name' => $req->name,
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			\Log::error('Error: ', ['exception' => $e->getMessage()]); // Tambahkan log untuk kesalahan
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
+			], 500);
+		}
+	}
+
+	public function InsertMasterKelas(Request $req)
+	{
+		try {
+			Master_kelas::create([
+				'class_type' => $req->class_type,
 			]);
 			DB::connection('pgsql')->commit();
 			return response([
