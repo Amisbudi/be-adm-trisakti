@@ -81,6 +81,7 @@ use App\Http\Models\ADM\StudentAdmission\Education_Degree;
 use App\Http\Models\ADM\StudentAdmission\Selection_Categories;
 use App\Http\Models\ADM\StudentAdmission\Student_Interest;
 use App\Http\Models\ADM\StudentAdmission\Category;
+use app\Http\Models\ADM\StudentAdmission\Document_Type;
 use App\Http\Models\ADM\StudentAdmission\Education_Major;
 use App\Http\Models\ADM\StudentAdmission\Form;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Category;
@@ -4015,6 +4016,28 @@ class CreateController extends Controller
         'faculty_name' => $req->faculty_name,
         'acronim' => $req->acronim,
         'acreditation' => $req->acreditation,
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
+			], 500);
+		}
+	}
+
+	public function InsertDocumentType(Request $req)
+	{
+		try {
+			Document_Type::create([
+				'name' => $req->name,
+				'description' => $req->description,
 			]);
 			DB::connection('pgsql')->commit();
 			return response([

@@ -14,8 +14,7 @@ class Document_Type extends Model {
         'description',
     ];
     public $timestamps = true;
-
-
+    
     public static function GetDocumentType($name=''){
         if($name != ''){
             $data = Document_Type::select('id','name','description')
