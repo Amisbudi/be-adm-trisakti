@@ -103,7 +103,7 @@ class DeleteController extends Controller
       DB::rollBack();
       return response()->json([
         "status" => "Failed",
-        "message" => "Participant Family failed to delete",,
+        "message" => "Participant Family failed to delete",
 				'error' => $e->getMessage()
       ], 403);
     } catch (QueryException $qe) {
@@ -177,7 +177,7 @@ class DeleteController extends Controller
       DB::rollBack();
       return response()->json([
         "status" => "Failed",
-        "message" => "Participant Work Data failed to delete",,
+        "message" => "Participant Work Data failed to delete",
 				'error' => $e->getMessage()
       ], 403);
     } catch (QueryException $qe) {
@@ -1074,8 +1074,7 @@ class DeleteController extends Controller
         "status" => "Success",
         "message" => "Document deleted successfully",
       ], 200);
-    } catch (Exception $e) {
-
+    } catch (\Exception $e) {
       DB::rollBack();
       return response()->json([
         "status" => "Failed",
@@ -1201,14 +1200,14 @@ class DeleteController extends Controller
   public function DeleteForm(Request $req)
   {
     try {
-      $form = Form::findOrFail($req->id);
+      $form = Form::where('id', $req->id)->first();
       $form->delete();
 
       return response([
         'status' => 'Success',
         'message' => 'Data formulir telah dihapus',
       ], 200);
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
       return response([
         'status' => 'Failed',
         'message' => 'Gagal menghapus formulir ujian',

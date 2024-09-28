@@ -3967,9 +3967,9 @@ class CreateController extends Controller
 				'nama_prodi' => $req->nama_prodi,
 				'kelas_fk' => $req->kelas_fk,
 				'nama_kelas' => $req->nama_kelas,
-				'spp_I' => $req->spp_I,
-				'spp_II' => $req->spp_II,
-				'spp_III' => $req->spp_III,
+				'spp_i' => $req->spp_i,
+				'spp_ii' => $req->spp_ii,
+				'spp_iii' => $req->spp_iii,
 				'praktikum' => $req->praktikum,
 			]);
 			DB::connection('pgsql')->commit();

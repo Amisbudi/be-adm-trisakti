@@ -15,9 +15,9 @@ class Mapping_Prodi_Biaya extends Model
         'nama_prodi',
         'kelas_fk',
         'nama_kelas',
-        'spp_I',
-        'spp_II',
-        'spp_III',
+        'spp_i',
+        'spp_ii',
+        'spp_iii',
         'praktikum',
     ];
     public $timestamps = false;
