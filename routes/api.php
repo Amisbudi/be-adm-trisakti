@@ -94,10 +94,7 @@ Route::post('/masterMataPelajaran/{id}', 'ADM\StudentAdmission\UpdateController@
 Route::post('/masterMataPelajaran/{id}', 'ADM\StudentAdmission\DeleteController@DeleteMasterMataPelajaran');
 
 // Mapping Master Kelas
-Route::get('/masterKelas', 'ADM\StudentAdmission\ReadController@GetMasterKelas');
-Route::post('/masterKelas', 'ADM\StudentAdmission\CreateController@InsertMasterKelas');
-Route::post('/masterKelas/{id}', 'ADM\StudentAdmission\UpdateController@UpdateMasterKelas');
-Route::post('/masterKelas/{id}', 'ADM\StudentAdmission\DeleteController@DeleteMasterKelas');
-
-
-
+Route::get('/masterKelas', 'ADM\StudentAdmission\ReadController@GetStudyProgramSpecialization');
+Route::post('/masterKelas', 'ADM\StudentAdmission\CreateController@InsertStudyProgramSpecialization');
+Route::post('/masterKelas/{id}', 'ADM\StudentAdmission\UpdateController@UpdateStudyProgramSpecialization');
+Route::post('/masterKelas/{id}', 'ADM\StudentAdmission\DeleteController@DeleteStudyProgramSpecialization');
