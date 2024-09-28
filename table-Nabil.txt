@@ -49,6 +49,21 @@ CREATE TABLE mapping_prodi_formulir(
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- TABLE MAPPING_PRODI_BIAYA
+CREATE TABLE mapping_prodi_biaya(
+    id SERIAL PRIMARY KEY,
+    prodi_fk INT NOT NULL,
+    nama_prodi VARCHAR(100) NOT NULL,
+    kelas_fk VARCHAR(255) NOT NULL,
+    nama_kelas VARCHAR(255) NOT NULL,
+    spp_I INT NOT NULL,
+    spp_II INT NOT NULL,
+    spp_III INT NOT NULL,
+    praktikum INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- TABLE MASTER MATA PELAJARAN
 CREATE TABLE master_matpel(
     id SERIAL PRIMARY KEY, 

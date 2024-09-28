@@ -40,6 +40,7 @@ use App\Http\Models\ADM\StudentAdmission\Education_Major;
 use App\Http\Models\ADM\StudentAdmission\Form;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Category;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Formulir;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Biaya;
 use App\Http\Models\ADM\StudentAdmission\Master_kelas;
 use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
@@ -1074,8 +1075,7 @@ class DeleteController extends Controller
         "status" => "Success",
         "message" => "Document deleted successfully",
       ], 200);
-    } catch (Exception $e) {
-
+    } catch (\Exception $e) {
       DB::rollBack();
       return response()->json([
         "status" => "Failed",
@@ -1201,14 +1201,14 @@ class DeleteController extends Controller
   public function DeleteForm(Request $req)
   {
     try {
-      $form = Form::findOrFail($req->id);
+      $form = Form::where('id', $req->id)->first();
       $form->delete();
 
       return response([
         'status' => 'Success',
         'message' => 'Data formulir telah dihapus',
       ], 200);
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
       return response([
         'status' => 'Failed',
         'message' => 'Gagal menghapus formulir ujian',
@@ -1378,6 +1378,25 @@ class DeleteController extends Controller
       return response()->json([
         'status' => 'Success',
         'message' => 'Mapping Prodi Formulir has been deleted successfully',
+      ], 200);
+    } catch (\Exception $e) {
+      return response()->json([
+        'status' => 'Failed',
+        'message' => 'Failed to delete the Selection Category',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteMappingProdiBiaya(Request $req)
+  {
+    try {
+      $mappingProdiBiaya = Mapping_Prodi_Biaya::findOrFail($req->id);
+      $mappingProdiBiaya->delete();
+
+      return response()->json([
+        'status' => 'Success',
+        'message' => 'Mapping Prodi Biaya has been deleted successfully',
       ], 200);
     } catch (\Exception $e) {
       return response()->json([

@@ -57,23 +57,17 @@ Route::post('/studyprogram', 'ADM\StudentAdmission\CreateController@InsertStudyP
 Route::post('/studyprogram', 'ADM\StudentAdmission\UpdateController@UpdateStudyProgram');
 Route::post('/studyprogram', 'ADM\StudentAdmission\DeleteController@DeleteStudyProgram');
 
-// Category
-Route::get('/categories', 'ADM\StudentAdmission\ReadController@GetCategories');
-Route::post('/categories', 'ADM\StudentAdmission\CreateController@InsertCategory');
-Route::post('/categories', 'ADM\StudentAdmission\UpdateController@UpdateCategory');
-Route::post('/categories', 'ADM\StudentAdmission\DeleteController@DeleteCategory');
-
 // Form
 Route::get('/forms', 'ADM\StudentAdmission\ReadController@GetForms');
 Route::post('/forms/insert', 'ADM\StudentAdmission\CreateController@InsertForm');
 Route::post('/forms/update', 'ADM\StudentAdmission\UpdateController@UpdateForm');
 Route::post('/forms/delete', 'ADM\StudentAdmission\DeleteController@DeleteForm');
 
-// Schedule
-Route::get('/schedules', 'ADM\StudentAdmission\ReadController@GetSchedules');
-Route::post('/schedules', 'ADM\StudentAdmission\CreateController@InsertSchedule');
-Route::post('/schedules', 'ADM\StudentAdmission\UpdateController@UpdateSchedule');
-Route::post('/schedules', 'ADM\StudentAdmission\DeleteController@DeleteSchedule');
+// Mapping Prodi Biaya
+Route::get('/mappingprodibiaya', 'ADM\StudentAdmission\ReadController@GetMappingProdiBiaya');
+Route::post('/mappingprodibiaya/insert', 'ADM\StudentAdmission\CreateController@InsertMappingProdiBiaya');
+Route::post('/mappingprodibiaya/update', 'ADM\StudentAdmission\UpdateController@UpdateMappingProdiBiaya');
+Route::post('/mappingprodibiaya/delete', 'ADM\StudentAdmission\DeleteController@DeleteMappingProdiBiaya');
 
 // Mapping Prodi Category
 Route::get('/mappingprodicategory', 'ADM\StudentAdmission\ReadController@GetMappingProdiCategory');
@@ -83,7 +77,7 @@ Route::post('/mappingprodicategory/delete', 'ADM\StudentAdmission\DeleteControll
 
 // Mapping Prodi Formulir
 Route::get('/mappingprodiformulir', 'ADM\StudentAdmission\ReadController@GetMappingProdiFormulir');
-Route::post('/mappingprodiformulir', 'ADM\StudentAdmission\CreateController@InsertMappingProdiFormulir');
+Route::post('/mappingprodiformulir/insert', 'ADM\StudentAdmission\CreateController@InsertMappingProdiFormulir');
 Route::post('/mappingprodiformulir/update', 'ADM\StudentAdmission\UpdateController@UpdateMappingProdiFormulir');
 Route::post('/mappingprodiformulir/delete', 'ADM\StudentAdmission\DeleteController@DeleteMappingProdiFormulir');
 
