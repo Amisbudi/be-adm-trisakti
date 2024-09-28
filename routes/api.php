@@ -78,22 +78,22 @@ Route::post('/schedules', 'ADM\StudentAdmission\DeleteController@DeleteSchedule'
 // Mapping Prodi Category
 Route::get('/mappingprodicategory', 'ADM\StudentAdmission\ReadController@GetMappingProdiCategory');
 Route::post('/mappingprodicategory', 'ADM\StudentAdmission\CreateController@InsertMappingProdiCategory');
-Route::post('/mappingprodicategory', 'ADM\StudentAdmission\UpdateController@UpdateMappingProdiCategory');
-Route::post('/mappingprodicategory', 'ADM\StudentAdmission\DeleteController@DeleteMappingProdiCategory');
+Route::post('/mappingprodicategory/update', 'ADM\StudentAdmission\UpdateController@UpdateMappingProdiCategory');
+Route::post('/mappingprodicategory/delete', 'ADM\StudentAdmission\DeleteController@DeleteMappingProdiCategory');
 
 // Mapping Prodi Formulir
 Route::get('/mappingprodiformulir', 'ADM\StudentAdmission\ReadController@GetMappingProdiFormulir');
 Route::post('/mappingprodiformulir', 'ADM\StudentAdmission\CreateController@InsertMappingProdiFormulir');
-Route::post('/mappingprodiformulir', 'ADM\StudentAdmission\UpdateController@UpdateMappingProdiFormulir');
-Route::post('/mappingprodiformulir', 'ADM\StudentAdmission\DeleteController@DeleteMappingProdiFormulir');
+Route::post('/mappingprodiformulir/update', 'ADM\StudentAdmission\UpdateController@UpdateMappingProdiFormulir');
+Route::post('/mappingprodiformulir/delete', 'ADM\StudentAdmission\DeleteController@DeleteMappingProdiFormulir');
 
 // Mapping Master Mata Pelajaran
 Route::get('/masterMataPelajaran', 'ADM\StudentAdmission\ReadController@GetMasterMataPelajaran');
 Route::post('/masterMataPelajaran', 'ADM\StudentAdmission\CreateController@InsertMasterMataPelajaran');
-Route::post('/masterMataPelajaran/{id}', 'ADM\StudentAdmission\UpdateController@UpdateMasterMataPelajaran');
-Route::post('/masterMataPelajaran/{id}', 'ADM\StudentAdmission\DeleteController@DeleteMasterMataPelajaran');
+Route::post('/masterMataPelajaran/update', 'ADM\StudentAdmission\UpdateController@UpdateMasterMataPelajaran');
+Route::post('/masterMataPelajaran/delete', 'ADM\StudentAdmission\DeleteController@DeleteMasterMataPelajaran');
 
-// Mapping Master Kelas
+// Mapping Master Kelas - BEDA COLUMN TABLE
 Route::get('/masterKelas', 'ADM\StudentAdmission\ReadController@GetStudyProgramSpecialization');
 Route::post('/masterKelas', 'ADM\StudentAdmission\CreateController@InsertStudyProgramSpecialization');
 Route::post('/masterKelas/update', 'ADM\StudentAdmission\UpdateController@UpdateStudyProgramSpecialization');
