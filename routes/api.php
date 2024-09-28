@@ -65,15 +65,21 @@ Route::post('/categories', 'ADM\StudentAdmission\DeleteController@DeleteCategory
 
 // Form
 Route::get('/forms', 'ADM\StudentAdmission\ReadController@GetForms');
-Route::post('/forms', 'ADM\StudentAdmission\CreateController@InsertForm');
-Route::post('/forms', 'ADM\StudentAdmission\UpdateController@UpdateForm');
-Route::post('/forms', 'ADM\StudentAdmission\DeleteController@DeleteForm');
+Route::post('/forms/insert', 'ADM\StudentAdmission\CreateController@InsertForm');
+Route::post('/forms/update', 'ADM\StudentAdmission\UpdateController@UpdateForm');
+Route::post('/forms/delete', 'ADM\StudentAdmission\DeleteController@DeleteForm');
 
 // Schedule
 Route::get('/schedules', 'ADM\StudentAdmission\ReadController@GetSchedules');
 Route::post('/schedules', 'ADM\StudentAdmission\CreateController@InsertSchedule');
 Route::post('/schedules', 'ADM\StudentAdmission\UpdateController@UpdateSchedule');
 Route::post('/schedules', 'ADM\StudentAdmission\DeleteController@DeleteSchedule');
+
+// Mapping Prodi Biaya
+Route::get('/mappingprodibiaya', 'ADM\StudentAdmission\ReadController@GetMappingProdiBiaya');
+Route::post('/mappingprodibiaya', 'ADM\StudentAdmission\CreateController@InsertMappingProdiBiaya');
+Route::post('/mappingprodibiaya', 'ADM\StudentAdmission\UpdateController@UpdateMappingProdiBiaya');
+Route::post('/mappingprodibiaya', 'ADM\StudentAdmission\DeleteController@DeleteMappingProdiBiaya');
 
 // Mapping Prodi Category
 Route::get('/mappingprodicategory', 'ADM\StudentAdmission\ReadController@GetMappingProdiCategory');
