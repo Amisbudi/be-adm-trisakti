@@ -2998,4 +2998,35 @@ class UpdateController extends Controller
 			], 500);
 		}
 	}
+
+	public function UpdateFaculty(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$study_program = Study_Program::where('classification_id', $req->classification_id)->first();
+			$study_program->update([
+				'program_study_id' => $req->program_study_id,
+        'faculty_id' => $req->faculty_id,
+        'category' => $req->category,
+        'classification_name' => $req->classification_name,
+        'study_program_branding_name' => $req->study_program_branding_name,
+        'study_program_name' => $req->study_program_name,
+        'study_program_name_en' => $req->study_program_name_en,
+        'study_program_acronim' => $req->study_program_acronim,
+        'faculty_name' => $req->faculty_name,
+        'acronim' => $req->acronim,
+        'acreditation' => $req->acreditation,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
 }

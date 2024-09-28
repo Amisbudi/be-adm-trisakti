@@ -3763,7 +3763,8 @@ class CreateController extends Controller
 			DB::connection('pgsql')->rollBack();
 			return response([
 				'status' => 'Failed',
-				'message' => 'Mohon maaf, data gagal disimpan'
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
 			], 500);
 		}
 	}
@@ -3787,7 +3788,8 @@ class CreateController extends Controller
 			DB::connection('pgsql')->rollBack();
 			return response([
 				'status' => 'Failed',
-				'message' => 'Mohon maaf, data gagal disimpan'
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
 			], 500);
 		}
 	}
@@ -3808,7 +3810,8 @@ class CreateController extends Controller
 			DB::connection('pgsql')->rollBack();
 			return response([
 				'status' => 'Failed',
-				'message' => 'Mohon maaf, data gagal disimpan'
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
 			], 500);
 		}
 	}
@@ -3834,7 +3837,8 @@ class CreateController extends Controller
 			DB::connection('pgsql')->rollBack();
 			return response([
 				'status' => 'Failed',
-				'message' => 'Mohon maaf, data gagal disimpan'
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
 			], 500);
 		}
 	}
@@ -3862,7 +3866,8 @@ class CreateController extends Controller
 			DB::connection('pgsql')->rollBack();
 			return response([
 				'status' => 'Failed',
-				'message' => 'Mohon maaf, data gagal disimpan'
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
 			], 500);
 		}
 	}
@@ -3894,7 +3899,8 @@ class CreateController extends Controller
 			DB::connection('pgsql')->rollBack();
 			return response([
 				'status' => 'Failed',
-				'message' => 'Mohon maaf, data gagal disimpan'
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
 			], 500);
 		}
 	}
@@ -3918,7 +3924,8 @@ class CreateController extends Controller
 			DB::connection('pgsql')->rollBack();
 			return response([
 				'status' => 'Failed',
-				'message' => 'Mohon maaf, data gagal disimpan'
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
 			], 500);
 		}
 	}
@@ -3992,4 +3999,37 @@ class CreateController extends Controller
 			], 500);
 		}
 	}
+
+	public function InsertFaculty(Request $req)
+	{
+		try {
+			Study_Program::create([
+				'program_study_id' => $req->program_study_id,
+        'faculty_id' => $req->faculty_id,
+        'category' => $req->category,
+        'classification_name' => $req->classification_name,
+        'study_program_branding_name' => $req->study_program_branding_name,
+        'study_program_name' => $req->study_program_name,
+        'study_program_name_en' => $req->study_program_name_en,
+        'study_program_acronim' => $req->study_program_acronim,
+        'faculty_name' => $req->faculty_name,
+        'acronim' => $req->acronim,
+        'acreditation' => $req->acreditation,
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
+			], 500);
+		}
+	}
 }
+
+
