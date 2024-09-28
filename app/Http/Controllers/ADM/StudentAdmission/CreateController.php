@@ -86,6 +86,7 @@ use App\Http\Models\ADM\StudentAdmission\Education_Major;
 use App\Http\Models\ADM\StudentAdmission\Form;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Category;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Formulir;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Biaya;
 use App\Http\Models\ADM\StudentAdmission\Master_kelas;
 use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
@@ -3941,6 +3942,35 @@ class CreateController extends Controller
 				'nama_formulir' => $req->nama_formulir,
 				'harga' => $req->harga,
 				'kategori_formulir' => $req->kategori_formulir,
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			\Log::error('Error: ', ['exception' => $e->getMessage()]); // Tambahkan log untuk kesalahan
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
+			], 500);
+		}
+	}
+
+	public function InsertMappingProdiBiaya(Request $req)
+	{
+		try {
+			Mapping_Prodi_Biaya::create([
+				'prodi_fk' => $req->prodi_fk,
+				'nama_prodi' => $req->nama_prodi,
+				'kelas_fk' => $req->kelas_fk,
+				'nama_kelas' => $req->nama_kelas,
+				'spp_I' => $req->spp_I,
+				'spp_II' => $req->spp_II,
+				'spp_III' => $req->spp_III,
+				'praktikum' => $req->praktikum,
 			]);
 			DB::connection('pgsql')->commit();
 			return response([

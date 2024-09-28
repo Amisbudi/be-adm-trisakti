@@ -66,6 +66,7 @@ use App\Http\Models\ADM\StudentAdmission\Education_Major;
 use App\Http\Models\ADM\StudentAdmission\Form;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Category;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Formulir;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Biaya;
 use App\Http\Models\ADM\StudentAdmission\Master_kelas;
 use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
@@ -2952,7 +2953,36 @@ class UpdateController extends Controller
 			return response([
 				'status' => 'Failed',
 				'message' => 'Mohon maaf, data gagal disimpan',
-				'error' => $th->getMessage()
+				'error' => $e->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateMappingProdiBiaya(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$mappingprodibiaya = Mapping_Prodi_Biaya::findOrFail($req->id);
+			$mappingprodibiaya->update([
+				'prodi_fk' => $req->prodi_fk,
+				'nama_prodi' => $req->nama_prodi,
+				'kelas_fk' => $req->kelas_fk,
+				'nama_kelas' => $req->nama_kelas,
+				'spp_I' => $req->spp_I,
+				'spp_II' => $req->spp_II,
+				'spp_III' => $req->spp_III,
+				'praktikum' => $req->praktikum,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
 			], 500);
 		}
 	}
@@ -2974,7 +3004,7 @@ class UpdateController extends Controller
 			return response([
 				'status' => 'Failed',
 				'message' => 'Mohon maaf, data gagal disimpan',
-				'error' => $th->getMessage()
+				'error' => $e->getMessage()
 			], 500);
 		}
 	}
@@ -3001,7 +3031,7 @@ class UpdateController extends Controller
 			return response([
 				'status' => 'Failed',
 				'message' => 'Mohon maaf, data gagal disimpan',
-				'error' => $th->getMessage()
+				'error' => $e->getMessage()
 			], 500);
 		}
 	}
