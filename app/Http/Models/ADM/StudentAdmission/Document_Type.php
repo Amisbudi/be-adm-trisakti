@@ -9,6 +9,12 @@ class Document_Type extends Model {
     protected $connection = 'pgsql';
     protected $table = 'document_type';
     protected $primaryKey = 'id';
+    protected $fillable = [ 
+        'name',
+        'description',
+    ];
+    public $timestamps = true;
+
 
     public static function GetDocumentType($name=''){
         if($name != ''){
