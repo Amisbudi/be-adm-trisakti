@@ -65,9 +65,9 @@ Route::post('/categories', 'ADM\StudentAdmission\DeleteController@DeleteCategory
 
 // Form
 Route::get('/forms', 'ADM\StudentAdmission\ReadController@GetForms');
-Route::post('/forms', 'ADM\StudentAdmission\CreateController@InsertForm');
-Route::post('/forms', 'ADM\StudentAdmission\UpdateController@UpdateForm');
-Route::post('/forms', 'ADM\StudentAdmission\DeleteController@DeleteForm');
+Route::post('/forms/insert', 'ADM\StudentAdmission\CreateController@InsertForm');
+Route::post('/forms/update', 'ADM\StudentAdmission\UpdateController@UpdateForm');
+Route::post('/forms/delete', 'ADM\StudentAdmission\DeleteController@DeleteForm');
 
 // Schedule
 Route::get('/schedules', 'ADM\StudentAdmission\ReadController@GetSchedules');
@@ -78,23 +78,29 @@ Route::post('/schedules', 'ADM\StudentAdmission\DeleteController@DeleteSchedule'
 // Mapping Prodi Category
 Route::get('/mappingprodicategory', 'ADM\StudentAdmission\ReadController@GetMappingProdiCategory');
 Route::post('/mappingprodicategory', 'ADM\StudentAdmission\CreateController@InsertMappingProdiCategory');
-Route::post('/mappingprodicategory', 'ADM\StudentAdmission\UpdateController@UpdateMappingProdiCategory');
-Route::post('/mappingprodicategory', 'ADM\StudentAdmission\DeleteController@DeleteMappingProdiCategory');
+Route::post('/mappingprodicategory/update', 'ADM\StudentAdmission\UpdateController@UpdateMappingProdiCategory');
+Route::post('/mappingprodicategory/delete', 'ADM\StudentAdmission\DeleteController@DeleteMappingProdiCategory');
 
 // Mapping Prodi Formulir
 Route::get('/mappingprodiformulir', 'ADM\StudentAdmission\ReadController@GetMappingProdiFormulir');
 Route::post('/mappingprodiformulir', 'ADM\StudentAdmission\CreateController@InsertMappingProdiFormulir');
-Route::post('/mappingprodiformulir', 'ADM\StudentAdmission\UpdateController@UpdateMappingProdiFormulir');
-Route::post('/mappingprodiformulir', 'ADM\StudentAdmission\DeleteController@DeleteMappingProdiFormulir');
+Route::post('/mappingprodiformulir/update', 'ADM\StudentAdmission\UpdateController@UpdateMappingProdiFormulir');
+Route::post('/mappingprodiformulir/delete', 'ADM\StudentAdmission\DeleteController@DeleteMappingProdiFormulir');
 
 // Mapping Master Mata Pelajaran
 Route::get('/masterMataPelajaran', 'ADM\StudentAdmission\ReadController@GetMasterMataPelajaran');
 Route::post('/masterMataPelajaran', 'ADM\StudentAdmission\CreateController@InsertMasterMataPelajaran');
-Route::post('/masterMataPelajaran/{id}', 'ADM\StudentAdmission\UpdateController@UpdateMasterMataPelajaran');
-Route::post('/masterMataPelajaran/{id}', 'ADM\StudentAdmission\DeleteController@DeleteMasterMataPelajaran');
+Route::post('/masterMataPelajaran/update', 'ADM\StudentAdmission\UpdateController@UpdateMasterMataPelajaran');
+Route::post('/masterMataPelajaran/delete', 'ADM\StudentAdmission\DeleteController@DeleteMasterMataPelajaran');
 
-// Mapping Master Kelas
+// Mapping Master Kelas - BEDA COLUMN TABLE
 Route::get('/masterKelas', 'ADM\StudentAdmission\ReadController@GetStudyProgramSpecialization');
 Route::post('/masterKelas', 'ADM\StudentAdmission\CreateController@InsertStudyProgramSpecialization');
-Route::post('/masterKelas/{id}', 'ADM\StudentAdmission\UpdateController@UpdateStudyProgramSpecialization');
-Route::post('/masterKelas/{id}', 'ADM\StudentAdmission\DeleteController@DeleteStudyProgramSpecialization');
+Route::post('/masterKelas/update', 'ADM\StudentAdmission\UpdateController@UpdateStudyProgramSpecialization');
+Route::post('/masterKelas/delete', 'ADM\StudentAdmission\DeleteController@DeleteStudyProgramSpecialization');
+
+// Mapping Prodi Mata Pelajaran
+Route::get('/mappingprodiMatapelajaran', 'ADM\StudentAdmission\ReadController@GetMappingProdiMatapelajaran');
+Route::post('/mappingprodiMatapelajaran', 'ADM\StudentAdmission\CreateController@InsertMappingProdiMatapelajaran');
+Route::post('/mappingprodiMatapelajaran/update', 'ADM\StudentAdmission\UpdateController@UpdateMappingProdiMatapelajaran');
+Route::post('/mappingprodiMatapelajaran/delete', 'ADM\StudentAdmission\DeleteController@DeleteMappingProdiMatapelajaran');
