@@ -9,7 +9,7 @@ class Study_Program extends Model {
     protected $connection = 'pgsql';
     protected $table = 'study_programs';
     protected $primaryKey = 'classification_id';
-    protected $fillable = [ 
+    protected $fillable = [
         'program_study_id',
         'faculty_id',
         'category',

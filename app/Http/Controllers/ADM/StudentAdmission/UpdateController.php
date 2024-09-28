@@ -70,6 +70,7 @@ use App\Http\Models\ADM\StudentAdmission\Master_kelas;
 use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
 use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
+use App\Http\Models\ADM\StudentAdmission\Document_Type;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
@@ -2843,7 +2844,7 @@ class UpdateController extends Controller
 				'status' => 'Failed',
 				'message' => 'Mohon maaf, data gagal disimpan',
 				'error' => $th->getMessage()
-			],  500);
+			], 500);
 		}
 	}
 
@@ -2997,6 +2998,60 @@ class UpdateController extends Controller
 			], 200);
 		} catch (\Exception $e) {
 			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateFaculty(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$study_program = Study_Program::where('classification_id', $req->classification_id)->first();
+			$study_program->update([
+				'program_study_id' => $req->program_study_id,
+        'faculty_id' => $req->faculty_id,
+        'category' => $req->category,
+        'classification_name' => $req->classification_name,
+        'study_program_branding_name' => $req->study_program_branding_name,
+        'study_program_name' => $req->study_program_name,
+        'study_program_name_en' => $req->study_program_name_en,
+        'study_program_acronim' => $req->study_program_acronim,
+        'faculty_name' => $req->faculty_name,
+        'acronim' => $req->acronim,
+        'acreditation' => $req->acreditation,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateDocumentType(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$document = Document_Type::where('id', $req->id)->first();
+			$document->update([
+				'name' => $req->name,
+				'description' => $req->description,
+        
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
 			return response([
 				'status' => 'Failed',
 				'message' => 'Mohon maaf, data gagal disimpan',
