@@ -68,7 +68,7 @@ use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Category;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Formulir;
 use App\Http\Models\ADM\StudentAdmission\Master_kelas;
 use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
-use App\Http\Models\ADM\StudentAdmission\Schedule;
+use App\Http\Models\ADM\StudentAdmission\Document_Type;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
@@ -2842,7 +2842,7 @@ class UpdateController extends Controller
 				'status' => 'Failed',
 				'message' => 'Mohon maaf, data gagal disimpan',
 				'error' => $th->getMessage()
-			],  500);
+			], 500);
 		}
 	}
 
@@ -3016,6 +3016,29 @@ class UpdateController extends Controller
         'faculty_name' => $req->faculty_name,
         'acronim' => $req->acronim,
         'acreditation' => $req->acreditation,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateDocumentType(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$document = Document_Type::where('id', $req->id)->first();
+			$document->update([
+				'name' => $req->name,
+				'description' => $req->description,
+        
 			]);
 			return response([
 				'status' => 'Success',

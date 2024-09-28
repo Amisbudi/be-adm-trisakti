@@ -44,7 +44,7 @@ use App\Http\Models\ADM\StudentAdmission\Master_kelas;
 use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
 use App\Http\Models\ADM\StudentAdmission\Selection_Path;
-use App\Http\Models\ADM\StudentAdmission\Student_Interest;
+use App\Http\Models\ADM\StudentAdmission\Document_Type;
 use App\Http\Models\ADM\StudentAdmission\Study_Program;
 use Exception;
 use GuzzleHttp\Client;
@@ -1438,6 +1438,25 @@ class DeleteController extends Controller
       return response([
         'status' => 'Failed',
         'message' => 'Gagal menghapus jadwal study program',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteDocumentType(Request $req)
+  {
+    try {
+      $study_program = Document_Type::where('id', $req->id)->first();
+      $study_program->delete();
+
+      return response([
+        'status' => 'Success',
+        'message' => 'Dokumen telah dihapus',
+      ], 200);
+    } catch (\Exception $e) {
+      return response([
+        'status' => 'Failed',
+        'message' => 'Gagal menghapus dokumen',
         'error' => $e->getMessage()
       ], 500);
     }
