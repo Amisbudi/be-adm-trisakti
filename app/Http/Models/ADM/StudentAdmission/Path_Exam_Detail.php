@@ -24,7 +24,8 @@ class Path_Exam_Detail extends Model {
         'session_one_end',
         'session_two_end',
         'session_three_end',
-        'exam_type_id'
+        'exam_type_id',
+        'class_type'
     ];
     public $timestamps = true;
 

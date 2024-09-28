@@ -184,7 +184,8 @@ class UpdateController extends Controller
 				'session_one_end' => $req->session_one_end,
 				'session_two_end' => $req->session_two_end,
 				'session_three_end' => $req->session_three_end,
-				'exam_type_id' => $req->exam_type_id
+				'exam_type_id' => $req->exam_type_id,
+				'class_type' => $req->class_type
 			]);
 
 			DB::connection('pgsql')->commit();
