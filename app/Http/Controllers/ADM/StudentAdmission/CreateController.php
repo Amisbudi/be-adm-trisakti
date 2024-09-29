@@ -81,7 +81,7 @@ use App\Http\Models\ADM\StudentAdmission\Education_Degree;
 use App\Http\Models\ADM\StudentAdmission\Selection_Categories;
 use App\Http\Models\ADM\StudentAdmission\Student_Interest;
 use App\Http\Models\ADM\StudentAdmission\Category;
-use app\Http\Models\ADM\StudentAdmission\Document_Type;
+use App\Http\Models\ADM\StudentAdmission\Document_Type;
 use App\Http\Models\ADM\StudentAdmission\Education_Major;
 use App\Http\Models\ADM\StudentAdmission\Form;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Category;
@@ -3914,8 +3914,7 @@ class CreateController extends Controller
 	{
 		try {
 			Mapping_Prodi_Category::where('prodi_fk', $req->prodi)->delete();
-			$prodi = Study_Program::find($req->prodi)->first();
-			DB::connection('pgsql')->beginTransaction();
+			$prodi = Study_Program::where('classification_id', $req->prodi)->first();
 			\Log::info('Request data: ', $req->all()); // Tambahkan log untuk melihat input JSON
 
 			foreach($req->terpilih as $key => $select){
