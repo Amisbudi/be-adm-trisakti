@@ -506,13 +506,13 @@ class ReadController extends Controller
             'md.active_status',
             'md.document_type_id',
             'md.program_study_id',
-            'c.name as nama_prodi',
+            'c.study_program_branding_name as nama_prodi',
             DB::raw('case when md.active_status =' . "'t'" . ' then ' . "'Aktif'" . ' else ' . "'Non Aktif'" . ' end as active_status_name'),
             DB::raw('case when md.required =' . "'t'" . ' then ' . "true" . ' else ' . "false" . ' end as required'),
             'md.is_value'
         )
             ->leftjoin('document_type as b', 'md.document_type_id', '=', 'b.id')
-            ->leftjoin('study_programs as c', 'md.program_study_id', '=', 'c.id')
+            ->leftjoin('study_programs as c', 'md.program_study_id', '=', 'c.classification_id')
             ->where([$selection_path_id, $active_status])
             ->get();
 
