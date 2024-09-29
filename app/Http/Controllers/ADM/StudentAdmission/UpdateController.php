@@ -2733,7 +2733,7 @@ class UpdateController extends Controller
 		}
 	}
 
-	public function UpdateForm(Request $req)
+	public function UpdateForms(Request $req)
 	{
 		$by = $req->header("X-I");
 		try {
