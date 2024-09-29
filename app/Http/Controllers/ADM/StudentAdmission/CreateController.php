@@ -270,8 +270,8 @@ class CreateController extends Controller
 				'participant_id' => $participant->id
 			]);
 
-			$email['username'] 	= $participant->username;
-			$email['name'] 		= $participant->fullname;
+			$email['username'] = $participant->username;
+			$email['name'] = $participant->fullname;
 
 			$link = URL::temporarySignedRoute('4e374a7443c209ffcdcb722eb1b0e989', now()->addHour(60), [
 				'id' => $createReset->id,
@@ -1464,11 +1464,11 @@ class CreateController extends Controller
 	}
 
 	/*
-	Fungsi pembayaran finnet, pakai api InitialFinpayTransaction
-	ada 2 fungsi tambahan yaitu RequestPinTransaction dan createSignature.
-	- RequestPinTransaction (untuk mengirim request ke finnet / finpay)
-	- createSignature (Untuk pembuatan menc_signature atau kode unik pembayaran finnet)
-	*/
+	 Fungsi pembayaran finnet, pakai api InitialFinpayTransaction
+	 ada 2 fungsi tambahan yaitu RequestPinTransaction dan createSignature.
+	 - RequestPinTransaction (untuk mengirim request ke finnet / finpay)
+	 - createSignature (Untuk pembuatan menc_signature atau kode unik pembayaran finnet)
+	 */
 	public function RequestPinTransaction(Request $req)
 	{
 		$by = $req->header("X-I");
@@ -1637,11 +1637,11 @@ class CreateController extends Controller
 					<b>TELKOM UNIVERSITY Admission Team</b><br><br>';
 
 		$param = array(
-			'to'              =>  $email['username'],
-			'subject'         => 'Telkom University Admission',
-			'content'         =>  $message,
-			'toname'          =>  $email['name'],
-			'fromname'        => 'Telkom University Admission Team'
+			'to' => $email['username'],
+			'subject' => 'Telkom University Admission',
+			'content' => $message,
+			'toname' => $email['name'],
+			'fromname' => 'Telkom University Admission Team'
 		);
 
 		$response = $http->post($url, ['auth' => ['igracias', 'v01DSp!r1T'], 'form_params' => $param]);
@@ -2937,9 +2937,9 @@ class CreateController extends Controller
 	public function InsertMoodleEnrollment(Request $req)
 	{
 		/*
-		Ketika proses insert data enrollment maka harus divalidasi lagi dari database
-		ketika data sudah ada maka tidak boleh insert ulang ke moodle
-		*/
+			Ketika proses insert data enrollment maka harus divalidasi lagi dari database
+			ketika data sudah ada maka tidak boleh insert ulang ke moodle
+			*/
 
 		$by = $req->header("X-I");
 
@@ -3506,48 +3506,48 @@ class CreateController extends Controller
 		}
 
 		/*
-		Kode Prodi ada yang 3 / 4 / 5 digit. Untuk prodi yang hanya
-		ada 3 atau 4 digit, sisanya diganti dengan angka 0
-		*/
+			Kode Prodi ada yang 3 / 4 / 5 digit. Untuk prodi yang hanya
+			ada 3 atau 4 digit, sisanya diganti dengan angka 0
+			*/
 		$program_study = str_pad($data->program_study_id, 5, '0', STR_PAD_LEFT);
 
 		/*
-		Tahun ajaran masuk
-		2021 -> 21
-		2022 -> 22
-		2023 -> 23 dst.
-		*/
+			Tahun ajaran masuk
+			2021 -> 21
+			2022 -> 22
+			2023 -> 23 dst.
+			*/
 		$school_year = substr(explode("/", $data->year)[0], 2, 3);
 
 		/*
-		Semester masuk
-		0 : semester ganjil
-		1 : semester genap
-		*/
+			Semester masuk
+			0 : semester ganjil
+			1 : semester genap
+			*/
 		$semester = ($data->semester == 1) ? 0 : 1;
 
 		/*
-		Kode kampus
-		Ex: kampus sentu
-		*/
+			Kode kampus
+			Ex: kampus sentu
+			*/
 		$campus_code = $data->specialization_code;
 
 		/*
-		Kode kelas
-		Ex: 5 kelas khusus
-		0 kelas reguler
-		*/
+			Kode kelas
+			Ex: 5 kelas khusus
+			0 kelas reguler
+			*/
 		$class_code = $data->class_type_id;
 
 		/*
-		tmp gabungan dari program study, tahun ajar, semester, kode kampus dan kode kelas
-		untuk mencari increment
-		*/
+			tmp gabungan dari program study, tahun ajar, semester, kode kampus dan kode kelas
+			untuk mencari increment
+			*/
 		$tmp = $program_study . $school_year . $semester . $campus_code . $class_code;
 
 		/*
-		Nomor urut
-		*/
+			Nomor urut
+			*/
 		$increment = New_Student::select('new_student.id')
 			->where('new_student.student_id', 'LIKE', "$tmp%")
 			->get()
@@ -3881,9 +3881,9 @@ class CreateController extends Controller
 
 	public function InsertStudyProgram(Request $req)
 	{
-		// return response()->json($req->all());
 		try {
 			Study_Program::create([
+				'classification_id' => $req->classification_id,
 				'program_study_id' => $req->program_study_id,
 				'faculty_id' => $req->faculty_id,
 				'category' => $req->category,
@@ -3919,7 +3919,7 @@ class CreateController extends Controller
 			$prodi = Study_Program::where('classification_id', $req->prodi)->first();
 			\Log::info('Request data: ', $req->all()); // Tambahkan log untuk melihat input JSON
 
-			foreach($req->terpilih as $key => $select){
+			foreach ($req->terpilih as $key => $select) {
 				Mapping_Prodi_Category::create([
 					'prodi_fk' => $prodi->classification_id,
 					'nama_prodi' => $prodi->study_program_branding_name,
@@ -3928,7 +3928,7 @@ class CreateController extends Controller
 					'selectedstatus' => $select['sifatdokumen'],
 				]);
 			}
-			
+
 			DB::connection('pgsql')->commit();
 			return response([
 				'status' => 'Success',
@@ -4138,16 +4138,22 @@ class CreateController extends Controller
 	public function InsertMappingProdiMinat(Request $req)
 	{
 		try {
-			Mapping_Prodi_Minat::create([
-				'fakultas' => $req->fakultas,
-				'fakultas_id' => $req->fakultas_id,
-				'prodi_id' => $req->prodi_id,
-				'nama_prodi' => $req->nama_prodi,
-				'nama_minat' => $req->nama_minat,
-				'minat_id' => $req->minat_id,
-				'quota' => $req->quota,
-				'status' => $req->status
+		$minats = [];
+		$prodi = Study_Program::where('program_study_id', $req->prodi)->first();
+		for ($i = 0; $i < count($req->terpilih); $i++) {
+			$minat = Education_Major::where('id', $req->terpilih[$i])->first();
+			array_push($minats, [
+				'fakultas' => $prodi->faculty_name,
+				'fakultas_id' => $prodi->faculty_id,
+				'prodi_id' => $prodi->program_study_id,
+				'nama_prodi' => $prodi->study_program_name,
+				'nama_minat' => $minat->major,
+				'minat_id' => $minat->id,
+				'quota' => 0,
+				'status' => true
 			]);
+		}
+			Mapping_Prodi_Minat::insert($minats);
 			DB::connection('pgsql')->commit();
 			return response([
 				'status' => 'Success',

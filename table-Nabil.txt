@@ -85,14 +85,8 @@ CREATE TABLE master_kelas(
 -- TABLE MAPPING_PRODI_MINAT
 CREATE TABLE mapping_prodi_minat(
     id SERIAL PRIMARY KEY, 
-    fakultas VARCHAR(255) NOT NULL, 
-    fakultas_id INT NULL, 
-    prodi_id INT NULL, 
-    nama_prodi VARCHAR(225) NULL, 
-    nama_minat VARCHAR(225) NULL, 
-    minat_id INT NULL, 
-    quota INT NULL, 
-    status INT NULL, 
+    prodi INT NULL, 
+    terpilih INT NULL, 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

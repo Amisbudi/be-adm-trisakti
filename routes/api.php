@@ -53,9 +53,9 @@ Route::post('/educationdegrees', 'ADM\StudentAdmission\UpdateController@UpdateEd
 Route::post('/educationdegrees', 'ADM\StudentAdmission\DeleteController@DeleteEducationDegree');
 
 Route::get('/studyprogram', 'ADM\StudentAdmission\ReadController@GetStudyProgram');
-Route::post('/studyprogram', 'ADM\StudentAdmission\CreateController@InsertStudyProgram');
-Route::post('/studyprogram', 'ADM\StudentAdmission\UpdateController@UpdateStudyProgram');
-Route::post('/studyprogram', 'ADM\StudentAdmission\DeleteController@DeleteStudyProgram');
+Route::post('/studyprogram/insert', 'ADM\StudentAdmission\CreateController@InsertStudyProgram');
+Route::post('/studyprogram/update', 'ADM\StudentAdmission\UpdateController@UpdateStudyProgram');
+Route::post('/studyprogram/delete', 'ADM\StudentAdmission\DeleteController@DeleteStudyProgram');
 
 // Form
 Route::get('/forms', 'ADM\StudentAdmission\ReadController@GetForms');
