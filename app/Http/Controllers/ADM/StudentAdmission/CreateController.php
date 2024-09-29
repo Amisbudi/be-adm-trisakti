@@ -3919,12 +3919,11 @@ class CreateController extends Controller
 			\Log::info('Request data: ', $req->all()); // Tambahkan log untuk melihat input JSON
 
 			foreach($req->terpilih as $select){
-				$doc = Document_Type::where('id', $select->dokumen_id)->first();
 				Mapping_Prodi_Category::create([
 					'prodi_fk' => $prodi->id,
 					'nama_prodi' => $prodi->study_program_branding_name,
-					'dokumen_fk' => $doc->id,
-					'nama_dokumen' => $doc->name,
+					'dokumen_fk' => $select->dokumen_id,
+					'nama_dokumen' => $select->nama_dokumen,
 					'selectedstatus' => $select->sifatdokumen,
 				]);
 			}
