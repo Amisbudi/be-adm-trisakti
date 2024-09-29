@@ -49,6 +49,7 @@ use App\Http\Models\ADM\StudentAdmission\Document_Type;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Matapelajaran;
 use App\Http\Models\ADM\StudentAdmission\Study_Program;
 use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
+use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
 use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Database\QueryException;
@@ -1497,6 +1498,25 @@ class DeleteController extends Controller
       return response([
         'status' => 'Failed',
         'message' => 'Gagal menghapus Mapping Prodi Mata Pelajaran',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeletePackageQuestionUsers(Request $req)
+  {
+    try {
+      $data = CBT_Package_Question_Users::where('id', $req->id)->first();
+      $data->delete();
+
+      return response([
+        'status' => 'Success',
+        'message' => 'Package Question Users telah dihapus',
+      ], 200);
+    } catch (\Exception $e) {
+      return response([
+        'status' => 'Failed',
+        'message' => 'Gagal menghapus Package Question Users',
         'error' => $e->getMessage()
       ], 500);
     }

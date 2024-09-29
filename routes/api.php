@@ -98,3 +98,9 @@ Route::get('/mappingprodiMatapelajaran', 'ADM\StudentAdmission\ReadController@Ge
 Route::post('/mappingprodiMatapelajaran', 'ADM\StudentAdmission\CreateController@InsertMappingProdiMatapelajaran');
 Route::post('/mappingprodiMatapelajaran/update', 'ADM\StudentAdmission\UpdateController@UpdateMappingProdiMatapelajaran');
 Route::post('/mappingprodiMatapelajaran/delete', 'ADM\StudentAdmission\DeleteController@DeleteMappingProdiMatapelajaran');
+
+// Package Question Users
+Route::get('/packagequestionusers', 'ADM\StudentAdmission\ReadController@GetPackageQuestionUsers');
+Route::post('/packagequestionusers/insert', 'ADM\StudentAdmission\CreateController@InsertPackageQuestionUsers');
+Route::post('/packagequestionusers/update', 'ADM\StudentAdmission\UpdateController@UpdatePackageQuestionUsers');
+Route::post('/packagequestionusers/delete', 'ADM\StudentAdmission\DeleteController@DeletePackageQuestionUsers');
