@@ -562,6 +562,7 @@ class CreateController extends Controller
 				'document_type_id' => $req->document_type_id,
 				'active_status' => $req->active_status,
 				'created_by' => $by,
+				'program_study_id' => $req->program_study_id,
 				'required' => $req->required,
 				'is_value' => $req->is_value
 			]);

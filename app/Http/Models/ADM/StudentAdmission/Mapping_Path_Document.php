@@ -14,6 +14,7 @@ class Mapping_Path_Document extends Model {
         'selection_path_id',
     	'created_by',
     	'updated_by',
+        'program_study_id',
         'active_status',
         'required',
         'is_value'
