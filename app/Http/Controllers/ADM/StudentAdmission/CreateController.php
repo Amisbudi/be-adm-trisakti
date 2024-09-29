@@ -81,7 +81,7 @@ use App\Http\Models\ADM\StudentAdmission\Education_Degree;
 use App\Http\Models\ADM\StudentAdmission\Selection_Categories;
 use App\Http\Models\ADM\StudentAdmission\Student_Interest;
 use App\Http\Models\ADM\StudentAdmission\Category;
-use app\Http\Models\ADM\StudentAdmission\Document_Type;
+use App\Http\Models\ADM\StudentAdmission\Document_Type;
 use App\Http\Models\ADM\StudentAdmission\Education_Major;
 use App\Http\Models\ADM\StudentAdmission\Form;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Category;
@@ -3914,18 +3914,16 @@ class CreateController extends Controller
 	{
 		try {
 			Mapping_Prodi_Category::where('prodi_fk', $req->prodi)->delete();
-			$prodi = Study_Program::find($req->prodi)->first();
-			DB::connection('pgsql')->beginTransaction();
+			$prodi = Study_Program::where('classification_id', $req->prodi)->first();
 			\Log::info('Request data: ', $req->all()); // Tambahkan log untuk melihat input JSON
 
-			foreach($req->terpilih as $select){
-				$doc = Document_Type::find($select->dokumen_id)->first();
+			foreach($req->terpilih as $key => $select){
 				Mapping_Prodi_Category::create([
-					'prodi_fk' => $prodi->id,
+					'prodi_fk' => $prodi->classification_id,
 					'nama_prodi' => $prodi->study_program_branding_name,
-					'dokumen_fk' => $doc->id,
-					'nama_dokumen' => $doc->name,
-					'selectedstatus' => $select->sifatdokumen,
+					'dokumen_fk' => $select['dokumen_id'],
+					'nama_dokumen' => $select['nama_dokumen'],
+					'selectedstatus' => $select['sifatdokumen'],
 				]);
 			}
 			
