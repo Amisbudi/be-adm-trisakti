@@ -118,6 +118,7 @@ use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Category;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Formulir;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Biaya;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Matapelajaran;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Minat;
 use App\Http\Models\ADM\StudentAdmission\Master_kelas;
 use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
@@ -9356,6 +9357,12 @@ class ReadController extends Controller
     public function GetMappingProdiMatapelajaran(Request $req)
     {
         $data = Mapping_Prodi_Matapelajaran::all();
+        return response()->json($data);
+    }
+
+    public function GetMappingProdiMinat(Request $req)
+    {
+        $data = Mapping_Prodi_Minat::all();
         return response()->json($data);
     }
 
