@@ -3920,11 +3920,11 @@ class CreateController extends Controller
 
 			foreach($req->terpilih as $key => $select){
 				Mapping_Prodi_Category::create([
-					'prodi_fk' => $prodi->id,
+					'prodi_fk' => $prodi->classification_id,
 					'nama_prodi' => $prodi->study_program_branding_name,
-					'dokumen_fk' => $select->dokumen_id,
-					'nama_dokumen' => $select->nama_dokumen,
-					'selectedstatus' => $select->sifatdokumen,
+					'dokumen_fk' => $select['dokumen_id'],
+					'nama_dokumen' => $select['nama_dokumen'],
+					'selectedstatus' => $select['sifatdokumen'],
 				]);
 			}
 			
