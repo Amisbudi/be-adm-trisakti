@@ -93,6 +93,7 @@ use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
 use App\Http\Models\ADM\StudentAdmission\Study_Program;
 use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
+use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
@@ -4116,6 +4117,33 @@ class CreateController extends Controller
 				'nama_prodi' => $req->nama_prodi,
 				'mata_pelajaran' => $req->mata_pelajaran,
 				'pelajaran_id' => $req->pelajaran_id,
+				'status' => $req->status
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
+			], 500);
+		}
+	}
+
+	public function InsertPackageQuestionUsers(Request $req)
+	{
+		try {
+			CBT_Package_Question_Users::create([
+				'package_question_id' => $req->package_question_id,
+				'user_id' => $req->user_id,
+				'classes' => $req->classes,
+				'date_exam' => $req->date_exam,
+				'date_start' => $req->date_start,
+				'date_end' => $req->date_end,
 				'status' => $req->status
 			]);
 			DB::connection('pgsql')->commit();

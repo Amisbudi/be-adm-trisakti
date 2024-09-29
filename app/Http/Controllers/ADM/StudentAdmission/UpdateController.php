@@ -72,6 +72,7 @@ use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
 use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
 use App\Http\Models\ADM\StudentAdmission\Document_Type;
+use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
@@ -3110,6 +3111,33 @@ class UpdateController extends Controller
 				'nama_prodi' => $req->nama_prodi,
 				'mata_pelajaran' => $req->mata_pelajaran,
 				'pelajaran_id' => $req->pelajaran_id,
+				'status' => $req->status
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdatePackageQuestionUsers(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$data = CBT_Package_Question_Users::where('id', $req->id)->first();
+			$data->update([
+				'package_question_id' => $req->package_question_id,
+				'user_id' => $req->user_id,
+				'classes' => $req->classes,
+				'date_exam' => $req->date_exam,
+				'date_start' => $req->date_start,
+				'date_end' => $req->date_end,
 				'status' => $req->status
 			]);
 			return response([
