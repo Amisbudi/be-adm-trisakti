@@ -1198,7 +1198,7 @@ class DeleteController extends Controller
     }
   }
 
-  public function DeleteForm(Request $req)
+  public function DeleteForms(Request $req)
   {
     try {
       $form = Form::where('id', $req->id)->first();

@@ -3752,7 +3752,7 @@ class CreateController extends Controller
 		}
 	}
 
-	public function InsertForm(Request $req)
+	public function InsertForms(Request $req)
 	{
 		try {
 			Form::create([
@@ -3913,13 +3913,22 @@ class CreateController extends Controller
 	public function InsertMappingProdiCategory(Request $req)
 	{
 		try {
-			Mapping_Prodi_Category::create([
-				'prodi_fk' => $req->prodi_fk,
-				'nama_prodi' => $req->nama_prodi,
-				'dokumen_fk' => $req->dokumen_fk,
-				'nama_dokumen' => $req->nama_dokumen,
-				'selectedstatus' => $req->selectedstatus,
-			]);
+			Mapping_Prodi_Category::where('prodi_fk', $req->prodi)->delete();
+			$prodi = Study_Program::find($req->prodi)->first();
+			DB::connection('pgsql')->beginTransaction();
+			\Log::info('Request data: ', $req->all()); // Tambahkan log untuk melihat input JSON
+
+			foreach($req->terpilih as $select){
+				$doc = Document_Type::find($select->dokumen_id)->first();
+				Mapping_Prodi_Category::create([
+					'prodi_fk' => $prodi->id,
+					'nama_prodi' => $prodi->study_program_branding_name,
+					'dokumen_fk' => $doc->id,
+					'nama_dokumen' => $doc->name,
+					'selectedstatus' => $select->sifatdokumen,
+				]);
+			}
+			
 			DB::connection('pgsql')->commit();
 			return response([
 				'status' => 'Success',
