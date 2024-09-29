@@ -47,6 +47,7 @@ use App\Http\Models\ADM\StudentAdmission\Schedule;
 use App\Http\Models\ADM\StudentAdmission\Selection_Path;
 use App\Http\Models\ADM\StudentAdmission\Document_Type;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Matapelajaran;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Minat;
 use App\Http\Models\ADM\StudentAdmission\Study_Program;
 use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
 use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
@@ -1493,6 +1494,25 @@ class DeleteController extends Controller
       return response([
         'status' => 'Success',
         'message' => 'Mapping Prodi Mata Pelajaran telah dihapus',
+      ], 200);
+    } catch (\Exception $e) {
+      return response([
+        'status' => 'Failed',
+        'message' => 'Gagal menghapus Mapping Prodi Mata Pelajaran',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteMappingProdiMinat(Request $req)
+  {
+    try {
+      $data = Mapping_Prodi_Minat::where('id', $req->id)->first();
+      $data->delete();
+
+      return response([
+        'status' => 'Success',
+        'message' => 'Mapping Prodi minat telah dihapus',
       ], 200);
     } catch (\Exception $e) {
       return response([

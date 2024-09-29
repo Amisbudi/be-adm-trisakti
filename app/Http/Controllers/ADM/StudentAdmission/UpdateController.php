@@ -67,6 +67,8 @@ use App\Http\Models\ADM\StudentAdmission\Form;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Category;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Formulir;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Biaya;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Matapelajaran;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Minat;
 use App\Http\Models\ADM\StudentAdmission\Master_kelas;
 use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
@@ -3103,7 +3105,7 @@ class UpdateController extends Controller
 	{
 		$by = $req->header("X-I");
 		try {
-			$document = Document_Type::where('id', $req->id)->first();
+			$document = Mapping_Prodi_Matapelajaran::where('id', $req->id)->first();
 			$document->update([
 				'fakultas' => $req->fakultas,
 				'fakultas_id' => $req->fakultas_id,
@@ -3111,6 +3113,34 @@ class UpdateController extends Controller
 				'nama_prodi' => $req->nama_prodi,
 				'mata_pelajaran' => $req->mata_pelajaran,
 				'pelajaran_id' => $req->pelajaran_id,
+				'status' => $req->status
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateMappingProdiMinat(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$document = Mapping_Prodi_Minat::where('id', $req->id)->first();
+			$document->update([
+				'fakultas' => $req->fakultas,
+				'fakultas_id' => $req->fakultas_id,
+				'prodi_id' => $req->prodi_id,
+				'nama_prodi' => $req->nama_prodi,
+				'nama_minat' => $req->nama_minat,
+				'minat_id' => $req->minat_id,
+				'quota' => $req->quota,
 				'status' => $req->status
 			]);
 			return response([

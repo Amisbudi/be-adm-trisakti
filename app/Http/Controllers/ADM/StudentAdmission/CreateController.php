@@ -88,6 +88,7 @@ use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Category;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Formulir;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Biaya;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Matapelajaran;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Minat;
 use App\Http\Models\ADM\StudentAdmission\Master_kelas;
 use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
@@ -4117,6 +4118,34 @@ class CreateController extends Controller
 				'nama_prodi' => $req->nama_prodi,
 				'mata_pelajaran' => $req->mata_pelajaran,
 				'pelajaran_id' => $req->pelajaran_id,
+				'status' => $req->status
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
+			], 500);
+		}
+	}
+
+	public function InsertMappingProdiMinat(Request $req)
+	{
+		try {
+			Mapping_Prodi_Minat::create([
+				'fakultas' => $req->fakultas,
+				'fakultas_id' => $req->fakultas_id,
+				'prodi_id' => $req->prodi_id,
+				'nama_prodi' => $req->nama_prodi,
+				'nama_minat' => $req->nama_minat,
+				'minat_id' => $req->minat_id,
+				'quota' => $req->quota,
 				'status' => $req->status
 			]);
 			DB::connection('pgsql')->commit();
