@@ -2897,7 +2897,8 @@ class UpdateController extends Controller
 				'study_program_acronim' => $req->study_program_acronim,
 				'faculty_name' => $req->faculty_name,
 				'acronim' => $req->acronim,
-				'acreditation' => $req->acreditation
+				'acreditation' => $req->acreditation,
+				'quota' => $req->quota
 			]);
 			return response([
 				'status' => 'Success',

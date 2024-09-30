@@ -33,14 +33,22 @@ Route::post('/selectionCategory/{id}', 'ADM\StudentAdmission\UpdateController@Up
 Route::post('/selectionCategory/{id}', 'ADM\StudentAdmission\DeleteController@DeleteSelectionCategory');
 
 Route::get('/documentcategories', 'ADM\StudentAdmission\ReadController@GetDocumentCategories');
-Route::post('/documentcategories', 'ADM\StudentAdmission\CreateController@InsertDocumentCategories');
-Route::post('/documentcategories', 'ADM\StudentAdmission\UpdateController@UpdateDocumentCategories');
-Route::post('/documentcategories', 'ADM\StudentAdmission\DeleteController@DeleteDocumentCategories');
+Route::post('/documentcategories/insert', 'ADM\StudentAdmission\CreateController@InsertDocumentCategories');
+Route::post('/documentcategories/update', 'ADM\StudentAdmission\UpdateController@UpdateDocumentCategories');
+Route::post('/documentcategories/delete', 'ADM\StudentAdmission\DeleteController@DeleteDocumentCategories');
+
+
+Route::post('/studyprogramspecialization/insert', 'ADM\StudentAdmission\CreateController@InsertStudyProgramSpecialization');
 
 Route::get('/selectioncategories', 'ADM\StudentAdmission\ReadController@GetSelectionCategories');
-Route::post('/selectioncategories', 'ADM\StudentAdmission\CreateController@InsertSelectionCategories');
-Route::post('/selectioncategories', 'ADM\StudentAdmission\UpdateController@UpdateSelectionCategories');
-Route::post('/selectioncategories', 'ADM\StudentAdmission\DeleteController@DeleteSelectionCategories');
+Route::post('/selectioncategories/insert', 'ADM\StudentAdmission\CreateController@InsertSelectionCategories');
+Route::post('/selectioncategories/update', 'ADM\StudentAdmission\UpdateController@UpdateSelectionCategories');
+Route::post('/selectioncategories/delete', 'ADM\StudentAdmission\DeleteController@DeleteSelectionCategories');
+
+Route::get('/studyprogram', 'ADM\StudentAdmission\ReadController@GetStudyProgram');
+Route::post('/studyprogram/insert', 'ADM\StudentAdmission\CreateController@InsertStudyProgram');
+Route::post('/studyprogram/update', 'ADM\StudentAdmission\UpdateController@UpdateStudyProgram');
+Route::post('/studyprogram/delete', 'ADM\StudentAdmission\DeleteController@DeleteStudyProgram');
 
 Route::get('/studentinterest', 'ADM\StudentAdmission\ReadController@GetStudentInterest');
 Route::post('/studentinterest/insert', 'ADM\StudentAdmission\CreateController@InsertStudentInterest');
@@ -82,7 +90,7 @@ Route::post('/mappingprodiminat/delete', 'ADM\StudentAdmission\DeleteController@
 
 // Mapping Prodi Category
 Route::get('/mappingprodicategory', 'ADM\StudentAdmission\ReadController@GetMappingProdiCategory');
-Route::post('/mappingprodicategory', 'ADM\StudentAdmission\CreateController@InsertMappingProdiCategory');
+Route::post('/mappingprodicategory/insert', 'ADM\StudentAdmission\CreateController@InsertMappingProdiCategory');
 Route::post('/mappingprodicategory/update', 'ADM\StudentAdmission\UpdateController@UpdateMappingProdiCategory');
 Route::post('/mappingprodicategory/delete', 'ADM\StudentAdmission\DeleteController@DeleteMappingProdiCategory');
 
@@ -93,10 +101,10 @@ Route::post('/mappingprodiformulir/update', 'ADM\StudentAdmission\UpdateControll
 Route::post('/mappingprodiformulir/delete', 'ADM\StudentAdmission\DeleteController@DeleteMappingProdiFormulir');
 
 // Mapping Master Mata Pelajaran
-Route::get('/masterMataPelajaran', 'ADM\StudentAdmission\ReadController@GetMasterMataPelajaran');
-Route::post('/masterMataPelajaran', 'ADM\StudentAdmission\CreateController@InsertMasterMataPelajaran');
-Route::post('/masterMataPelajaran/update', 'ADM\StudentAdmission\UpdateController@UpdateMasterMataPelajaran');
-Route::post('/masterMataPelajaran/delete', 'ADM\StudentAdmission\DeleteController@DeleteMasterMataPelajaran');
+Route::get('/mastermatapelajaran', 'ADM\StudentAdmission\ReadController@GetMasterMataPelajaran');
+Route::post('/mastermatapelajaran/insert', 'ADM\StudentAdmission\CreateController@InsertMasterMataPelajaran');
+Route::post('/mastermatapelajaran/update', 'ADM\StudentAdmission\UpdateController@UpdateMasterMataPelajaran');
+Route::post('/mastermatapelajaran/delete', 'ADM\StudentAdmission\DeleteController@DeleteMasterMataPelajaran');
 
 // Mapping Master Kelas - BEDA COLUMN TABLE
 Route::get('/masterKelas', 'ADM\StudentAdmission\ReadController@GetStudyProgramSpecialization');
