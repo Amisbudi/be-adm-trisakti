@@ -42,10 +42,10 @@ Route::post('/selectioncategories', 'ADM\StudentAdmission\CreateController@Inser
 Route::post('/selectioncategories', 'ADM\StudentAdmission\UpdateController@UpdateSelectionCategories');
 Route::post('/selectioncategories', 'ADM\StudentAdmission\DeleteController@DeleteSelectionCategories');
 
-Route::get('/educationmajors', 'ADM\StudentAdmission\ReadController@GetStudentInterest');
-Route::post('/educationmajors', 'ADM\StudentAdmission\CreateController@InsertStudentInterest');
-Route::post('/educationmajors', 'ADM\StudentAdmission\UpdateController@UpdateStudentInterest');
-Route::post('/educationmajors', 'ADM\StudentAdmission\DeleteController@DeleteStudentInterest');
+Route::get('/studentinterest', 'ADM\StudentAdmission\ReadController@GetStudentInterest');
+Route::post('/studentinterest/insert', 'ADM\StudentAdmission\CreateController@InsertStudentInterest');
+Route::post('/studentinterest/update', 'ADM\StudentAdmission\UpdateController@UpdateStudentInterest');
+Route::post('/studentinterest/delete', 'ADM\StudentAdmission\DeleteController@DeleteStudentInterest');
 
 Route::get('/educationdegrees', 'ADM\StudentAdmission\ReadController@GetEducationDegree');
 Route::post('/educationdegrees', 'ADM\StudentAdmission\CreateController@InsertEducationDegree');

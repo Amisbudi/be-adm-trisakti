@@ -1247,12 +1247,12 @@ class DeleteController extends Controller
 
       return response()->json([
         'status' => 'Success',
-        'message' => 'Document category has been deleted successfully',
+        'message' => 'Deleted successfully',
       ], 200);
     } catch (\Exception $e) {
       return response()->json([
         'status' => 'Failed',
-        'message' => 'Failed to delete the document category',
+        'message' => 'Failed to delete',
         'error' => $e->getMessage()
       ], 500);
     }
@@ -1266,12 +1266,12 @@ class DeleteController extends Controller
 
       return response()->json([
         'status' => 'Success',
-        'message' => 'Document category has been deleted successfully',
+        'message' => 'Deleted successfully',
       ], 200);
     } catch (\Exception $e) {
       return response()->json([
         'status' => 'Failed',
-        'message' => 'Failed to delete the document category',
+        'message' => 'Failed to delete',
         'error' => $e->getMessage()
       ], 500);
     }
@@ -1280,17 +1280,17 @@ class DeleteController extends Controller
   public function DeleteStudentInterest(Request $req)
   {
     try {
-      $documentCategory = Education_Major::findOrFail($req->id);
-      $documentCategory->delete();
+      $data = Education_Major::findOrFail($req->id);
+      $data->delete();
 
       return response()->json([
         'status' => 'Success',
-        'message' => 'Document category has been deleted successfully',
+        'message' => 'Deleted successfully',
       ], 200);
     } catch (\Exception $e) {
       return response()->json([
         'status' => 'Failed',
-        'message' => 'Failed to delete the document category',
+        'message' => 'Failed to delete',
         'error' => $e->getMessage()
       ], 500);
     }
@@ -1299,17 +1299,17 @@ class DeleteController extends Controller
   public function DeleteEducationDegree(Request $req)
   {
     try {
-      $educationDegree = Education_Degree::findOrFail($req->id);
-      $educationDegree->delete();
+      $data = Education_Degree::findOrFail($req->id);
+      $data->delete();
 
       return response()->json([
         'status' => 'Success',
-        'message' => 'Education Degree has been deleted successfully',
+        'message' => 'Deleted successfully',
       ], 200);
     } catch (\Exception $e) {
       return response()->json([
         'status' => 'Failed',
-        'message' => 'Failed to delete the education degree',
+        'message' => 'Failed to delete',
         'error' => $e->getMessage()
       ], 500);
     }
@@ -1323,7 +1323,7 @@ class DeleteController extends Controller
 
       return response()->json([
         'status' => 'Success',
-        'message' => 'Education Degree has been deleted successfully',
+        'message' => 'Deleted successfully',
       ], 200);
     } catch (\Exception $e) {
       return response()->json([
