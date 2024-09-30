@@ -213,11 +213,11 @@ class ReadController extends Controller
             } else if ($value['exam_status_id'] == 2) {
                 $value['exam_status'] = "CBT";
             } else {
-                // if ($value['exam_status_id'] == 0) {
+                if ($value['exam_status_id'] == 0) {
                     $value['exam_status'] = null;
-                // } else {
-                    // $value['exam_status'] = Exam_Type::getExamTypeName($value['exam_status_id'])->name;
-                // }
+                } else {
+                    $value['exam_status'] = Selection_Category::getCategoryName($value['exam_status_id'])->name;
+                }
             }
 
             array_push($response, $value);

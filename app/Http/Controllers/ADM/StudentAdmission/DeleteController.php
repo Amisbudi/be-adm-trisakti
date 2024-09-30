@@ -1545,8 +1545,8 @@ class DeleteController extends Controller
   public function DeleteMappingPathPrice(Request $req)
   {
     try {
-      $mappingProdiCategory = Mapping_Path_Price::findOrFail($req->id);
-      $mappingProdiCategory->delete();
+      $data = Mapping_Path_Price::where('id', $req->id)->first();
+      $data->delete();
 
       return response()->json([
         'status' => 'Success',
