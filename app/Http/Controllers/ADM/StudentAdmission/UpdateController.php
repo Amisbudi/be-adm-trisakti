@@ -3127,35 +3127,6 @@ class UpdateController extends Controller
 			], 500);
 		}
 	}
-
-	public function UpdateMappingProdiMinat(Request $req)
-	{
-		$by = $req->header("X-I");
-		try {
-			$document = Mapping_Prodi_Minat::where('id', $req->id)->first();
-			$document->update([
-				'fakultas' => $req->fakultas,
-				'fakultas_id' => $req->fakultas_id,
-				'prodi_id' => $req->prodi_id,
-				'nama_prodi' => $req->nama_prodi,
-				'nama_minat' => $req->nama_minat,
-				'minat_id' => $req->minat_id,
-				'quota' => $req->quota,
-				'status' => $req->status
-			]);
-			return response([
-				'status' => 'Success',
-				'message' => 'Data Tersimpan'
-			], 200);
-		} catch (\Throwable $th) {
-			return response([
-				'status' => 'Failed',
-				'message' => 'Mohon maaf, data gagal disimpan',
-				'error' => $th->getMessage()
-			], 500);
-		}
-	}
-
 	public function UpdatePackageQuestionUsers(Request $req)
 	{
 		$by = $req->header("X-I");
