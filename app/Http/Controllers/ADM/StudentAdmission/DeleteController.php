@@ -1319,7 +1319,6 @@ class DeleteController extends Controller
   {
     try {
       $studyProgram = Study_Program::where('classification_id', $req->id)->first();
-      // return response()->json($studyProgram);
       $studyProgram->delete();
 
       return response()->json([
