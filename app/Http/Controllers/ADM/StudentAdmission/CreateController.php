@@ -3919,11 +3919,12 @@ class CreateController extends Controller
 	public function InsertMappingProdiCategory(Request $req)
 	{
 		try {
-			Mapping_Prodi_Category::where('prodi_fk', $req->prodi)->delete();
-			$prodi = Study_Program::where('classification_id', $req->prodi)->first();
+			$datas = json_decode($req->json, true);
+			Mapping_Prodi_Category::where('prodi_fk', $datas->prodi)->delete();
+			$prodi = Study_Program::where('classification_id', $datas->prodi)->first();
 			\Log::info('Request data: ', $req->all()); // Tambahkan log untuk melihat input JSON
 
-			foreach (json_decode($req->terpilih) as $key => $select) {
+			foreach ($datas->terpilih as $key => $select) {
 				Mapping_Prodi_Category::create([
 					'prodi_fk' => $prodi->classification_id,
 					'nama_prodi' => $prodi->study_program_branding_name,
@@ -4149,15 +4150,15 @@ class CreateController extends Controller
 	public function InsertMappingProdiMinat(Request $req)
 	{
 		try {
+		$datas = json_decode($req->json, true);
 		$minats = [];
-		$prodi = Study_Program::where('classification_id', $req->prodi)->first();
-		$mapping_minat = Mapping_Prodi_Minat::where('prodi_id', $req->prodi)->count();
+		$prodi = Study_Program::where('classification_id', $datas['prodi'])->first();
+		$mapping_minat = Mapping_Prodi_Minat::where('prodi_id', $datas['prodi'])->count();
 		if($mapping_minat > 0){
 			Mapping_Prodi_Minat::where('prodi_id', $req->prodi)->delete();
 		}
-		$terpilih = json_decode($req->terpilih);
-		for ($i = 0; $i < count($terpilih); $i++) {
-			$minat = Education_Major::where('id', $terpilih[$i])->first();
+		for ($i = 0; $i < count($datas['terpilih']); $i++) {
+			$minat = Education_Major::where('id', $datas['terpilih'][$i])->first();
 			array_push($minats, [
 				'fakultas' => $prodi->faculty_name,
 				'fakultas_id' => $prodi->faculty_id,
