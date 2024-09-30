@@ -19,6 +19,13 @@ class Mapping_Prodi_Biaya extends Model
         'spp_ii',
         'spp_iii',
         'praktikum',
+        'bpp_pokok',
+        'bpp_sks',
+        'bpp_i',
+        'bpp_ii',
+        'bpp_iii',
+        'biaya_ujian',
+        'biaya_lainnya'
     ];
     public $timestamps = false;
 }

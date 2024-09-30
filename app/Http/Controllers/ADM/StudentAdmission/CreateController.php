@@ -95,6 +95,7 @@ use App\Http\Models\ADM\StudentAdmission\Schedule;
 use App\Http\Models\ADM\StudentAdmission\Study_Program;
 use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
 use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
+use App\Http\Models\ADM\StudentAdmission\Transfer_Credit;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
@@ -3985,6 +3986,13 @@ class CreateController extends Controller
 				'spp_ii' => $req->spp_ii,
 				'spp_iii' => $req->spp_iii,
 				'praktikum' => $req->praktikum,
+				'bpp_pokok' => $req->bpp_pokok,
+        'bpp_sks' => $req->bpp_sks,
+        'bpp_i' => $req->bpp_i,
+        'bpp_ii' => $req->bpp_ii,
+        'bpp_iii' => $req->bpp_iii,
+        'biaya_ujian' => $req->biaya_ujian,
+        'biaya_lainnya' => $req->biaya_lainnya
 			]);
 			DB::connection('pgsql')->commit();
 			return response([
@@ -4188,6 +4196,34 @@ class CreateController extends Controller
 				'date_end' => $req->date_end,
 				'status' => $req->status
 			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
+			], 500);
+		}
+	}
+
+	public function InsertTransferCredit(Request $req)
+	{
+		try {
+			Transfer_Credit::create([
+				'kode_matakuliah_ex' => $req->kode_matakuliah_ex,
+				'nama_matakuliah_ex' => $req->nama_matakuliah_ex,
+				'sks_ex' => $req->sks_ex,
+				'kode_matakuliah' => $req->kode_matakuliah,
+				'nama_matakuliah' => $req->nama_matakuliah,
+				'sks' => $req->sks,
+				'nilai' => $req->nilai
+			]);
+
 			DB::connection('pgsql')->commit();
 			return response([
 				'status' => 'Success',

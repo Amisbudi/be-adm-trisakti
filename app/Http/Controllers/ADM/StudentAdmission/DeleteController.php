@@ -51,6 +51,7 @@ use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Minat;
 use App\Http\Models\ADM\StudentAdmission\Study_Program;
 use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
 use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
+use App\Http\Models\ADM\StudentAdmission\Transfer_Credit;
 use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Database\QueryException;
@@ -1504,7 +1505,6 @@ class DeleteController extends Controller
     }
   }
 
-
   public function DeletePackageQuestionUsers(Request $req)
   {
     try {
@@ -1519,6 +1519,25 @@ class DeleteController extends Controller
       return response([
         'status' => 'Failed',
         'message' => 'Gagal menghapus Package Question Users',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteTransferCredit(Request $req)
+  {
+    try {
+      $data = Transfer_Credit::where('id', $req->id)->first();
+      $data->delete();
+
+      return response([
+        'status' => 'Success',
+        'message' => 'Transfer credit telah dihapus',
+      ], 200);
+    } catch (\Exception $e) {
+      return response([
+        'status' => 'Failed',
+        'message' => 'Gagal menghapus transfer credit',
         'error' => $e->getMessage()
       ], 500);
     }
