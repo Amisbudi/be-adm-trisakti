@@ -4142,7 +4142,7 @@ class CreateController extends Controller
 	{
 		try {
 		$minats = [];
-		$prodi = Study_Program::where('program_study_id', $req->prodi)->first();
+		$prodi = Study_Program::where('classification_id', $req->prodi)->first();
 		$mapping_minat = Mapping_Prodi_Minat::where('prodi_id', $req->prodi)->count();
 		if($mapping_minat > 0){
 			Mapping_Prodi_Minat::where('prodi_id', $req->prodi)->delete();
