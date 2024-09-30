@@ -17,6 +17,8 @@ class Mapping_Path_Price extends Model {
         'active_status',
         'maks_study_program',
         'mapping_path_year_id',
+        'study_program_id',
+        'form_id',
         'category',
         'is_medical'
     ];

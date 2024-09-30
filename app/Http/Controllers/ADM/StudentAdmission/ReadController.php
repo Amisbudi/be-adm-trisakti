@@ -216,7 +216,7 @@ class ReadController extends Controller
                 if ($value['exam_status_id'] == 0) {
                     $value['exam_status'] = null;
                 } else {
-                    $value['exam_status'] = Exam_Type::getExamTypeName($value['exam_status_id'])->name;
+                    $value['exam_status'] = Selection_Category::getCategoryName($value['exam_status_id'])->name;
                 }
             }
 
@@ -506,13 +506,13 @@ class ReadController extends Controller
             'md.active_status',
             'md.document_type_id',
             'md.program_study_id',
-            'c.name as nama_prodi',
+            'c.study_program_branding_name as nama_prodi',
             DB::raw('case when md.active_status =' . "'t'" . ' then ' . "'Aktif'" . ' else ' . "'Non Aktif'" . ' end as active_status_name'),
             DB::raw('case when md.required =' . "'t'" . ' then ' . "true" . ' else ' . "false" . ' end as required'),
             'md.is_value'
         )
             ->leftjoin('document_type as b', 'md.document_type_id', '=', 'b.id')
-            ->leftjoin('study_programs as c', 'md.program_study_id', '=', 'c.id')
+            ->leftjoin('study_programs as c', 'md.program_study_id', '=', 'c.classification_id')
             ->where([$selection_path_id, $active_status])
             ->get();
 
@@ -578,9 +578,15 @@ class ReadController extends Controller
             'mpp.active_status',
             DB::raw('case when mpp.active_status =' . "'t'" . ' then ' . "'Aktif'" . ' else ' . "'Non Aktif'" . ' end as active_status_name'),
             'mpp.mapping_path_year_id',
-            'mpp.category',
+            'mpp.category as nama_formulir',
+            'mpp.study_program_id',
+            'b.study_program_branding_name as nama_prodi',
+            'mpp.form_id',
+            'c.name as kategori_formulir',
             'mpp.is_medical'
         )
+            ->leftJoin('study_programs as b', 'mpp.study_program_id', '=', 'b.classification_id')
+            ->leftJoin('forms as c', 'mpp.form_id', '=', 'c.id')
             ->where([$selection_path_id, $active_status, $price_id, $maks_study_program, $mapping_path_year_id])
             ->get();
 

@@ -592,6 +592,8 @@ class CreateController extends Controller
 				'active_status' => $req->active_status,
 				'created_by' => $by,
 				'mapping_path_year_id' => $req->mapping_path_year_id,
+				'study_program_id' => $req->study_program_id,
+				'form_id' => $req->form_id,
 				'category' => $req->category,
 				'is_medical' => $req->is_medical
 			]);
