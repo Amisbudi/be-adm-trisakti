@@ -585,7 +585,7 @@ class ReadController extends Controller
             'forms.name as kategori_formulir',
             'mpp.is_medical'
         )
-            ->leftJoin('study_programs as b', 'mpp.program_study_id', '=', 'b.classification_id')
+            ->leftJoin('study_programs as b', 'mpp.study_program_id', '=', 'b.classification_id')
             ->leftJoin('forms', 'mpp.form_id', '=', 'forms.id')
             ->where([$selection_path_id, $active_status, $price_id, $maks_study_program, $mapping_path_year_id])
             ->get();
