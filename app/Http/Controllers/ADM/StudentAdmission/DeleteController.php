@@ -1318,7 +1318,8 @@ class DeleteController extends Controller
   public function DeleteStudyProgram(Request $req)
   {
     try {
-      $studyProgram = Study_Program::findOrFail($req->id);
+      $studyProgram = Study_Program::where('classification_id', $req->id)->first();
+      // return response()->json($studyProgram);
       $studyProgram->delete();
 
       return response()->json([

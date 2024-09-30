@@ -1316,7 +1316,8 @@ class ReadController extends Controller
             'study_program_name_en',
             'study_programs.acronim',
             'study_programs.faculty_id',
-            'study_programs.faculty_name'
+            'study_programs.faculty_name',
+            'study_programs.quota'
         )
             ->where([$faculty_id, $study_program_id])
             ->orderBy('study_program_name');
