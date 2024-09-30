@@ -44,7 +44,7 @@ use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Biaya;
 use App\Http\Models\ADM\StudentAdmission\Master_kelas;
 use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
-use App\Http\Models\ADM\StudentAdmission\Selection_Path;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Path_Price;
 use App\Http\Models\ADM\StudentAdmission\Document_Type;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Matapelajaran;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Minat;
@@ -1537,6 +1537,25 @@ class DeleteController extends Controller
       return response([
         'status' => 'Failed',
         'message' => 'Gagal menghapus Package Question Users',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteMappingPathPrice(Request $req)
+  {
+    try {
+      $mappingProdiCategory = Mapping_Path_Price::findOrFail($req->id);
+      $mappingProdiCategory->delete();
+
+      return response()->json([
+        'status' => 'Success',
+        'message' => 'Mapping Path Price deleted successfully',
+      ], 200);
+    } catch (\Exception $e) {
+      return response()->json([
+        'status' => 'Failed',
+        'message' => 'Failed to delete the Mapping Path Price',
         'error' => $e->getMessage()
       ], 500);
     }
