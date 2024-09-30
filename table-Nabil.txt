@@ -1,0 +1,106 @@
+-- TABLE DOCUMENT_CATEGORIES
+CREATE TABLE document_categories (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    status BOOLEAN NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- TABLE SELECTION_CATEGORIES
+CREATE TABLE selection_categories (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    status BOOLEAN NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- TABLE STUDENT_INTEREST
+CREATE TABLE student_interest (
+    id SERIAL PRIMARY KEY,
+    interest_type VARCHAR(255) NOT NULL,
+    status BOOLEAN NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- TABLE MAPPING_PRODI_CATEGORY
+CREATE TABLE mapping_prodi_category(
+    id SERIAL PRIMARY KEY,
+    prodi_fk INT NOT NULL,
+    nama_prodi VARCHAR(100) NOT NULL,
+    dokumen_fk INT NOT NULL,
+    nama_dokumen VARCHAR(100) NOT NULL,
+    selectedstatus INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- TABLE MAPPING_PRODI_FORMULIR
+CREATE TABLE mapping_prodi_formulir(
+    id SERIAL PRIMARY KEY,
+    prodi_fk INT NOT NULL,
+    nama_prodi VARCHAR(100) NOT NULL,
+    nama_formulir VARCHAR(255) NOT NULL,
+    harga INT NOT NULL,
+    kategori_formulir INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- TABLE MAPPING_PRODI_BIAYA
+CREATE TABLE mapping_prodi_biaya(
+    id SERIAL PRIMARY KEY,
+    prodi_fk INT NOT NULL,
+    nama_prodi VARCHAR(100) NOT NULL,
+    kelas_fk VARCHAR(255) NOT NULL,
+    nama_kelas VARCHAR(255) NOT NULL,
+    spp_I INT NOT NULL,
+    spp_II INT NOT NULL,
+    spp_III INT NOT NULL,
+    praktikum INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- TABLE MASTER MATA PELAJARAN
+CREATE TABLE master_matpel(
+    id SERIAL PRIMARY KEY, 
+    name VARCHAR(255) NOT NULL, 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- TABLE MASTER KELAS
+CREATE TABLE master_kelas(
+    id SERIAL PRIMARY KEY, 
+    class_type VARCHAR(255) NOT NULL, 
+    program_study_id INT NULL, 
+    kampus VARCHAR(225) NULL, 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- TABLE MAPPING_PRODI_MINAT
+CREATE TABLE mapping_prodi_minat(
+    id SERIAL PRIMARY KEY, 
+    prodi INT NULL, 
+    terpilih INT NULL, 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- TABLE MAPPING_PRODI_MATAPELAJARAN
+CREATE TABLE mapping_prodi_matapelajaran(
+    id SERIAL PRIMARY KEY, 
+    fakultas VARCHAR(255) NOT NULL, 
+    fakultas_id INT NULL, 
+    prodi_id INT NULL, 
+    nama_prodi VARCHAR(225) NULL, 
+    mata_pelajaran VARCHAR(225) NULL, 
+    pelajaran_id INT NULL, 
+    status INT NULL, 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

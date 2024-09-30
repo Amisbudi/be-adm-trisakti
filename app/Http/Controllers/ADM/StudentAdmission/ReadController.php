@@ -109,6 +109,20 @@ use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
 use App\Http\Models\ADM\StudentAdmission\University;
 use App\Http\Models\ADM\StudentAdmission\Publication_Type;
 use App\Http\Models\ADM\StudentAdmission\Publication_Writer_Position;
+use App\Http\Models\ADM\StudentAdmission\Document_Categories;
+use App\Http\Models\ADM\StudentAdmission\Selection_Categories;
+use App\Http\Models\ADM\StudentAdmission\Student_Interest;
+use App\Http\Models\ADM\StudentAdmission\Category;
+use App\Http\Models\ADM\StudentAdmission\Form;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Category;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Formulir;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Biaya;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Matapelajaran;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Minat;
+use App\Http\Models\ADM\StudentAdmission\Master_kelas;
+use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
+use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
+use App\Http\Models\ADM\StudentAdmission\Schedule;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
 use DataTables;
@@ -491,11 +505,14 @@ class ReadController extends Controller
             'b.name as document_name',
             'md.active_status',
             'md.document_type_id',
+            'md.program_study_id',
+            'c.study_program_branding_name as nama_prodi',
             DB::raw('case when md.active_status =' . "'t'" . ' then ' . "'Aktif'" . ' else ' . "'Non Aktif'" . ' end as active_status_name'),
             DB::raw('case when md.required =' . "'t'" . ' then ' . "true" . ' else ' . "false" . ' end as required'),
             'md.is_value'
         )
             ->leftjoin('document_type as b', 'md.document_type_id', '=', 'b.id')
+            ->leftjoin('study_programs as c', 'md.program_study_id', '=', 'c.classification_id')
             ->where([$selection_path_id, $active_status])
             ->get();
 
@@ -1642,6 +1659,7 @@ class ReadController extends Controller
             'path_exam_details.session_two_end',
             'path_exam_details.session_three_end',
             'path_exam_details.exam_type_id',
+            'path_exam_details.class_type',
             'le.city',
             'le.location',
             'le.address',
@@ -3693,8 +3711,6 @@ class ReadController extends Controller
             ]);
 
             return response()->json(['urls' => $path], 200);
-
-
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => 'Failed',
@@ -5891,6 +5907,20 @@ class ReadController extends Controller
             ->where('study_program_specializations.active_status', '=', true)
             ->distinct()
             ->get();
+
+        return response()->json($data, 200);
+    }
+
+    public function OptionClassTypeSpecialization(Request $req)
+    {
+
+        $data = Study_Program_Specialization::select(
+            'class_type as id',
+            'class_type'
+        )
+        ->where('study_program_specializations.active_status', '=', true)
+        ->distinct()
+        ->get();
 
         return response()->json($data, 200);
     }
@@ -9249,10 +9279,9 @@ class ReadController extends Controller
 
             return response()->json([
                 'status' => 'Success',
-                'grade' => (double) $grade / $total,
+                'grade' => (float) $grade / $total,
                 'message' => null
             ], 200);
-
         } catch (\Exception $e) {
             return response([
                 'status' => 'Failed',
@@ -9260,5 +9289,91 @@ class ReadController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function GetCategories(Request $req)
+    {
+        $data = Category::all();
+        return response()->json($data);
+    }
+
+    public function GetForms(Request $req)
+    {
+        $data = Form::all();
+        return response()->json($data);
+    }
+
+    public function GetSchedules(Request $req)
+    {
+        $data = Schedule::all();
+        return response()->json($data);
+    }
+
+    public function GetDocumentCategories(Request $req)
+    {
+        $data = Document_Categories::all();
+        return response()->json($data);
+    }
+
+    public function GetSelectionCategories(Request $req)
+    {
+        $data = Selection_Categories::all();
+        return response()->json($data);
+    }
+
+    public function GetStudentInterest(Request $req)
+    {
+        $data = Education_Major::all();
+        return response()->json($data);
+    }
+
+    public function GetMappingProdiCategory(Request $req)
+    {
+        $data = Mapping_Prodi_Category::all();
+        return response()->json($data);
+    }
+
+    public function GetMappingProdiFormulir(Request $req)
+    {
+        $data = Mapping_Prodi_Formulir::all();
+        return response()->json($data);
+    }
+
+    public function GetMappingProdiBiaya(Request $req)
+    {
+        $data = Mapping_Prodi_Biaya::all();
+        return response()->json($data);
+    }
+
+    public function GetMasterMataPelajaran(Request $req)
+    {
+        $data = Master_Matpel::all();
+        return response()->json($data);
+    }
+
+    public function GetMasterKelas(Request $req)
+    {
+        $data = Master_kelas::all();
+        return response()->json($data);
+    }
+
+    public function GetMappingProdiMatapelajaran(Request $req)
+    {
+        $data = Mapping_Prodi_Matapelajaran::all();
+        return response()->json($data);
+    }
+
+    public function GetMappingProdiMinat(Request $req)
+    {
+        $data = Mapping_Prodi_Minat::all();
+        return response()->json($data);
+    }
+
+    public function GetPackageQuestionUsers(Request $req)
+    {
+        $data = CBT_Package_Question_Users::all();
+        return response()->json([
+            'data' => $data,
+        ]);
     }
 }

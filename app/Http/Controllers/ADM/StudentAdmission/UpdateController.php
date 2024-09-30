@@ -52,9 +52,29 @@ use App\Http\Models\ADM\StudentAdmission\Registration_Result;
 use App\Http\Models\ADM\StudentAdmission\Study_Program;
 use App\Http\Models\ADM\StudentAdmission\Document_Publication;
 use App\Http\Models\ADM\StudentAdmission\Document_Transcript;
+use App\Http\Models\ADM\StudentAdmission\Exam_Type;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Transcript_Participant;
 use App\Http\Models\ADM\StudentAdmission\New_Student;
 use App\Http\Models\ADM\StudentAdmission\Participant_Document;
+use App\Http\Models\ADM\StudentAdmission\Selection_Category;
+use App\Http\Models\ADM\StudentAdmission\Document_Categories;
+use App\Http\Models\ADM\StudentAdmission\Education_Degree;
+use App\Http\Models\ADM\StudentAdmission\Selection_Categories;
+use App\Http\Models\ADM\StudentAdmission\Student_Interest;
+use App\Http\Models\ADM\StudentAdmission\Category;
+use App\Http\Models\ADM\StudentAdmission\Education_Major;
+use App\Http\Models\ADM\StudentAdmission\Form;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Category;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Formulir;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Biaya;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Matapelajaran;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Minat;
+use App\Http\Models\ADM\StudentAdmission\Master_kelas;
+use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
+use App\Http\Models\ADM\StudentAdmission\Schedule;
+use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
+use App\Http\Models\ADM\StudentAdmission\Document_Type;
+use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
@@ -167,7 +187,8 @@ class UpdateController extends Controller
 				'session_one_end' => $req->session_one_end,
 				'session_two_end' => $req->session_two_end,
 				'session_three_end' => $req->session_three_end,
-				'exam_type_id' => $req->exam_type_id
+				'exam_type_id' => $req->exam_type_id,
+				'class_type' => $req->class_type
 			]);
 
 			DB::connection('pgsql')->commit();
@@ -2615,7 +2636,7 @@ class UpdateController extends Controller
 
 		try {
 			$dc = Document_Transcript::find($req->document_transcript_id);
-			
+
 			//update mapping document transcript
 			$datas = json_decode($req->json, true);
 
@@ -2631,6 +2652,524 @@ class UpdateController extends Controller
 						'approval_by' => $by
 					]);
 			}
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateExamType(Request $req)
+	{
+		try {
+			$by = $req->header("X-I");
+			$id = Exam_Type::select('id')->where('id', '=', $req->id)->first();
+			$update = Exam_Type::find($id->id)->update([
+				'id' => $req->id,
+				'name' => $req->name,
+				'active_status' => $req->active_status,
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateCategory(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$category = Category::findOrFail($req->id);
+			$category->update([
+				'name' => $req->name,
+				'status' => $req->status,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateSelectionCategory(Request $req)
+	{
+		try {
+			$by = $req->header("X-I");
+			$id = Selection_Category::select('id')->where('id', '=', $req->id)->first();
+			$update = Selection_Category::find($id->id)->update([
+				'id' => $req->id,
+				'name' => $req->name,
+				'description' => $req->description,
+				'active_status' => $req->active_status
+			]);
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateForms(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$form = Form::findOrFail($req->id);
+			$form->update([
+				'name' => $req->name,
+				'status' => $req->status,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateSchedule(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$schedule = Schedule::findOrFail($req->id);
+			$schedule->update([
+				'selection_path_id' => $req->selection_path_id,
+				'category_id' => $req->category_id,
+				'session' => $req->session,
+				'date' => $req->date,
+				'status' => $req->status,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+	public function UpdateDocumentCategories(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$schedule = Document_Categories::findOrFail($req->id);
+			$schedule->update([
+				'name' => $req->name,
+				'status' => $req->status,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			],  500);
+		}
+	}
+
+	public function UpdateSelectionCategories(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$schedule = Selection_Categories::findOrFail($req->id);
+			$schedule->update([
+				'name' => $req->name,
+				'status' => $req->status,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			],  500);
+		}
+	}
+
+	public function UpdateStudentInterest(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$schedule = Education_Major::findOrFail($req->id);
+			$schedule->update([
+				'major' => $req->major,
+				'education_degree_id' => $req->education_degree_id,
+				'created_by' => $req->created_by,
+				'updated_by' => $req->updated_by,
+				'created_at' => $req->created_at,
+				'updated_at' => $req->updated_at,
+				'is_technic' => $req->is_technic,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateEducationDegree(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$schedule = Education_Degree::findOrFail($req->id);
+			$schedule->update([
+				'level' => $req->level,
+				'description' => $req->description,
+				'created_by' => $req->created_by,
+				'updated_by' => $req->updated_by,
+				'created_at' => $req->created_at,
+				'updated_at' => $req->updated_at,
+				'type' => $req->type
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateStudyProgram(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$schedule = Study_Program::where('classification_id', $req->classification_id);
+			$schedule->update([
+				'program_study_id' => $req->program_study_id,
+				'faculty_id' => $req->faculty_id,
+				'category' => $req->category,
+				'classification_name' => $req->classification_name,
+				'study_program_branding_name' => $req->study_program_branding_name,
+				'study_program_name' => $req->study_program_name,
+				'study_program_name_en' => $req->study_program_name_en,
+				'study_program_acronim' => $req->study_program_acronim,
+				'faculty_name' => $req->faculty_name,
+				'acronim' => $req->acronim,
+				'acreditation' => $req->acreditation
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateMappingProdiCategory(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$mappingprodicategory = Mapping_Prodi_Category::findOrFail($req->id);
+			$mappingprodicategory->update([
+				'prodi_fk' => $req->prodi_fk,
+				'nama_prodi' => $req->nama_prodi,
+				'dokumen_fk' => $req->dokumen_fk,
+				'nama_dokumen' => $req->nama_dokumen,
+				'selectedstatus' => $req->selectedstatus,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateMappingProdiFormulir(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$mappingprodiformulir = Mapping_Prodi_Formulir::findOrFail($req->id);
+			$mappingprodiformulir->update([
+				'prodi_fk' => $req->prodi_fk,
+				'nama_prodi' => $req->nama_prodi,
+				'nama_formulir' => $req->nama_formulir,
+				'harga' => $req->harga,
+				'kategori_formulir' => $req->kategori_formulir,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateMappingProdiBiaya(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$mappingprodibiaya = Mapping_Prodi_Biaya::findOrFail($req->id);
+			$mappingprodibiaya->update([
+				'prodi_fk' => $req->prodi_fk,
+				'nama_prodi' => $req->nama_prodi,
+				'kelas_fk' => $req->kelas_fk,
+				'nama_kelas' => $req->nama_kelas,
+				'spp_i' => $req->spp_i,
+				'spp_ii' => $req->spp_ii,
+				'spp_iii' => $req->spp_iii,
+				'praktikum' => $req->praktikum,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateMasterMataPelajaran(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$MasterMataPelajaran = Master_Matpel::findOrFail($req->id);
+			$MasterMataPelajaran->update([
+				'name' => $req->name,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateStudyProgramSpecialization(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$MasterKelas = Study_Program_Specialization::findOrFail($req->id);
+			$MasterKelas->update([
+				'specialization_name_ori ' => $req->specialization_name_ori,
+				'specialization_name' => $req->specialization_name,
+				'specialization_code' => $req->specialization_code,
+				'active_status' => $req->active_status,
+				'class_type' => $req->class_type,
+				'program_study_id' => $req->program_study_id,
+				'faculty_id' => $req->faculty_id,
+				'faculty_name' => $req->faculty_name,
+				'category' => $req->category,
+				'classification_name' => $req->classification_name,
+				'study_program_name' => $req->study_program_name,
+				'study_program_name_en' => $req->study_program_name_en,
+				'acronim' => $req->acronim
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateFaculty(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$study_program = Study_Program::where('classification_id', $req->classification_id)->first();
+			$study_program->update([
+				'program_study_id' => $req->program_study_id,
+				'faculty_id' => $req->faculty_id,
+				'category' => $req->category,
+				'classification_name' => $req->classification_name,
+				'study_program_branding_name' => $req->study_program_branding_name,
+				'study_program_name' => $req->study_program_name,
+				'study_program_name_en' => $req->study_program_name_en,
+				'study_program_acronim' => $req->study_program_acronim,
+				'faculty_name' => $req->faculty_name,
+				'acronim' => $req->acronim,
+				'acreditation' => $req->acreditation,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateDocumentType(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$document = Document_Type::where('id', $req->id)->first();
+			$document->update([
+				'name' => $req->name,
+				'description' => $req->description,
+
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateMappingProdiMatapelajaran(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$document = Mapping_Prodi_Matapelajaran::where('id', $req->id)->first();
+			$document->update([
+				'fakultas' => $req->fakultas,
+				'fakultas_id' => $req->fakultas_id,
+				'prodi_id' => $req->prodi_id,
+				'nama_prodi' => $req->nama_prodi,
+				'mata_pelajaran' => $req->mata_pelajaran,
+				'pelajaran_id' => $req->pelajaran_id,
+				'status' => $req->status
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateMappingProdiMinat(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$document = Mapping_Prodi_Minat::where('id', $req->id)->first();
+			$document->update([
+				'fakultas' => $req->fakultas,
+				'fakultas_id' => $req->fakultas_id,
+				'prodi_id' => $req->prodi_id,
+				'nama_prodi' => $req->nama_prodi,
+				'nama_minat' => $req->nama_minat,
+				'minat_id' => $req->minat_id,
+				'quota' => $req->quota,
+				'status' => $req->status
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdatePackageQuestionUsers(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$data = CBT_Package_Question_Users::where('id', $req->id)->first();
+			$data->update([
+				'package_question_id' => $req->package_question_id,
+				'user_id' => $req->user_id,
+				'classes' => $req->classes,
+				'date_exam' => $req->date_exam,
+				'date_start' => $req->date_start,
+				'date_end' => $req->date_end,
+				'status' => $req->status
+			]);
 			return response([
 				'status' => 'Success',
 				'message' => 'Data Tersimpan'

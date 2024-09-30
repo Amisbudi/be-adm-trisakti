@@ -17,5 +17,5 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASS }}
           script: |
-            cd /var/www/adm-trisakti
+            cd /var/www/trisakti/backend
             git pull origin dev
