@@ -3923,7 +3923,7 @@ class CreateController extends Controller
 			$prodi = Study_Program::where('classification_id', $req->prodi)->first();
 			\Log::info('Request data: ', $req->all()); // Tambahkan log untuk melihat input JSON
 
-			foreach ($req->terpilih as $key => $select) {
+			foreach (json_decode($req->terpilih) as $key => $select) {
 				Mapping_Prodi_Category::create([
 					'prodi_fk' => $prodi->classification_id,
 					'nama_prodi' => $prodi->study_program_branding_name,
@@ -4155,8 +4155,9 @@ class CreateController extends Controller
 		if($mapping_minat > 0){
 			Mapping_Prodi_Minat::where('prodi_id', $req->prodi)->delete();
 		}
-		for ($i = 0; $i < count($req->terpilih); $i++) {
-			$minat = Education_Major::where('id', $req->terpilih[$i])->first();
+		$terpilih = json_decode($req->terpilih);
+		for ($i = 0; $i < count($terpilih); $i++) {
+			$minat = Education_Major::where('id', $terpilih[$i])->first();
 			array_push($minats, [
 				'fakultas' => $prodi->faculty_name,
 				'fakultas_id' => $prodi->faculty_id,
