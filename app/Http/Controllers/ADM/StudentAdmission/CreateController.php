@@ -3921,11 +3921,11 @@ class CreateController extends Controller
 	{
 		try {
 			$datas = json_decode($req->json, true);
-			Mapping_Prodi_Category::where('prodi_fk', $datas->prodi)->delete();
-			$prodi = Study_Program::where('classification_id', $datas->prodi)->first();
+			Mapping_Prodi_Category::where('prodi_fk', $datas['prodi'])->delete();
+			$prodi = Study_Program::where('classification_id', $datas['prodi'])->first();
 			\Log::info('Request data: ', $req->all()); // Tambahkan log untuk melihat input JSON
 
-			foreach ($datas->terpilih as $key => $select) {
+			foreach ($datas['terpilih'] as $key => $select) {
 				Mapping_Prodi_Category::create([
 					'prodi_fk' => $prodi->classification_id,
 					'nama_prodi' => $prodi->study_program_branding_name,
