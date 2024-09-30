@@ -57,6 +57,11 @@ Route::post('/studyprogram/insert', 'ADM\StudentAdmission\CreateController@Inser
 Route::post('/studyprogram/update', 'ADM\StudentAdmission\UpdateController@UpdateStudyProgram');
 Route::post('/studyprogram/delete', 'ADM\StudentAdmission\DeleteController@DeleteStudyProgram');
 
+Route::get('/transfercredit', 'ADM\StudentAdmission\ReadController@GetTransferCredit');
+Route::post('/transfercredit/insert', 'ADM\StudentAdmission\CreateController@InsertTransferCredit');
+Route::post('/transfercredit/update', 'ADM\StudentAdmission\UpdateController@UpdateTransferCredit');
+Route::post('/transfercredit/delete', 'ADM\StudentAdmission\DeleteController@DeleteTransferCredit');
+
 // Form
 Route::get('/forms', 'ADM\StudentAdmission\ReadController@GetForms');
 Route::post('/forms/insert', 'ADM\StudentAdmission\CreateController@InsertForm');

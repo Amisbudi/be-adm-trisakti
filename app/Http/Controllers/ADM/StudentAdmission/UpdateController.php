@@ -75,6 +75,7 @@ use App\Http\Models\ADM\StudentAdmission\Schedule;
 use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
 use App\Http\Models\ADM\StudentAdmission\Document_Type;
 use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
+use App\Http\Models\ADM\StudentAdmission\Transfer_Credit;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
@@ -2976,6 +2977,13 @@ class UpdateController extends Controller
 				'spp_ii' => $req->spp_ii,
 				'spp_iii' => $req->spp_iii,
 				'praktikum' => $req->praktikum,
+				'bpp_pokok' => $req->bpp_pokok,
+        'bpp_sks' => $req->bpp_sks,
+        'bpp_i' => $req->bpp_i,
+        'bpp_ii' => $req->bpp_ii,
+        'bpp_iii' => $req->bpp_iii,
+        'biaya_ujian' => $req->biaya_ujian,
+        'biaya_lainnya' => $req->biaya_lainnya
 			]);
 			return response([
 				'status' => 'Success',
@@ -3127,6 +3135,7 @@ class UpdateController extends Controller
 			], 500);
 		}
 	}
+
 	public function UpdatePackageQuestionUsers(Request $req)
 	{
 		$by = $req->header("X-I");
@@ -3140,6 +3149,33 @@ class UpdateController extends Controller
 				'date_start' => $req->date_start,
 				'date_end' => $req->date_end,
 				'status' => $req->status
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateTransferCredit(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$data = Transfer_Credit::where('id', $req->id)->first();
+			$data->update([
+				'kode_matakuliah_ex' => $req->kode_matakuliah_ex,
+				'nama_matakuliah_ex' => $req->nama_matakuliah_ex,
+				'sks_ex' => $req->sks_ex,
+				'kode_matakuliah' => $req->kode_matakuliah,
+				'nama_matakuliah' => $req->nama_matakuliah,
+				'sks' => $req->sks,
+				'nilai' => $req->nilai
 			]);
 			return response([
 				'status' => 'Success',

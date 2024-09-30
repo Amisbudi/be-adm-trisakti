@@ -122,6 +122,7 @@ use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Minat;
 use App\Http\Models\ADM\StudentAdmission\Master_kelas;
 use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
+use App\Http\Models\ADM\StudentAdmission\Transfer_Credit;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
@@ -9375,6 +9376,11 @@ class ReadController extends Controller
         return response()->json($data);
     }
 
+    public function GetTransferCredit(Request $req)
+    {
+        $data = Transfer_Credit::all();
+        return response()->json($data);
+    }
     public function GetPackageQuestionUsers(Request $req)
     {
         $data = CBT_Package_Question_Users::all();

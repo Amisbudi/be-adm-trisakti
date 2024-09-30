@@ -6,3 +6,17 @@ CREATE TABLE forms (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+// Table forms
+CREATE TABLE transfer_credit (
+    id SERIAL PRIMARY KEY,
+    kode_matakuliah_ex VARCHAR(255) NOT NULL,
+    nama_matakuliah_ex VARCHAR(255) NOT NULL,
+    sks_ex INT NULL,
+    kode_matakuliah VARCHAR(255) NOT NULL,
+    nama_matakuliah VARCHAR(255) NOT NULL,
+    sks INT NULL,
+    nilai VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
