@@ -1275,7 +1275,7 @@ class ReadController extends Controller
         $data['data'] = array();
 
         foreach ($query as $key => $value) {
-            $value['sdp_total'] = number_format($value['education_fund'] + $value['minimum_donation'], 0, '.', '.');
+            $value['sdp_total'] = number_format($value['price'] + $value['education_fund'] + $value['minimum_donation'], 0, '.', '.');
             array_push($data['data'], $value);
         }
 
