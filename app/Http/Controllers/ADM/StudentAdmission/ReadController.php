@@ -9339,7 +9339,7 @@ class ReadController extends Controller
     {
         $data = Mapping_Prodi_Category::select('*');
         if($req->id){
-            $data->where('id', $req->id);
+            $data->where('prodi_fk', $req->id);
         }
         
         return response()->json($data->get());
