@@ -9337,8 +9337,12 @@ class ReadController extends Controller
 
     public function GetMappingProdiCategory(Request $req)
     {
-        $data = Mapping_Prodi_Category::all();
-        return response()->json($data);
+        $data = Mapping_Prodi_Category::select('*');
+        if($req->id){
+            $data->where('id', $req->id);
+        }
+        
+        return response()->json($data->get());
     }
 
     public function GetMappingProdiFormulir(Request $req)
