@@ -351,7 +351,7 @@ class UpdateController extends Controller
 				$data['birth_city'] = $req->birth_city;
 			}
 			if ($req->birth_date) {
-				$data['birth_date'] = Carbon::date($req->birth_date)->format('Y-m-d');
+				$data['birth_date'] = Carbon::parse($req->birth_date)->format('Y-m-d');
 			}
 			if ($req->nationality) {
 				$data['nationality'] = $req->nationality;
