@@ -3935,10 +3935,13 @@ class CreateController extends Controller
 				]);
 			}
 
+			$data = Mapping_Prodi_Category::where('prodi_fk', $datas['prodi'])->first();
+
 			DB::connection('pgsql')->commit();
 			return response([
 				'status' => 'Success',
-				'message' => 'Data Tersimpan'
+				'message' => 'Data Tersimpan',
+				'data' => $data
 			], 200);
 		} catch (\Exception $e) {
 			DB::connection('pgsql')->rollBack();
