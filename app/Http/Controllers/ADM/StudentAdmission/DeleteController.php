@@ -1486,25 +1486,6 @@ class DeleteController extends Controller
     }
   }
 
-  public function DeleteMappingProdiMatapelajaran(Request $req)
-  {
-    try {
-      $mapping_prodi_matapellajaran = Mapping_Prodi_Matapelajaran::where('id', $req->id)->first();
-      $mapping_prodi_matapellajaran->delete();
-
-      return response([
-        'status' => 'Success',
-        'message' => 'Mapping Prodi Mata Pelajaran telah dihapus',
-      ], 200);
-    } catch (\Exception $e) {
-      return response([
-        'status' => 'Failed',
-        'message' => 'Gagal menghapus Mapping Prodi Mata Pelajaran',
-        'error' => $e->getMessage()
-      ], 500);
-    }
-  }
-
   public function DeletePackageQuestionUsers(Request $req)
   {
     try {
