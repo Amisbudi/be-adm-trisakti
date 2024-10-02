@@ -2885,7 +2885,7 @@ class UpdateController extends Controller
 	{
 		$by = $req->header("X-I");
 		try {
-			$schedule = Study_Program::where('classification_id', $req->classification_id);
+			$schedule = Study_Program::where('classification_id', $req->id);
 			$schedule->update([
 				'program_study_id' => $req->program_study_id,
 				'faculty_id' => $req->faculty_id,
