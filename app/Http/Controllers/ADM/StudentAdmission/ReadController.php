@@ -1275,7 +1275,7 @@ class ReadController extends Controller
         $data['data'] = array();
 
         foreach ($query as $key => $value) {
-            $value['sdp_total'] = number_format($value['education_fund'] + $value['minimum_donation'], 0, '.', '.');
+            $value['sdp_total'] = number_format($value['price'] + $value['education_fund'] + $value['minimum_donation'], 0, '.', '.');
             array_push($data['data'], $value);
         }
 
@@ -9337,8 +9337,12 @@ class ReadController extends Controller
 
     public function GetMappingProdiCategory(Request $req)
     {
-        $data = Mapping_Prodi_Category::all();
-        return response()->json($data);
+        $data = Mapping_Prodi_Category::select('*');
+        if($req->id){
+            $data->where('prodi_fk', $req->id);
+        }
+        
+        return response()->json($data->get());
     }
 
     public function GetMappingProdiFormulir(Request $req)

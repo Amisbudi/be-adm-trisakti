@@ -2460,64 +2460,27 @@ class CreateController extends Controller
 			'participants.id',
 			'participants.fullname',
 			'participants.username as email',
-			'participants.photo_url'
+			'participants.photo_url',
+			'participants.identify_number'
 		)
 			->where('participants.id', '=', $req->participant_id)
 			->first();
 
-		//get first last name from fullname
-		$first_last_name = Moodle_Users::GenerateFirstLastNameFromFullname($participant->fullname);
-		//generate password Default minimum 8 Karakter, terdapat angka, huruf besar, kecil dan simbol
-		$password = Str::random(4) . 'Pw@' . $participant->id;
-
 		try {
 			//initialize moodle
-			$http = new Client();
-			$url = env('CBT_MOODLE_URL');
-
-			$formParam['wstoken'] = env('CBT_MOODLE_TOKEN');
-			$formParam['moodlewsrestformat'] = 'json';
-			$formParam['wsfunction'] = 'local_trisakti_api_create_users';
-
-			$formParam['users'][0]['username'] = $participant->email;
-			$formParam['users'][0]['password'] = $password;
-			$formParam['users'][0]['firstname'] = $first_last_name['firstname'];
-			$formParam['users'][0]['lastname'] = $first_last_name['lastname'];
-			$formParam['users'][0]['email'] = $participant->email;
-			$formParam['users'][0]['idnumber'] = $participant->id;
-			$formParam['users'][0]['auth'] = "oauth2";
-
-			//execute moodle
-			$request = $http->post($url, ['form_params' => $formParam]);
-			$response = json_decode($request->getBody(), true);
-
-			if ($response['data'][0]['id'] == 0) {
-				return response([
-					'status' => 'Success',
-					'message' => 'Data didaftarkan dalam moodle',
-					'response' => null,
-					'moodle_user_id' => $participant->id
-				], 200);
-			}
-
-			$moodle_user = Moodle_Users::create([
-				'id' => $response['data'][0]['idnumber'],
-				'username' => $formParam['users'][0]['username'],
-				'password' => $formParam['users'][0]['password'],
-				'firstname' => $formParam['users'][0]['firstname'],
-				'lastname' => $formParam['users'][0]['lastname'],
-				'email' => $formParam['users'][0]['email'],
-				'participant_id' => $participant->id,
-				'auth' => $formParam['users'][0]['auth'],
-				'json_response' => json_encode($response),
-				'created_by' => $by
+			CBT_Package_Question_Users::create([
+				'package_question_id' => 1,
+				'user_id' => $participant->identify_number,
+				'classes' => "Reguler",
+				'date_exam' => "2024-10-01 08:00:00",
+				'date_start' => "2024-10-01 08:00:00",
+				'date_end' => "2024-10-10 23:00:00",
+				'status' => 1
 			]);
-
+			DB::connection('pgsql')->commit();
 			return response([
 				'status' => 'Success',
-				'message' => 'Data didaftarkan dalam moodle',
-				'response' => $response,
-				'moodle_user_id' => $moodle_user->id
+				'message' => 'Data Tersimpan'
 			], 200);
 		} catch (\Exception $e) {
 			return response([

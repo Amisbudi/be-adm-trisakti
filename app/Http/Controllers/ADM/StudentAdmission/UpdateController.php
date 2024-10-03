@@ -351,7 +351,7 @@ class UpdateController extends Controller
 				$data['birth_city'] = $req->birth_city;
 			}
 			if ($req->birth_date) {
-				$data['birth_date'] = Carbon::date($req->birth_date)->format('Y-m-d');
+				$data['birth_date'] = Carbon::parse($req->birth_date)->format('Y-m-d');
 			}
 			if ($req->nationality) {
 				$data['nationality'] = $req->nationality;
@@ -2885,7 +2885,7 @@ class UpdateController extends Controller
 	{
 		$by = $req->header("X-I");
 		try {
-			$schedule = Study_Program::where('classification_id', $req->classification_id);
+			$schedule = Study_Program::where('classification_id', $req->id);
 			$schedule->update([
 				'program_study_id' => $req->program_study_id,
 				'faculty_id' => $req->faculty_id,
