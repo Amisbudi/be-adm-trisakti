@@ -3935,10 +3935,13 @@ class CreateController extends Controller
 				]);
 			}
 
+			$data = Mapping_Prodi_Category::where('prodi_fk', $datas['prodi'])->first();
+
 			DB::connection('pgsql')->commit();
 			return response([
 				'status' => 'Success',
-				'message' => 'Data Tersimpan'
+				'message' => 'Data Tersimpan',
+				'data' => $data
 			], 200);
 		} catch (\Exception $e) {
 			DB::connection('pgsql')->rollBack();
@@ -4124,15 +4127,25 @@ class CreateController extends Controller
 	public function InsertMappingProdiMatapelajaran(Request $req)
 	{
 		try {
-			Mapping_Prodi_Matapelajaran::create([
-				'fakultas' => $req->fakultas,
-				'fakultas_id' => $req->fakultas_id,
-				'prodi_id' => $req->prodi_id,
-				'nama_prodi' => $req->nama_prodi,
-				'mata_pelajaran' => $req->mata_pelajaran,
-				'pelajaran_id' => $req->pelajaran_id,
-				'status' => $req->status
-			]);
+			$pelajarans = [];
+			$prodi = Study_Program::where('classification_id', $req->prodi)->first();
+			$mapping_matapelajaran = Mapping_Prodi_Matapelajaran::where('prodi_id', $prodi->program_study_id)->count();
+			if($mapping_matapelajaran > 0){
+				Mapping_Prodi_Matapelajaran::where('prodi_id', $prodi->program_study_id)->delete();
+			}
+			for ($i = 0; $i < count($req->terpilih); $i++) {
+				$matpel = Master_Matpel::where('id', $req->terpilih[$i]['pelajaran_id'])->first();
+				array_push($pelajarans, [
+					'fakultas' => $prodi->faculty_name,
+					'fakultas_id' => $prodi->faculty_id,
+					'prodi_id' => $prodi->program_study_id,
+					'nama_prodi' => $prodi->study_program_name,
+					'mata_pelajaran' => $matpel->name,
+					'pelajaran_id' => $matpel->id,
+					'status' => true
+				]);
+			}
+			Mapping_Prodi_Matapelajaran::insert($pelajarans);
 			DB::connection('pgsql')->commit();
 			return response([
 				'status' => 'Success',
