@@ -9391,8 +9391,12 @@ class ReadController extends Controller
 
     public function GetTransferCredit(Request $req)
     {
-        $data = Transfer_Credit::all();
-        return response()->json($data);
+        $data = Transfer_Credit::select('*');
+        if($req->participant_id){
+            $data->where('participant_id', $req->participant_id);
+        }
+        
+        return response()->json($data->get());
     }
     public function GetPackageQuestionUsers(Request $req)
     {
