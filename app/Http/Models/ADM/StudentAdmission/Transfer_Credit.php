@@ -11,6 +11,7 @@ class Transfer_Credit extends Model
     protected $table = 'transfer_credit';
     protected $primaryKey = 'id';
     protected $fillable = [
+        'participant_id',
         'kode_matakuliah_ex',
         'nama_matakuliah_ex',
         'sks_ex',

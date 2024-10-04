@@ -3143,6 +3143,7 @@ class UpdateController extends Controller
 		try {
 			$data = Transfer_Credit::where('id', $req->id)->first();
 			$data->update([
+				'participant_id' => $req->participant_id,
 				'kode_matakuliah_ex' => $req->kode_matakuliah_ex,
 				'nama_matakuliah_ex' => $req->nama_matakuliah_ex,
 				'sks_ex' => $req->sks_ex,
