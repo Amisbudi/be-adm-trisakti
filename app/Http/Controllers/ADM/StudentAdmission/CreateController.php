@@ -586,6 +586,7 @@ class CreateController extends Controller
 	{
 		try {
 			$by = $req->header("X-I");
+
 			$create = Mapping_Path_Price::create([
 				'selection_path_id' => $req->selection_path_id,
 				'price' => $req->price,
@@ -1476,69 +1477,97 @@ class CreateController extends Controller
 	public function RequestPinTransaction(Request $req)
 	{
 		$by = $req->header("X-I");
-		$token = $req->token;
-
-		$dataToSend['va_number'] = $req->registration_number;
-		$dataToSend['trx_amount'] = $req->amount;
-		$dataToSend['customer_name'] = $req->participant_name;
-		$dataToSend['customer_email'] = $req->participant_email;
-		$dataToSend['customer_phone'] = $req->participant_phone_number;
-		$dataToSend['datetime_expired'] = Carbon::now()->addWeek(1)->format('Y-m-d h:i:s');
-		$dataToSend['description'] = $req->add_info1;
-
+		$ipfy = '';
+		$createVA = '';
+		$datajson = '';
+		$request_body = '';
 		try {
-			//url transaction va
-			$url = env('URL_CREATE_TRANSACTION_VA');
+			$client_id = env('CLIENT_ID'); //client id from BNI
+			$prefix = env('PREFIX'); //prefix id from BNI
+			$secret_key = env('SECRET_VA'); // secret key from BNI
+			$trx_id = strtotime("now") . $client_id . $req->registration_number;
+			$request_body = array(
+				"client_id"         => $client_id,
+				"trx_amount"        => $req->amount,
+				"customer_name"     => $req->participant_name,
+				"customer_email"    => $req->participant_email,
+				"customer_phone"    => $req->participant_phone,
+				"virtual_account"   => $prefix . $client_id . $req->registration_number,
+				"trx_id"            => $trx_id,
+				"datetime_expired"  => Carbon::now()->addWeek(1)->format('Y-m-d h:i:s'),
+				"description"       => $req->add_info1,
+				"type"              => 'createBilling'
+			);
+			$hashdata = encrypt($request_body, $client_id, $secret_key);
+			$datajson = json_encode(array(
+				'client_id' => $client_id,
+				'prefix' => $prefix,
+				'data' => $hashdata,
+			));
 
 			$http = new Client(['verify' => false]);
 
-			$request = $http->post($url, [
-				'form_params' => $dataToSend,
+			$request = $http->post(env('URL_CREATE_TRANSACTION_VA'), [
+				'body' => $datajson,
 				'headers' => [
-					'Authorization' => 'Bearer ' . $token
-				]
+					'Content-Type' => 'application/json',
+					'Accept-Encoding' => ' gzip, deflate',
+					'Cache-Control' => ' max-age=0',
+					'Connection' => ' keep-alive',
+					'Accept-Language' => ' en-US,en;q=0.8,id;q=0.6',
+					// 'Authorization' => 'Bearer ' . $token
+				],
+				'connect_timeout' => 25
 			]);
 
-			$response = json_decode($request->getBody(), true);
+			$createVA = json_decode($request->getBody(), true);
 
-			//validate response status
-			if (isset($response['status'])) {
-				return response()->json([
-					'status' => 'Failed',
-					'code' => $response['status'],
-					'message' => $response['status'],
-					'response' => $response
-				], 500);
+			if (isset($createVA['data'])) {
+				$parsedata = decrypt($createVA['data'], $client_id, $secret_key);
+
+				$dataToSend['va_number'] = $req->registration_number;
+				$dataToSend['trx_amount'] = $req->amount;
+				$dataToSend['customer_name'] = $req->participant_name;
+				$dataToSend['customer_email'] = $req->participant_email;
+				$dataToSend['customer_phone'] = $req->participant_phone_number;
+				$dataToSend['datetime_expired'] = Carbon::now()->addWeek(1)->format('Y-m-d h:i:s');
+				$dataToSend['description'] = $req->add_info1;
+
+				Transaction_Request::create([
+					'client_id' => $client_id,
+					'trx_amount' => $dataToSend['trx_amount'],
+					'customer_name' => $dataToSend['customer_name'],
+					'customer_email' => $dataToSend['customer_email'],
+					'customer_phone' => $dataToSend['customer_phone'],
+					'virtual_account' => $parsedata->virtual_account,
+					'trx_id' => $parsedata->trx_id,
+					'datetime_expired' => $dataToSend['datetime_expired'],
+					'description' => $dataToSend['description'],
+					'type' => 'createBilling',
+					'json_response' => json_encode($createVA),
+					'created_by' => $by,
+					'registration_number' => $req->registration_number
+				]);
+			} else {
+				return response()->json($createVA);
 			}
 
-			Transaction_Request::create([
-				'client_id' => $response['request_body']['client_id'],
-				'trx_amount' => $response['request_body']['trx_amount'],
-				'customer_name' => $response['request_body']['customer_name'],
-				'customer_email' => $response['request_body']['customer_email'],
-				'customer_phone' => $response['request_body']['customer_phone'],
-				'virtual_account' => $response['request_body']['virtual_account'],
-				'trx_id' => $response['request_body']['trx_id'],
-				'datetime_expired' => $response['request_body']['datetime_expired'],
-				'description' => $response['request_body']['description'],
-				'type' => $response['request_body']['type'],
-				'json_response' => json_encode($response),
-				'created_by' => $by,
-				'registration_number' => $req->registration_number
-			]);
-
-			return response()->json([
-				'status' => 'Success',
-				'message' => 'Transaction Success',
-				'result' => $response
-			], 200);
-		} catch (\Exception $e) {
-			return response()->json([
-				'status' => 'Failed',
-				'message' => 'Transaction Failed',
-				'result' => $e->getMessage()
-			], 500);
+			$ipfy = json_decode($http->request('GET', 'https://api64.ipify.org?format=json', [
+				'connect_timeout' => 25
+			])->getBody(), true);
+		} catch (\Throwable $e) {
+			return $e;
+		} catch (Exception $e) {
+			return $e;
+		} catch (\GuzzleHttp\Exception\BadResponseException $e) {
+			return $e;
 		}
+		return response()->json(
+			array(
+				'request_body' => $request_body,
+				'response' => $parsedata
+			)
+		);
 	}
 
 	public function RequestPinTransactionBackup(Request $req)
@@ -3955,12 +3984,12 @@ class CreateController extends Controller
 				'spp_iii' => $req->spp_iii,
 				'praktikum' => $req->praktikum,
 				'bpp_pokok' => $req->bpp_pokok,
-        'bpp_sks' => $req->bpp_sks,
-        'bpp_i' => $req->bpp_i,
-        'bpp_ii' => $req->bpp_ii,
-        'bpp_iii' => $req->bpp_iii,
-        'biaya_ujian' => $req->biaya_ujian,
-        'biaya_lainnya' => $req->biaya_lainnya
+				'bpp_sks' => $req->bpp_sks,
+				'bpp_i' => $req->bpp_i,
+				'bpp_ii' => $req->bpp_ii,
+				'bpp_iii' => $req->bpp_iii,
+				'biaya_ujian' => $req->biaya_ujian,
+				'biaya_lainnya' => $req->biaya_lainnya
 			]);
 			DB::connection('pgsql')->commit();
 			return response([
@@ -4093,7 +4122,7 @@ class CreateController extends Controller
 			$pelajarans = [];
 			$prodi = Study_Program::where('classification_id', $req->prodi)->first();
 			$mapping_matapelajaran = Mapping_Prodi_Matapelajaran::where('prodi_id', $prodi->program_study_id)->count();
-			if($mapping_matapelajaran > 0){
+			if ($mapping_matapelajaran > 0) {
 				Mapping_Prodi_Matapelajaran::where('prodi_id', $prodi->program_study_id)->delete();
 			}
 			for ($i = 0; $i < count($req->terpilih); $i++) {
@@ -4127,26 +4156,26 @@ class CreateController extends Controller
 	public function InsertMappingProdiMinat(Request $req)
 	{
 		try {
-		$datas = json_decode($req->json, true);
-		$minats = [];
-		$prodi = Study_Program::where('classification_id', $datas['prodi'])->first();
-		$mapping_minat = Mapping_Prodi_Minat::where('prodi_id', $datas['prodi'])->count();
-		if($mapping_minat > 0){
-			Mapping_Prodi_Minat::where('prodi_id', $req->prodi)->delete();
-		}
-		for ($i = 0; $i < count($datas['terpilih']); $i++) {
-			$minat = Education_Major::where('id', $datas['terpilih'][$i])->first();
-			array_push($minats, [
-				'fakultas' => $prodi->faculty_name,
-				'fakultas_id' => $prodi->faculty_id,
-				'prodi_id' => $prodi->program_study_id,
-				'nama_prodi' => $prodi->study_program_name,
-				'nama_minat' => $minat->major,
-				'minat_id' => $minat->id,
-				'quota' => 0,
-				'status' => true
-			]);
-		}
+			$datas = json_decode($req->json, true);
+			$minats = [];
+			$prodi = Study_Program::where('classification_id', $datas['prodi'])->first();
+			$mapping_minat = Mapping_Prodi_Minat::where('prodi_id', $datas['prodi'])->count();
+			if ($mapping_minat > 0) {
+				Mapping_Prodi_Minat::where('prodi_id', $req->prodi)->delete();
+			}
+			for ($i = 0; $i < count($datas['terpilih']); $i++) {
+				$minat = Education_Major::where('id', $datas['terpilih'][$i])->first();
+				array_push($minats, [
+					'fakultas' => $prodi->faculty_name,
+					'fakultas_id' => $prodi->faculty_id,
+					'prodi_id' => $prodi->program_study_id,
+					'nama_prodi' => $prodi->study_program_name,
+					'nama_minat' => $minat->major,
+					'minat_id' => $minat->id,
+					'quota' => 0,
+					'status' => true
+				]);
+			}
 			Mapping_Prodi_Minat::insert($minats);
 			DB::connection('pgsql')->commit();
 			return response([
