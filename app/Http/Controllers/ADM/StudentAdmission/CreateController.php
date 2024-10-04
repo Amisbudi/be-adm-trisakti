@@ -4199,13 +4199,13 @@ class CreateController extends Controller
     		$exam_type = Exam_Type::where('id',$req->type_id)->first();
             if(!$exam_type){
                 return response()->json([
-          		'message' => 'Exam type not found.'
-           	], 400);
+              		'message' => 'Exam type not found.'
+           	    ], 400);
             }
             $package = CBT_Package_Questions::where('type_id', $req->type_id)->inRandomOrder()->first();
             if(!$package){
                 return response()->json([
-          		'message' => 'Package question not found.'
+              		'message' => 'Package question not found.'
            	    ], 400);
             }
 			CBT_Package_Question_Users::create([
