@@ -94,6 +94,7 @@ use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
 use App\Http\Models\ADM\StudentAdmission\Study_Program;
 use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
+use App\Http\Models\ADM\StudentAdmission\CBT_Package_Questions;
 use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
 use App\Http\Models\ADM\StudentAdmission\Transfer_Credit;
 use Exception;
@@ -4195,8 +4196,20 @@ class CreateController extends Controller
 	public function InsertPackageQuestionUsers(Request $req)
 	{
 		try {
+    		$exam_type = Exam_Type::where('id',$req->type_id)->first();
+            if(!$exam_type){
+                return response()->json([
+              		'message' => 'Exam type not found.'
+           	    ], 400);
+            }
+            $package = CBT_Package_Questions::where('type_id', $req->type_id)->inRandomOrder()->first();
+            if(!$package){
+                return response()->json([
+              		'message' => 'Package question not found.'
+           	    ], 400);
+            }
 			CBT_Package_Question_Users::create([
-				'package_question_id' => $req->package_question_id,
+				'package_question_id' => $package->id,
 				'user_id' => $req->user_id,
 				'classes' => $req->classes,
 				'date_exam' => $req->date_exam,
