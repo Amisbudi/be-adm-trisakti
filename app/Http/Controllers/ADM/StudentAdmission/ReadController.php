@@ -9371,7 +9371,7 @@ class ReadController extends Controller
 
     public function GetMappingProdiMatapelajaran(Request $req)
     {
-        $data = Mapping_Prodi_Matapelajaran::select('id, prodi_id,nama_prodi, pelajaran_id, mata_pelajaran');
+        $data = Mapping_Prodi_Matapelajaran::select('id' , 'prodi_id' , 'nama_prodi' , 'pelajaran_id' , 'mata_pelajaran');
         if($req->id){
             $data->where('prodi_fk', $req->id);
         }
@@ -9381,7 +9381,7 @@ class ReadController extends Controller
 
     public function GetMappingProdiMinat(Request $req)
     {
-        $data = Mapping_Prodi_Minat::select('id, prodi_id, nama_prodi, minat_id, nama_minat');
+        $data = Mapping_Prodi_Minat::select('id' , 'prodi_id' , 'nama_prodi' , 'minat_id', 'nama_minat');
         if($req->id){
             $data->where('prodi_fk', $req->id);
         }

@@ -1499,7 +1499,7 @@ class CreateController extends Controller
 				"description"       => $req->add_info1,
 				"type"              => 'createBilling'
 			);
-			$hashdata = encrypt($request_body, $client_id, $secret_key);
+			$hashdata = BniEnc::encrypt($request_body, $client_id, $secret_key);
 			$datajson = json_encode(array(
 				'client_id' => $client_id,
 				'prefix' => $prefix,
@@ -1524,7 +1524,7 @@ class CreateController extends Controller
 			$createVA = json_decode($request->getBody(), true);
 
 			if (isset($createVA['data'])) {
-				$parsedata = decrypt($createVA['data'], $client_id, $secret_key);
+				$parsedata = BniEnc::decrypt($createVA['data'], $client_id, $secret_key);
 
 				$dataToSend['va_number'] = $req->registration_number;
 				$dataToSend['trx_amount'] = $req->amount;
@@ -4120,19 +4120,20 @@ class CreateController extends Controller
 	public function InsertMappingProdiMatapelajaran(Request $req)
 	{
 		try {
+			$datas = json_decode($req->json, true);
 			$pelajarans = [];
-			$prodi = Study_Program::where('classification_id', $req->prodi)->first();
-			$mapping_matapelajaran = Mapping_Prodi_Matapelajaran::where('prodi_id', $prodi->program_study_id)->count();
+			$prodi = Study_Program::where('classification_id', $datas['prodi'])->first();
+			$mapping_matapelajaran = Mapping_Prodi_Matapelajaran::where('prodi_id', $datas['prodi'])->count();
 			if ($mapping_matapelajaran > 0) {
-				Mapping_Prodi_Matapelajaran::where('prodi_id', $prodi->program_study_id)->delete();
+				Mapping_Prodi_Matapelajaran::where('prodi_id', $datas['prodi'])->delete();
 			}
-			for ($i = 0; $i < count($req->terpilih); $i++) {
-				$matpel = Master_Matpel::where('id', $req->terpilih[$i]['pelajaran_id'])->first();
+			for ($i = 0; $i < count($datas['terpilih']); $i++) {
+				$matpel = Master_Matpel::where('id', $datas['terpilih'][$i])->first();
 				array_push($pelajarans, [
 					'fakultas' => $prodi->faculty_name,
 					'fakultas_id' => $prodi->faculty_id,
-					'prodi_id' => $prodi->program_study_id,
-					'nama_prodi' => $prodi->study_program_name,
+					'prodi_id' => $prodi->classification_id,
+					'nama_prodi' => $prodi->study_program_branding_name,
 					'mata_pelajaran' => $matpel->name,
 					'pelajaran_id' => $matpel->id,
 					'status' => true
@@ -4162,15 +4163,15 @@ class CreateController extends Controller
 			$prodi = Study_Program::where('classification_id', $datas['prodi'])->first();
 			$mapping_minat = Mapping_Prodi_Minat::where('prodi_id', $datas['prodi'])->count();
 			if ($mapping_minat > 0) {
-				Mapping_Prodi_Minat::where('prodi_id', $req->prodi)->delete();
+				Mapping_Prodi_Minat::where('prodi_id', $datas['prodi'])->delete();
 			}
 			for ($i = 0; $i < count($datas['terpilih']); $i++) {
 				$minat = Education_Major::where('id', $datas['terpilih'][$i])->first();
 				array_push($minats, [
 					'fakultas' => $prodi->faculty_name,
 					'fakultas_id' => $prodi->faculty_id,
-					'prodi_id' => $prodi->program_study_id,
-					'nama_prodi' => $prodi->study_program_name,
+					'prodi_id' => $prodi->classification_id,
+					'nama_prodi' => $prodi->study_program_branding_name,
 					'nama_minat' => $minat->major,
 					'minat_id' => $minat->id,
 					'quota' => 0,
