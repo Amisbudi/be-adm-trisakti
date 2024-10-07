@@ -1,5 +1,5 @@
 <?php
-namespace app\Http\Controllers\ADM\StudentAdmission;
+namespace App\Http\Controllers\ADM\StudentAdmission;
 
 use App\Http\Controllers\Controller;
 

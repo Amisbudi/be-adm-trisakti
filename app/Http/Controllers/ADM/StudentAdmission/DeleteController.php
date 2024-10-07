@@ -1570,8 +1570,7 @@ class DeleteController extends Controller
   public function DeleteMappingPathDocument(Request $req)
   {
     try {
-      $data = Mapping_Path_Document::where(['program_study_id' => $req->id, 'selection_path_id' => $req->path_id])->first();
-      $data->delete();
+      $data = Mapping_Path_Document::where(['program_study_id' => $req->id, 'selection_path_id' => $req->path_id])->delete();
 
       return response()->json([
         'status' => 'Success',

@@ -2831,7 +2831,7 @@ class UpdateController extends Controller
 	{
 		$by = $req->header("X-I");
 		try {
-			$schedule = Education_Major::findOrFail($req->id);
+			$schedule = Education_Major::where('id', $req->id);
 			$schedule->update([
 				'major' => $req->major,
 				'education_degree_id' => $req->education_degree_id,
@@ -2887,17 +2887,10 @@ class UpdateController extends Controller
 		try {
 			$schedule = Study_Program::where('classification_id', $req->id);
 			$schedule->update([
-				'program_study_id' => $req->program_study_id,
-				'faculty_id' => $req->faculty_id,
 				'category' => $req->category,
 				'classification_name' => $req->classification_name,
-				'study_program_branding_name' => $req->study_program_branding_name,
+				'study_program_branding_name' => $req->study_program_name,
 				'study_program_name' => $req->study_program_name,
-				'study_program_name_en' => $req->study_program_name_en,
-				'study_program_acronim' => $req->study_program_acronim,
-				'faculty_name' => $req->faculty_name,
-				'acronim' => $req->acronim,
-				'acreditation' => $req->acreditation,
 				'quota' => $req->quota
 			]);
 			return response([
