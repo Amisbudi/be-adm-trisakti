@@ -51,6 +51,8 @@ use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Minat;
 use App\Http\Models\ADM\StudentAdmission\Study_Program;
 use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
 use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
+use app\Http\Models\ADM\StudentAdmission\Mapping_Path_Document;
+use app\Http\Models\ADM\StudentAdmission\Mapping_Path_Study_Program;
 use App\Http\Models\ADM\StudentAdmission\Transfer_Credit;
 use Exception;
 use GuzzleHttp\Client;
@@ -67,6 +69,28 @@ class DeleteController extends Controller
       $id = Mapping_Registration_Program_Study::select('id')->where('id', '=', $req->id)->first();    //return $id->id;
       if ($id) {
         $deletedata = Mapping_Registration_Program_Study::where('id', '=', $id->id)->delete();
+
+        return response()->json([
+          'status' => 'Success',
+          'Message' => 'ID ' . $id->id . ' Deleted'
+        ], 200);
+      }
+    } catch (Exception $e) {
+      DB::connection('pgsql')->rollBack();
+      return response()->json([
+        'status' => 'Failed',
+        'Message' => 'Cant delete data',
+				'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteMappingPathStudyProgram(Request $req)
+  {
+    try {
+      $id = Mapping_Path_Study_Program::select('id')->where('id', '=', $req->id)->first();    //return $id->id;
+      if ($id) {
+        $deletedata = Mapping_Path_Study_Program::where('id', '=', $id->id)->delete();
 
         return response()->json([
           'status' => 'Success',
@@ -1538,6 +1562,25 @@ class DeleteController extends Controller
       return response()->json([
         'status' => 'Failed',
         'message' => 'Failed to delete the Mapping Path Price',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteMappingPathDocument(Request $req)
+  {
+    try {
+      $data = Mapping_Path_Document::where('program_study_id', $req->id)->first();
+      $data->delete();
+
+      return response()->json([
+        'status' => 'Success',
+        'message' => 'Mapping Path Document deleted successfully',
+      ], 200);
+    } catch (\Exception $e) {
+      return response()->json([
+        'status' => 'Failed',
+        'message' => 'Failed to delete the Mapping Path Document',
         'error' => $e->getMessage()
       ], 500);
     }
