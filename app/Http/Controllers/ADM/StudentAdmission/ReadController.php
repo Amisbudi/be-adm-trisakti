@@ -9373,7 +9373,7 @@ class ReadController extends Controller
     {
         $data = Mapping_Prodi_Matapelajaran::select('id' , 'prodi_id' , 'nama_prodi' , 'pelajaran_id' , 'mata_pelajaran');
         if($req->id){
-            $data->where('prodi_fk', $req->id);
+            $data->where('prodi_id', $req->id);
         }
         
         return response()->json($data->get());
@@ -9383,7 +9383,7 @@ class ReadController extends Controller
     {
         $data = Mapping_Prodi_Minat::select('id' , 'prodi_id' , 'nama_prodi' , 'minat_id', 'nama_minat');
         if($req->id){
-            $data->where('prodi_fk', $req->id);
+            $data->where('prodi_id', $req->id);
         }
         
         return response()->json($data->get());
