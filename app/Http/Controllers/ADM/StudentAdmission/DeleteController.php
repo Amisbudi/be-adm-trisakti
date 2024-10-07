@@ -51,8 +51,8 @@ use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Minat;
 use App\Http\Models\ADM\StudentAdmission\Study_Program;
 use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
 use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
-use app\Http\Models\ADM\StudentAdmission\Mapping_Path_Document;
-use app\Http\Models\ADM\StudentAdmission\Mapping_Path_Study_Program;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Path_Document;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Path_Study_Program;
 use App\Http\Models\ADM\StudentAdmission\Transfer_Credit;
 use Exception;
 use GuzzleHttp\Client;
@@ -1570,7 +1570,7 @@ class DeleteController extends Controller
   public function DeleteMappingPathDocument(Request $req)
   {
     try {
-      $data = Mapping_Path_Document::where('program_study_id', $req->id)->first();
+      $data = Mapping_Path_Document::where(['program_study_id' => $req->id, 'selection_path_id' => $req->path_id])->first();
       $data->delete();
 
       return response()->json([
