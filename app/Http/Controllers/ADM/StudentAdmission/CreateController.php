@@ -4034,19 +4034,12 @@ class CreateController extends Controller
 	{
 		try {
 			Study_Program_Specialization::create([
-				'specialization_name_ori ' => $req->specialization_name_ori,
 				'specialization_name' => $req->specialization_name,
 				'specialization_code' => $req->specialization_code,
 				'active_status' => $req->active_status,
 				'class_type' => $req->class_type,
-				'program_study_id' => $req->program_study_id,
-				'faculty_id' => $req->faculty_id,
-				'faculty_name' => $req->faculty_name,
-				'category' => $req->category,
-				'classification_name' => $req->classification_name,
-				'study_program_name' => $req->study_program_name,
-				'study_program_name_en' => $req->study_program_name_en,
-				'acronim' => $req->acronim
+				'class_type_id' => $req->class_type_id,
+				'classification_id' => $req->classification_id,
 			]);
 			DB::connection('pgsql')->commit();
 			return response([
