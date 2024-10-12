@@ -240,6 +240,7 @@ class UpdateController extends Controller
 			[
 				'selection_path_id' => $req->selection_path_id,
 				'document_type_id' => $req->document_type_id,
+				'program_study_id' => $req->program_study_id,
 			],
 			[
 				'active_status' => $req->active_status,
