@@ -54,15 +54,22 @@ class Mapping_Path_Study_Program extends Model
             'msp.quota',
             'msp.active_status',
             'msp.minimum_donation',
+            'sum(mpp.price) as price',
             'msp.id',
             DB::raw('case when msp.active_status =' . "'t'" . ' then ' . "'Aktif'" . ' else ' . "'Non Aktif'" . ' end as active_status_name'),
             DB::raw("CASE WHEN msp.is_technic = 't' THEN msp.is_technic ELSE 'false' END AS is_technic")
         )
             ->join('study_programs as t1', 'msp.program_study_id', '=', 't1.classification_id')
+            ->join('mapping_path_price as mpp', 'msp.program_study_id', '=', 'mpp.program_study_id')
             ->where('msp.selection_path_id', '=', $selection_path_id)
             ->where([$active_status, $filter_id, $is_technic_filter])
+            ->distinct()
             ->get();
 
         return $data;
+    }
+
+    public function price(){
+        return $this->belongsTo(Mapping_Path_Price::class, 'selection_path_id', 'selection_path_id');
     }
 }

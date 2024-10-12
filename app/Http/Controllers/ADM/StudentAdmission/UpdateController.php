@@ -236,10 +236,12 @@ class UpdateController extends Controller
 	{
 		try {
 			$by = $req->header("X-I");
-			$id = Mapping_Path_Document::select('id')->where('id', '=', $req->id)->first();
-			$update = Mapping_Path_Document::where('md.id', $id->id)->update([
+			$update = Mapping_Path_Document::updateOrCreate(
+			[
 				'selection_path_id' => $req->selection_path_id,
 				'document_type_id' => $req->document_type_id,
+			],
+			[
 				'active_status' => $req->active_status,
 				'updated_by' => $by,
 				'required' => $req->required,

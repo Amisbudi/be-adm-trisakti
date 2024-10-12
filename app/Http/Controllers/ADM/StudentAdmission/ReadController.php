@@ -649,6 +649,9 @@ class ReadController extends Controller
             ->addColumn('minimum_donation', function ($row) {
                 return $row->minimum_donation;
             })
+            ->addColumn('price', function ($row) {
+                return $row->price;
+            })
             ->make(true);
     }
 
