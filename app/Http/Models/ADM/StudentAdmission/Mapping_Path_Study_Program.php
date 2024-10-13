@@ -64,7 +64,7 @@ class Mapping_Path_Study_Program extends Model
         ->leftJoin('mapping_path_price AS mpp', function ($join) use ($selection_path_id) {
             $join->on('msp.program_study_id', '=', 'mpp.study_program_id');
             // Optional: Add filtering conditions on 'mpp' table if needed
-            // $join->where('mpp.some_condition', '=', $some_value);
+            $join->where('mpp.selection_path_id', '=', $selection_path_id);
         })
         ->where('msp.selection_path_id', '=', $selection_path_id)
         ->where([$active_status, $filter_id, $is_technic_filter])

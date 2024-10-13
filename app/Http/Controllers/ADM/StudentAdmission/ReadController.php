@@ -7947,6 +7947,7 @@ class ReadController extends Controller
 
         //validate program studies participant
         $is_medical = false;
+        $study_program_id = null;
 
         foreach ($program_studies as $key => $value) {
             if ($value['faculty_id'] == 3 || $value['faculty_id'] == 4)
@@ -7960,16 +7961,34 @@ class ReadController extends Controller
         }
 
         $registration = Registration::select(
+            'mapping_registration_program_study.priority',
+            'mapping_registration_program_study.program_study_id',
             'registrations.registration_number',
             'registrations.participant_id',
             'mpp.id as mapping_path_price_id',
-            DB::raw("to_char(mpp.price, 'FM999999999') as price"),
+            // DB::raw("to_char(mpp.price, 'FM999999999') as price"),
+            DB::raw('SUM(mpp.price) AS price'), // Replace 'mpp.price' with the actual price column name
             'mpp.maks_study_program'
         )
-            ->leftjoin('mapping_path_price as mpp', 'registrations.selection_path_id', '=', 'mpp.selection_path_id')
+            // ->leftjoin('mapping_path_price as mpp', 'registrations.selection_path_id', '=', 'mpp.selection_path_id')
+            ->join('mapping_registration_program_study', 'mapping_registration_program_study.registration_number', '=', 'registrations.registration_number')
+            ->join('study_programs as sp', 'mapping_registration_program_study.program_study_id', '=', 'sp.classification_id')
+            ->leftJoin('mapping_path_price AS mpp', function ($join) {
+                $join->on('registrations.selection_path_id', '=', 'mpp.selection_path_id');
+                // Optional: Add filtering conditions on 'mpp' table if needed
+                $join->on('mapping_registration_program_study.program_study_id', '=', 'mpp.study_program_id');
+            })
             ->where('registrations.registration_number', '=', $req->registration_number)
-            ->where([$filter_is_medical])
+            // ->where([$filter_is_medical])
             ->where('mpp.active_status', '=', true)
+            ->groupBy('mapping_registration_program_study.priority',
+                'mapping_registration_program_study.program_study_id',
+                'registrations.registration_number',
+                'registrations.participant_id',
+                'mpp.id',
+                'price',
+                'mpp.maks_study_program'
+            )
             ->first();
 
         $result = $registration;

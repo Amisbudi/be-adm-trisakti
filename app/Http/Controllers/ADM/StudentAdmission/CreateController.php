@@ -2,12 +2,11 @@
 
 namespace app\Http\Controllers\ADM\StudentAdmission;
 
+use App\Http\Controllers\ADM\StudentAdmission\BniEnc;
 use App\Http\Controllers\Controller;
 use App\Http\Models\ADM\StudentAdmission\Announcement_Registration_Card;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Http\RedirectResponse;
 use DB;
 use Carbon\Carbon;
 use URL;
@@ -1486,14 +1485,15 @@ class CreateController extends Controller
 			$client_id = env('CLIENT_ID'); //client id from BNI
 			$prefix = env('PREFIX'); //prefix id from BNI
 			$secret_key = env('SECRET_VA'); // secret key from BNI
-			$trx_id = strtotime("now") . $client_id . $req->registration_number;
+			$trx_id = $prefix . $client_id . $req->registration_number;
+			// $trx_id = strtotime("now") . $client_id . $req->registration_number;
 			$request_body = array(
 				"client_id"         => $client_id,
 				"trx_amount"        => $req->amount,
 				"customer_name"     => $req->participant_name,
 				"customer_email"    => $req->participant_email,
 				"customer_phone"    => $req->participant_phone,
-				"virtual_account"   => $prefix . $client_id . $req->registration_number,
+				"virtual_account"   => $req->registration_number,
 				"trx_id"            => $trx_id,
 				"datetime_expired"  => Carbon::now()->addWeek(1)->format('Y-m-d h:i:s'),
 				"description"       => $req->add_info1,
@@ -1549,26 +1549,49 @@ class CreateController extends Controller
 					'created_by' => $by,
 					'registration_number' => $req->registration_number
 				]);
+
+				return response()->json([
+					'status' => 'Success',
+					'message' => 'Berhasil membuat VA',
+					// 'result' => $createVA
+				], 200);
 			} else {
-				return response()->json($createVA);
+				return response()->json([
+					'status' => 'Success',
+					'message' => 'Berhasil membuat VA',
+					'result' => $createVA,
+					'payload'=> $datajson
+				], 200);
 			}
 
-			$ipfy = json_decode($http->request('GET', 'https://api64.ipify.org?format=json', [
-				'connect_timeout' => 25
-			])->getBody(), true);
+			// $ipfy = json_decode($http->request('GET', 'https://api64.ipify.org?format=json', [
+			// 	'connect_timeout' => 25
+			// ])->getBody(), true);
 		} catch (\Throwable $e) {
-			return $e;
+			return response()->json([
+				'status' => 'Failed',
+				'message' => 'Transaction Failed',
+				'result' => $e->getMessage()
+			], 500);
 		} catch (Exception $e) {
-			return $e;
-		} catch (\GuzzleHttp\Exception\BadResponseException $e) {
-			return $e;
+			return response()->json([
+				'status' => 'Failed',
+				'message' => 'Transaction Failed',
+				'result' => $e->getMessage()
+			], 500);
+		} 
+		catch (\GuzzleHttp\Exception\BadResponseException $e) {
+			return response()->json([
+				'status' => 'Failed',
+				'message' => 'Transaction Failed',
+				'result' => $e->getMessage()
+			], 500);
 		}
-		return response()->json(
-			array(
-				'request_body' => $request_body,
-				'response' => $parsedata
-			)
-		);
+		return response()->json([
+			'status' => 'Success',
+			'request_body' => $request_body,
+			'result' => $createVA
+		], 200);
 	}
 
 	public function RequestPinTransactionBackup(Request $req)
