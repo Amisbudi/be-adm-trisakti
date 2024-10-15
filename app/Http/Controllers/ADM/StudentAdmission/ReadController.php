@@ -122,6 +122,8 @@ use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Minat;
 use App\Http\Models\ADM\StudentAdmission\Master_kelas;
 use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
+use App\Http\Models\ADM\StudentAdmission\Master_Package;
+use App\Http\Models\ADM\StudentAdmission\Master_Package_Angsuran;
 use App\Http\Models\ADM\StudentAdmission\Transfer_Credit;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
 use GuzzleHttp\Exception\GuzzleException;
@@ -2251,16 +2253,16 @@ class ReadController extends Controller
             'registration_result.publication_status',
             'registration_result.publication_date',
             'registration_result.schoolarship_id',
-            'registration_result.up3',
+            'registration_result.spp',
             'registration_result.bpp',
-            'registration_result.sdp2',
-            'registration_result.dormitory',
-            'registration_result.up3discount',
+            'registration_result.lainnya',
+            'registration_result.ujian',
+            'registration_result.praktikum',
             'registration_result.bppdiscount',
-            'registration_result.sdp2discount',
-            'registration_result.dormitorydiscount',
+            'registration_result.sppdiscount',
+            'registration_result.discount',
             'registration_result.semester',
-            'registration_result.insurance',
+            'registration_result.sks',
             'registration_result.notes',
             'registration_result.start_date_1',
             'registration_result.start_date_2',
@@ -2273,10 +2275,18 @@ class ReadController extends Controller
             'registration_result.oldstudentid',
             'registration_result.reference_number',
             'registration_result.password',
-            'registration_result.id as result_id',
             'registration_result.transfer_status',
             'registration_result.transfer_program_study_id',
             'registration_result.council_date',
+            'approval_university',
+            'approval_university_by',
+            'registration_result.approval_university_at',
+            'registration_result.generated_at',
+            'registration_result.file_url',
+            'registration_result.specialization_id',
+            'registration_result.package_id',
+            'registration_result.payment_method_id',
+            'registration_result.payment_status',
             'tps.study_program_branding_name as transfer_program_study_name',
             'tps.faculty_name as transfer_faculty_name',
             'registration_result.program_study_id as study_program_id',
@@ -4403,16 +4413,16 @@ class ReadController extends Controller
             'registration_result.publication_status',
             'registration_result.publication_date',
             'registration_result.schoolarship_id',
-            'registration_result.up3',
+            'registration_result.spp',
             'registration_result.bpp',
-            'registration_result.sdp2',
-            'registration_result.dormitory',
-            'registration_result.up3discount',
+            'registration_result.lainnya',
+            'registration_result.ujian',
+            'registration_result.praktikum',
             'registration_result.bppdiscount',
-            'registration_result.sdp2discount',
-            'registration_result.dormitorydiscount',
+            'registration_result.sppdiscount',
+            'registration_result.discount',
             'registration_result.semester',
-            'registration_result.insurance',
+            'registration_result.sks',
             'registration_result.notes',
             'registration_result.start_date_1',
             'registration_result.start_date_2',
@@ -4425,18 +4435,18 @@ class ReadController extends Controller
             'registration_result.oldstudentid',
             'registration_result.reference_number',
             'registration_result.password',
-            'registration_result.id as result_id',
             'registration_result.transfer_status',
             'registration_result.transfer_program_study_id',
-            'registration_result.approval_university',
-            'registration_result.approval_university_by',
-            'registration_result.approval_university_at',
-            'registration_result.specialization_id',
-            // 'registration_result.step_1_end_date',
-            // 'registration_result.step_2_end_date',
-            // 'registration_result.step_3_start_date',
-            // 'registration_result.step_3_end_date',
             'registration_result.council_date',
+            'approval_university',
+            'approval_university_by',
+            'registration_result.approval_university_at',
+            'registration_result.generated_at',
+            'registration_result.file_url',
+            'registration_result.specialization_id',
+            'registration_result.package_id',
+            'registration_result.payment_method_id',
+            'registration_result.payment_status',
             'tps.study_program_branding_name as transfer_program_study_name',
             'tps.faculty_name as transfer_faculty_name',
             'registration_result.program_study_id as study_program_id',
@@ -9417,11 +9427,26 @@ class ReadController extends Controller
         
         return response()->json($data->get());
     }
+
     public function GetPackageQuestionUsers(Request $req)
     {
         $data = CBT_Package_Question_Users::all();
         return response()->json([
             'data' => $data,
         ]);
+    }
+
+    public function GetMasterPackage(Request $req)
+    {
+        $result = [];
+        $data = Master_Package::all();
+        foreach ($data as $key => $paket) {
+            $result[$key] = $paket;
+            $result[$key]['detail'] = Master_Package_Angsuran::where('package_id', $paket->id)->orderBy('angsuran_ke', 'ASC')->get();
+        }
+        
+        return [
+            'data' => $result,
+        ];
     }
 }

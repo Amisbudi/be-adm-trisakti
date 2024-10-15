@@ -119,3 +119,10 @@ Route::get('/packagequestionusers', 'ADM\StudentAdmission\ReadController@GetPack
 Route::post('/packagequestionusers/insert', 'ADM\StudentAdmission\CreateController@InsertPackageQuestionUsers');
 Route::post('/packagequestionusers/update', 'ADM\StudentAdmission\UpdateController@UpdatePackageQuestionUsers');
 Route::post('/packagequestionusers/delete', 'ADM\StudentAdmission\DeleteController@DeletePackageQuestionUsers');
+
+
+
+Route::get('/master-package', 'ADM\StudentAdmission\ReadController@GetMasterPackage');
+Route::post('/master-package', 'ADM\StudentAdmission\CreateController@InsertMasterPackage');
+// Route::post('/master-package/{id}', 'ADM\StudentAdmission\UpdateController@UpdateMasterPackage');
+// Route::post('/master-package/{id}', 'ADM\StudentAdmission\DeleteController@DeleteMasterPackage');

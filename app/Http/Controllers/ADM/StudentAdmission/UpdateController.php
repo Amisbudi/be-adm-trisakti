@@ -75,6 +75,8 @@ use App\Http\Models\ADM\StudentAdmission\Schedule;
 use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
 use App\Http\Models\ADM\StudentAdmission\Document_Type;
 use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
+use App\Http\Models\ADM\StudentAdmission\Master_Package;
+use App\Http\Models\ADM\StudentAdmission\Master_Package_Angsuran;
 use App\Http\Models\ADM\StudentAdmission\Transfer_Credit;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
@@ -3150,6 +3152,51 @@ class UpdateController extends Controller
 				'status' => 'Failed',
 				'message' => 'Mohon maaf, data gagal disimpan',
 				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateMasterPackage(Request $req)
+	{
+		try {
+			DB::connection('pgsql')->beginTransaction();
+			$datas = json_decode($req->json);
+
+			$paket = Master_Package::where('id', '=', $req->id)->first();
+			Master_Package_Angsuran::where('package_id', $paket->id)->delete();
+			$paket->update([
+				'nama_paket'  	=> json_decode($req->nama_paket),
+				'angsuran' 		=> $req->angsuran,
+			]);
+
+			foreach ($datas->angsuran as $key => $item) {
+				Master_Package_Angsuran::create([
+					'package_id' => $paket->id,
+					'angsuran_ke' =>  $item->angsuran_ke,
+					'spp' => $item->spp,
+					'bpp'  => $item->bpp,
+					'praktikum'=> $item->praktikum,
+					'ujian'=> $item->ujian,
+					'lainnya'=> $item->lainnya,
+					'disc'=> $item->disc,
+					'disc_spp'=> $item->disc_spp,
+					'disc_bpp'=> $item->disc_bpp,
+					'disc_praktikum'=> $item->disc_praktikum,
+					'disc_lainnya'=> $item->disc_lainnya,
+				]);
+			}
+
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan',
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
 			], 500);
 		}
 	}

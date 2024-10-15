@@ -53,6 +53,8 @@ use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
 use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Path_Document;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Path_Study_Program;
+use App\Http\Models\ADM\StudentAdmission\Master_Package;
+use App\Http\Models\ADM\StudentAdmission\Master_Package_Angsuran;
 use App\Http\Models\ADM\StudentAdmission\Transfer_Credit;
 use Exception;
 use GuzzleHttp\Client;
@@ -1580,6 +1582,28 @@ class DeleteController extends Controller
       return response()->json([
         'status' => 'Failed',
         'message' => 'Failed to delete the Mapping Path Document',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteMasterPackage(Request $req)
+  {
+    try {
+			DB::connection('pgsql')->beginTransaction();
+			$paket = Master_Package::where('id', $req->id)->first();
+      $paket->delete();
+			Master_Package_Angsuran::where('package_id', $paket->id)->delete();
+      DB::connection('pgsql')->commit();
+      return response()->json([
+        'status' => 'Success',
+        'message' => 'Master package deleted successfully',
+      ], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+      return response()->json([
+        'status' => 'Failed',
+        'message' => 'Failed to delete the master package',
         'error' => $e->getMessage()
       ], 500);
     }

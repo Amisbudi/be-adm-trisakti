@@ -104,3 +104,29 @@ CREATE TABLE mapping_prodi_matapelajaran(
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE master_package_biaya(
+    id SERIAL PRIMARY KEY,
+    nama_paket VARCHAR(100) NOT NULL,
+    angsuran INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE master_detail_package_biaya(
+    id SERIAL PRIMARY KEY,
+    package_id INT NOT NULL,
+    angsuran_ke INT NOT NULL,
+    spp INT NOT NULL,
+    bpp INT NOT NULL,
+    praktikum INT NOT NULL,
+    ujian INT NOT NULL,
+    lainnya INT NOT NULL,
+    disc INT NULL,
+    disc_spp INT NULL,
+    disc_bpp INT NULL,
+    disc_praktikum INT NULL,
+    disc_lainnya INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

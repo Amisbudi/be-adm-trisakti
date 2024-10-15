@@ -18,7 +18,6 @@ use App\Http\Models\ADM\StudentAdmission\Participant;
 use App\Http\Models\ADM\StudentAdmission\Selection_Programs;
 use App\Http\Models\ADM\StudentAdmission\Location_Exam;
 use App\Http\Models\ADM\StudentAdmission\Selection_Path;
-use App\Http\Models\ADM\StudentAdmission\Mapping_Path_Program;
 use App\Http\Models\ADM\StudentAdmission\Path_Exam_Detail;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Location_Selection;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Path_Step;
@@ -58,7 +57,6 @@ use App\Http\Models\ADM\StudentAdmission\Moodle_Groups;
 use App\Http\Models\ADM\StudentAdmission\Moodle_Members;
 use App\Http\Models\ADM\StudentAdmission\Moodle_Quizes;
 use App\Http\Models\ADM\StudentAdmission\Moodle_Sections;
-use App\Http\Models\ADM\StudentAdmission\Moodle_Users;
 use App\Http\Models\ADM\StudentAdmission\Participant_Grade;
 use App\Http\Models\ADM\StudentAdmission\Passing_Grade;
 use App\Http\Models\ADM\StudentAdmission\PasswordReset;
@@ -66,7 +64,6 @@ use App\Http\Models\ADM\StudentAdmission\Pin_Voucher;
 use App\Http\Models\ADM\StudentAdmission\Registration_Result;
 use App\Http\Models\ADM\StudentAdmission\Registration_Result_Sync;
 use App\Http\Models\ADM\StudentAdmission\Transaction_Request;
-use App\Http\Models\ADM\StudentAdmission\Transaction_Result;
 use App\Http\Models\ADM\StudentAdmission\Transaction_Voucher;
 use App\Http\Models\ADM\StudentAdmission\Document_Publication;
 use App\Http\Models\ADM\StudentAdmission\Exam_Type;
@@ -77,8 +74,6 @@ use App\Http\Models\ADM\StudentAdmission\Selection_Category;
 use App\Http\Models\ADM\StudentAdmission\Transaction_Billing;
 use App\Http\Models\ADM\StudentAdmission\Document_Categories;
 use App\Http\Models\ADM\StudentAdmission\Education_Degree;
-use App\Http\Models\ADM\StudentAdmission\Selection_Categories;
-use App\Http\Models\ADM\StudentAdmission\Student_Interest;
 use App\Http\Models\ADM\StudentAdmission\Category;
 use App\Http\Models\ADM\StudentAdmission\Document_Type;
 use App\Http\Models\ADM\StudentAdmission\Education_Major;
@@ -88,23 +83,20 @@ use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Formulir;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Biaya;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Matapelajaran;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Minat;
-use App\Http\Models\ADM\StudentAdmission\Master_kelas;
 use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
 use App\Http\Models\ADM\StudentAdmission\Study_Program;
 use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
 use App\Http\Models\ADM\StudentAdmission\CBT_Package_Questions;
 use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
+use App\Http\Models\ADM\StudentAdmission\Master_Package;
+use App\Http\Models\ADM\StudentAdmission\Master_Package_Angsuran;
 use App\Http\Models\ADM\StudentAdmission\Transfer_Credit;
 use Exception;
-use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\URL as FacadesURL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Svg\Tag\Group;
-use Svg\Tag\Rect;
 use Throwable;
 
 class CreateController extends Controller
@@ -1352,7 +1344,7 @@ class CreateController extends Controller
 		}
 	}
 
-	public function CreateorUpdateRegistrationResult(Request $req)
+	public function CreateorUpdateRegistrationResult(Request $req) //update kelulusan
 	{
 		//validate registration before insert
 		$isUpdate = Registration_Result::where('registration_number', '=', $req->registration_number)
@@ -1380,16 +1372,16 @@ class CreateController extends Controller
 					'selection_path_id' => $req->selection_path_id,
 					'program_study_id' => $req->program_study_id,
 					'schoolarship_id' => $req->schoolarship_id,
-					'up3' => $req->up3,
+					'spp' => $req->spp,
 					'bpp' => $req->bpp,
-					'sdp2' => $req->sdp2,
-					'dormitory' => $req->dormitory,
-					'up3discount' => $req->up3discount,
+					'lainnya' => $req->lainnya,
+					'ujian' => $req->ujian,
+					'praktikum' => $req->praktikum,
 					'bppdiscount' => $req->bppdiscount,
-					'sdp2discount' => $req->sdp2discount,
-					'dormitorydiscount' => $req->dormitorydiscount,
+					'sppdiscount' => $req->sppdiscount,
+					'discount' => $req->discount,
 					'semester' => $req->semester,
-					'insurance' => $req->insurance,
+					'sks' => $req->sks,
 					'notes' => $req->notes,
 					'created_by' => $by,
 					'updated_by' => $by,
@@ -1404,14 +1396,13 @@ class CreateController extends Controller
 					'oldstudentid' => $req->oldstudentid,
 					'reference_number' => $req->reference_number,
 					'password' => $req->password,
-					'transfer_status' => $req->transfer_status,
-					'transfer_program_study_id' => $req->transfer_program_study_id,
-					'step_1_end_date' => $req->step_1_end_date,
-					'step_2_end_date' => $req->step_2_end_date,
-					'step_3_start_date' => $req->step_3_start_date,
-					'step_3_end_date' => $req->step_3_end_date,
-					'council_date' => $req->council_date,
-					'specialization_id' => $req->specialization_id
+					'created_by' => $by,
+					'updated_by' => $by,
+					'action' => $sync,
+					'specialization_id' => $req->specialization_id,
+					'package_id'  => $req->package_id,
+					'payment_method_id'  => $req->payment_method_id,
+					'payment_status'  => $req->payment_status
 				]
 			);
 
@@ -1425,17 +1416,19 @@ class CreateController extends Controller
 				'participant_id' => $req->participant_id,
 				'selection_path_id' => $req->selection_path_id,
 				'schoolarship_id' => $req->schoolarship_id,
-				'up3' => $req->up3,
+				'spp' => $req->spp,
 				'bpp' => $req->bpp,
-				'sdp2' => $req->sdp2,
-				'dormitory' => $req->dormitory,
-				'up3discount' => $req->up3discount,
+				'lainnya' => $req->lainnya,
+				'ujian' => $req->ujian,
+				'praktikum' => $req->praktikum,
 				'bppdiscount' => $req->bppdiscount,
-				'sdp2discount' => $req->sdp2discount,
-				'dormitorydiscount' => $req->dormitorydiscount,
+				'sppdiscount' => $req->sppdiscount,
+				'discount' => $req->discount,
 				'semester' => $req->semester,
-				'insurance' => $req->insurance,
+				'sks' => $req->sks,
 				'notes' => $req->notes,
+				'created_by' => $by,
+				'updated_by' => $by,
 				'start_date_1' => $req->start_date_1,
 				'start_date_2' => $req->start_date_2,
 				'start_date_3' => $req->start_date_3,
@@ -1450,7 +1443,10 @@ class CreateController extends Controller
 				'created_by' => $by,
 				'updated_by' => $by,
 				'action' => $sync,
-				'specialization_id' => $req->specialization_id
+				'specialization_id' => $req->specialization_id,
+				'package_id'  => $req->package_id,
+				'payment_method_id'  => $req->payment_method_id,
+				'payment_status'  => $req->payment_status
 			]);
 
 			DB::connection('pgsql')->commit();
@@ -1488,16 +1484,17 @@ class CreateController extends Controller
 			$trx_id = $prefix . $client_id . $req->registration_number;
 			// $trx_id = strtotime("now") . $client_id . $req->registration_number;
 			$request_body = array(
+				"type"              => 'createbilling',
 				"client_id"         => $client_id,
+				"trx_id"            => $trx_id,
 				"trx_amount"        => $req->amount,
+				"billing_type"		=> "c",
 				"customer_name"     => $req->participant_name,
 				"customer_email"    => $req->participant_email,
-				"customer_phone"    => $req->participant_phone,
+				"customer_phone"    => $req->participant_phone_number,
 				"virtual_account"   => $req->registration_number,
-				"trx_id"            => $trx_id,
 				"datetime_expired"  => Carbon::now()->addWeek(1)->format('Y-m-d h:i:s'),
 				"description"       => $req->add_info1,
-				"type"              => 'createBilling'
 			);
 			$hashdata = BniEnc::encrypt($request_body, $client_id, $secret_key);
 			$datajson = json_encode(array(
@@ -1512,10 +1509,10 @@ class CreateController extends Controller
 				'body' => $datajson,
 				'headers' => [
 					'Content-Type' => 'application/json',
-					'Accept-Encoding' => ' gzip, deflate',
-					'Cache-Control' => ' max-age=0',
-					'Connection' => ' keep-alive',
-					'Accept-Language' => ' en-US,en;q=0.8,id;q=0.6',
+					'Origin' => 'String',
+					// 'Cache-Control' => ' max-age=0',
+					// 'Connection' => ' keep-alive',
+					// 'Accept-Language' => ' en-US,en;q=0.8,id;q=0.6',
 					// 'Authorization' => 'Bearer ' . $token
 				],
 				'connect_timeout' => 25
@@ -1560,7 +1557,9 @@ class CreateController extends Controller
 					'status' => 'Success',
 					'message' => 'Berhasil membuat VA',
 					'result' => $createVA,
-					'payload'=> $datajson
+					// 'payload'=> $request_body,
+					// 'hashdata' => $hashdata,
+					// 'datareal' => $hashdata = BniEnc::encrypt($request_body, $client_id, $secret_key) 
 				], 200);
 			}
 
@@ -4267,6 +4266,49 @@ class CreateController extends Controller
 			return response([
 				'status' => 'Success',
 				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
+			], 500);
+		}
+	}
+
+	public function InsertMasterPackage(Request $req)
+	{
+		try {
+			DB::connection('pgsql')->beginTransaction();
+			$datas = json_decode($req->json);
+			$paket = Master_Package::create([
+				'nama_paket'  	=> json_decode($req->nama_paket),
+				'angsuran' 		=> $req->angsuran,
+			]);
+			\Log::info('Request data: ', $req->all()); // Tambahkan log untuk melihat input JSON
+
+			foreach ($datas->angsuran as $key => $item) {
+				Master_Package_Angsuran::create([
+					'package_id' => $paket->id,
+					'angsuran_ke' =>  $item->angsuran_ke,
+					'spp' => $item->spp,
+					'bpp'  => $item->bpp,
+					'praktikum'=> $item->praktikum,
+					'ujian'=> $item->ujian,
+					'lainnya'=> $item->lainnya,
+					'disc'=> $item->disc,
+					'disc_spp'=> $item->disc_spp,
+					'disc_bpp'=> $item->disc_bpp,
+					'disc_praktikum'=> $item->disc_praktikum,
+					'disc_lainnya'=> $item->disc_lainnya,
+				]);
+			}
+
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan',
 			], 200);
 		} catch (\Exception $e) {
 			DB::connection('pgsql')->rollBack();
