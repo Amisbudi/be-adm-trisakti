@@ -13,16 +13,18 @@ class Mapping_Utbk_Path extends Model {
     protected $fillable = [ 
         'selection_path_id',
         'is_science',
-        'math',
-    	'physics',
-        'biology',
-        'chemical',
-        'economy',
-        'geography',
-        'sociological',
+        'mapel1',
+        'mapel2',
+        'mapel3',
+        'mapel4',
+        'mapel5',
+        'mapel6',
+        'mapel7',
+        'mapel8',
+        'mapel9',
+        'mapel10',
         'created_by',
         'updated_by',
-        'historical',
         'active_status'
     ];
 

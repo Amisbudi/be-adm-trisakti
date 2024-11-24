@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 class BniEnc extends Controller
 {
 
-	const TIME_DIFF_LIMIT = 480;
+	const TIME_DIFF_LIMIT = 4800;
 
 	public static function encrypt(array $json_data, $cid, $secret) {
 		return self::doubleEncrypt(strrev(time()) . '.' . json_encode($json_data), $cid, $secret);

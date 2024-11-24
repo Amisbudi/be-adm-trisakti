@@ -55,6 +55,7 @@ use App\Http\Models\ADM\StudentAdmission\Mapping_Path_Document;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Path_Study_Program;
 use App\Http\Models\ADM\StudentAdmission\Master_Package;
 use App\Http\Models\ADM\StudentAdmission\Master_Package_Angsuran;
+use App\Http\Models\ADM\StudentAdmission\Refund_Request;
 use App\Http\Models\ADM\StudentAdmission\Transfer_Credit;
 use Exception;
 use GuzzleHttp\Client;
@@ -307,6 +308,28 @@ class DeleteController extends Controller
         return response()->json([
           'status' => 'Success',
           'Message' => 'ID ' . $id->id . ' Deleted'
+        ], 200);
+      }
+    } catch (Exception $e) {
+      DB::connection('pgsql')->rollBack();
+      return response()->json([
+        'status' => 'Failed',
+        'Message' => 'Cant delete data'
+      ], 500);
+    }
+  }
+
+  public function DeleteRefundRequest(Request $req)
+  {
+    try {
+      $id = Refund_Request::select('id')
+        ->where('registration_number', '=', $req->registration_number)
+        ->first();    //return $id->id;
+      if ($id) {
+        $deletedata = Registration_History::where('id', '=', $id->id)->delete();
+        return response()->json([
+          'status' => 'Success',
+          'Message' => 'No. ' . $id->registration_number . ' Deleted'
         ], 200);
       }
     } catch (Exception $e) {

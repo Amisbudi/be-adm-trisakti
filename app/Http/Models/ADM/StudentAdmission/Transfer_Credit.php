@@ -15,6 +15,7 @@ class Transfer_Credit extends Model
         'kode_matakuliah_ex',
         'nama_matakuliah_ex',
         'sks_ex',
+        'nilai_ex',
         'kode_matakuliah',
         'nama_matakuliah',
         'sks',

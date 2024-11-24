@@ -15,6 +15,8 @@ class Mapping_Prodi_Formulir extends Model
         'nama_prodi',
         'nama_formulir',
         'harga',
+        'add_cost',
+        'exam_status',
         'kategori_formulir'
     ];
     public $timestamps = false;

@@ -25,6 +25,8 @@ return [
             'https://be-trisakti.amisbudi.cloud',
             'https://fe-trisakti.amisbudi.cloud',
             'http://localhost:4200', 
+            'https://apibeta.bni-ecollection.com',
+            'https://api.bni-ecollection.com',
             'https://admission.amisbudi.cloud'
         ],
 

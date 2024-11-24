@@ -130,3 +130,23 @@ CREATE TABLE master_detail_package_biaya(
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE refund_request(
+    id SERIAL PRIMARY KEY,
+    registration_number VARCHAR(25),
+    nama VARCHAR(200) NOT NULL,
+    alamat VARCHAR(500) NOT NULL,
+    identitas VARCHAR(255) NOT NULL,
+    no_identitas VARCHAR(100) NULL,
+    no_rek VARCHAR(100) NULL,
+    nama_bank VARCHAR(150) NULL,
+    nama_pemilik VARCHAR(200) NULL,
+    hubungan_pemilik VARCHAR(200) NULL,
+    tanggal_transfer DATE NULL,
+    biaya_paket INT NULL,
+    biaya_admisistrasi INT NULL,
+    biaya_pengembalian INT NULL,
+    document_url text NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

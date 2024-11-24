@@ -20,6 +20,7 @@ class Participant extends Model {
         'birth_country',
         'birth_province',
         'birth_city',
+        'birth_place',
         'birth_date',
         'nationality',
         'origin_country',
@@ -47,6 +48,7 @@ class Participant extends Model {
         'birth_city_foreign',
         'nisn',
         'nis',
+        'size_almamater',
         'diploma_number'
     ];
     public $timestamps = true;

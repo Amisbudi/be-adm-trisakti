@@ -121,8 +121,13 @@ Route::post('/packagequestionusers/update', 'ADM\StudentAdmission\UpdateControll
 Route::post('/packagequestionusers/delete', 'ADM\StudentAdmission\DeleteController@DeletePackageQuestionUsers');
 
 
+Route::get('/view-final-result', 'ADM\StudentAdmission\ReadController@ViewFinalResult');
 
 Route::get('/master-package', 'ADM\StudentAdmission\ReadController@GetMasterPackage');
 Route::post('/master-package', 'ADM\StudentAdmission\CreateController@InsertMasterPackage');
 // Route::post('/master-package/{id}', 'ADM\StudentAdmission\UpdateController@UpdateMasterPackage');
 // Route::post('/master-package/{id}', 'ADM\StudentAdmission\DeleteController@DeleteMasterPackage');
+
+Route::post('/bodycallback', 'ADM\StudentAdmission\CreateController@BodyEncrypt');
+Route::post('/vacallback', 'ADM\StudentAdmission\UpdateController@UpdatePinTransaction');
+Route::get('/list-subject', 'ADM\StudentAdmission\ReadController@ListSubjectSiakad');

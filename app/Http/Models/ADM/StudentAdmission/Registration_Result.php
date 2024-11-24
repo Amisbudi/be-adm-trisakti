@@ -32,6 +32,7 @@ class Registration_Result extends Model {
         'discount',
         'semester',
         'sks',
+        'rank',
         'notes',
         'start_date_1',
         'start_date_2',
@@ -56,6 +57,11 @@ class Registration_Result extends Model {
         'package_id',
         'payment_method_id',
         'payment_status',
+        'payment_url',
+        'payment_date',
+        'payment_approval_date',
+        'payment_approval_by',
+        'total_amount',
     ];
     
     public $timestamps = true;

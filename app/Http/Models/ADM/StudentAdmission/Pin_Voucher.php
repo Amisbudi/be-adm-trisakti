@@ -17,10 +17,13 @@ class Pin_Voucher extends Model {
         'voucher',
         'type',
         'price',
+        'description',
         'expire_date',
     	'created_by',
     	'updated_by',
         'active_status',
+        'approved_by',
+        'approved_at'
     ];
 }
 ?>

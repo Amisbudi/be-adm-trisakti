@@ -91,6 +91,7 @@ use App\Http\Models\ADM\StudentAdmission\CBT_Package_Questions;
 use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
 use App\Http\Models\ADM\StudentAdmission\Master_Package;
 use App\Http\Models\ADM\StudentAdmission\Master_Package_Angsuran;
+use App\Http\Models\ADM\StudentAdmission\Refund_Request;
 use App\Http\Models\ADM\StudentAdmission\Transfer_Credit;
 use Exception;
 use GuzzleHttp\Client;
@@ -440,6 +441,7 @@ class CreateController extends Controller
 				'active_status' => $req->active_status,
 				'exam_status' => $req->exam_status,
 				'english_name' => $req->english_name,
+				'maks_program' => $req->maks_program,
 				'created_by' => $by
 			]);
 
@@ -502,6 +504,7 @@ class CreateController extends Controller
 				'session_two_end' => $req->session_two_end,
 				'session_three_end' => $req->session_three_end,
 				'exam_type_id' => $req->exam_type_id,
+				'location' => $req->location,
 				'class_type' => $req->class_type
 			]);
 
@@ -792,10 +795,14 @@ class CreateController extends Controller
 			$data = Registration::select('registration_number')
 				->where('selection_path_id', '=', $req->selection_path_id)
 				->count();
+
+			$mpyi = Mapping_Path_Year_Intake::select('school_year') ->where('id', '=', $req->mapping_path_year_intake_id)->first();
+			
 			$number = (int) $data + 3;
-			$max = str_pad($number, 7, '0', STR_PAD_LEFT);
-			$now = Carbon::now()->format('y');
-			$registration_number = $now . '' . $req->selection_path_id . '' . $max;
+			$max = str_pad($number, 5, '0', STR_PAD_LEFT);
+			$year = substr($mpyi->school_year, 0, 2);
+			$now = Carbon::now()->format('m');
+			$registration_number = $year. $now . '' . $req->selection_path_id . '' . $max;
 
 			while (true) {
 				$check = Registration::select('registration_number')
@@ -890,7 +897,7 @@ class CreateController extends Controller
 				'family_name' => $req->family_name,
 				'email' => $req->email,
 				'mobile_phone_number' => $req->mobile_phone_number,
-				'birth_place' => $req->birth_place,
+				'birth_place' => strtoupper($req->birth_place),
 				'birth_date' => $req->birth_date,
 				'gender' => $gender,
 				'education_degree_id' => $req->education_degree_id,
@@ -1067,16 +1074,30 @@ class CreateController extends Controller
 					'created_by' => $by,
 					'semester_id' => $req->semester_id,
 					'range_score' => $req->range_score,
-					'math' => $req->math,
-					'physics' => $req->physics,
-					'bahasa' => $req->bahasa,
-					'english' => $req->english,
-					'biology' => $req->biology,
-					'economy' => $req->economy,
-					'geography' => $req->geography,
-					'sociological' => $req->sociological,
-					'historical' => $req->historical,
-					'chemical' => $req->chemical,
+					'mapel1' => $req->mapel1,
+					'mapel2' => $req->mapel2,
+					'mapel3' => $req->mapel3,
+					'mapel4' => $req->mapel4,
+					'mapel5' => $req->mapel5,
+					'mapel6' => $req->mapel6,
+					'mapel7' => $req->mapel7,
+					'mapel8' => $req->mapel8,
+					'mapel9' => $req->mapel9,
+					'mapel10' => $req->mapel10,
+					'mapel11' => $req->mapel11,
+					'mapel12' => $req->mapel12,
+					'alias1' => $req->alias1,
+					'alias2' => $req->alias2,
+					'alias3' => $req->alias3,
+					'alias4' => $req->alias4,
+					'alias5' => $req->alias5,
+					'alias6' => $req->alias6,
+					'alias7' => $req->alias7,
+					'alias8' => $req->alias8,
+					'alias9' => $req->alias9,
+					'alias10' => $req->alias10,
+					'alias11' => $req->alias11,
+					'alias12' => $req->alias12,
 					'registration_number' => $req->registration_number,
 					'gpa' => $req->gpa
 				]
@@ -1367,7 +1388,9 @@ class CreateController extends Controller
 					'pass_status' => $req->pass_status,
 					'publication_status' => $req->publication_status,
 					'publication_date' => $req->publication_date,
+					'council_date' => $req->council_date,
 					'created_by' => $by,
+					'updated_by' => $by,
 					'participant_id' => $req->participant_id,
 					'selection_path_id' => $req->selection_path_id,
 					'program_study_id' => $req->program_study_id,
@@ -1383,8 +1406,6 @@ class CreateController extends Controller
 					'semester' => $req->semester,
 					'sks' => $req->sks,
 					'notes' => $req->notes,
-					'created_by' => $by,
-					'updated_by' => $by,
 					'start_date_1' => $req->start_date_1,
 					'start_date_2' => $req->start_date_2,
 					'start_date_3' => $req->start_date_3,
@@ -1400,9 +1421,12 @@ class CreateController extends Controller
 					'updated_by' => $by,
 					'action' => $sync,
 					'specialization_id' => $req->specialization_id,
+					'transfer_status' => $req->transfer_status,
+					'transfer_program_study_id' => $req->transfer_program_study_id,
 					'package_id'  => $req->package_id,
 					'payment_method_id'  => $req->payment_method_id,
-					'payment_status'  => $req->payment_status
+					'payment_status'  => $req->payment_status,
+					'total_amount'  => $req->total_amount
 				]
 			);
 
@@ -1446,9 +1470,109 @@ class CreateController extends Controller
 				'specialization_id' => $req->specialization_id,
 				'package_id'  => $req->package_id,
 				'payment_method_id'  => $req->payment_method_id,
-				'payment_status'  => $req->payment_status
+				'payment_status'  => $req->payment_status,
+				'total_amount'  => $req->total_amount
 			]);
 
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
+			], 500);
+		}
+	}
+
+	public function CreateOrUpdateFinalResult(Request $req) //update kelulusan
+	{
+
+		try {
+			$by = $req->header("X-I");
+			Registration_Result::updateOrCreate(
+				[
+					'registration_number' => $req->registration_number
+				],
+				[
+					'publication_status' => $req->publication_status,
+					'end_date_1' => $req->end_date_1,
+					'publication_date' => $req->publication_date,
+					'reference_number' => $req->reference_number,
+					'approval_university' => true,
+					'approval_university_by' => $by,
+					'approval_university_at' => Carbon::now()
+				]
+			);
+			
+			$registration_result = Registration_Result::select('*')
+				->where('registration_number', '=', $req->registration_number)
+				->first();
+
+			if ($registration_result->pass_status == true) {
+				$this->CreateOrUpdateNewStudent($registration_result->registration_number, $registration_result->participant_id, $registration_result->program_study_id, $by);
+			}
+
+			Registration_Result_Sync::updateOrCreate(
+				[
+					'registration_number' => $req->registration_number
+				],
+				[
+					'publication_status' => $req->publication_status,
+					'end_date_1' => $req->end_date_1,
+					'publication_date' => $req->publication_date,
+					'reference_number' => $req->reference_number,
+				]
+			);
+
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
+			], 500);
+		}
+	}
+
+	public function CreateOrUpdateRefundRequest(Request $req) //update kelulusan
+	{
+		$refund_request = Refund_Request::select('*')
+				->where('registration_number', '=', $req->registration_number)
+				->first();
+
+		try {
+			$by = $req->header("X-I");
+			Refund_Request::updateOrCreate(
+				[
+					'registration_number' => $req->registration_number
+				],
+				[
+					'nama' => (isset($req->nama) != null) ? $req->nama : $refund_request->nama,
+					'alamat' => (isset($req->alamat) != null) ? $req->alamat : $refund_request->alamat,
+					'identitas' => (isset($req->identitas) != null) ? $req->identitas : $refund_request->identitas,
+					'no_identitas' => (isset($req->no_identitas) != null) ? $req->no_identitas : $refund_request->no_identitas,
+					'no_rek' => (isset($req->no_rek) != null) ? $req->no_rek : $refund_request->no_rek,
+					'nama_bank' => (isset($req->nama_bank) != null) ? $req->nama_bank : $refund_request->nama_bank,
+					'nama_pemilik' => (isset($req->nama_pemilik) != null) ? $req->nama_pemilik : $refund_request->nama_pemilik,
+					'hubungan_pemilik' => (isset($req->hubungan_pemilik) != null) ? $req->hubungan_pemilik : $refund_request->hubungan_pemilik,
+					'tanggal_transfer' => (isset($req->tanggal_transfer) != null) ? $req->tanggal_transfer : $refund_request->tanggal_transfer,
+					'biaya_paket' => (isset($req->biaya_paket) != null) ? $req->biaya_paket : $refund_request->biaya_paket,
+					'biaya_admisistrasi' => (isset($req->biaya_admisistrasi) != null) ? $req->biaya_admisistrasi : $refund_request->biaya_admisistrasi,
+					'biaya_pengembalian' => (isset($req->biaya_pengembalian) != null) ? $req->biaya_pengembalian : $refund_request->biaya_pengembalian,
+					'document_url' => ($req->file('url') != null) ? env('FTP_URL') . $req->file('url')->store('DEV/ADM/Selection/participant/refund') : $refund_request->document_url,
+				]
+			);
+			
 			DB::connection('pgsql')->commit();
 			return response([
 				'status' => 'Success',
@@ -1481,8 +1605,10 @@ class CreateController extends Controller
 			$client_id = env('CLIENT_ID'); //client id from BNI
 			$prefix = env('PREFIX'); //prefix id from BNI
 			$secret_key = env('SECRET_VA'); // secret key from BNI
-			$trx_id = $prefix . $client_id . $req->registration_number;
-			// $trx_id = strtotime("now") . $client_id . $req->registration_number;
+			$trx_id = $this->GenerateFormulirTrxId($req->registration_number);
+			$number = str_pad($req->registration_number, 12 , '0', STR_PAD_LEFT);
+			$va   = $prefix . $client_id. $number;
+			// return $va;
 			$request_body = array(
 				"type"              => 'createbilling',
 				"client_id"         => $client_id,
@@ -1492,7 +1618,7 @@ class CreateController extends Controller
 				"customer_name"     => $req->participant_name,
 				"customer_email"    => $req->participant_email,
 				"customer_phone"    => $req->participant_phone_number,
-				"virtual_account"   => $req->registration_number,
+				"virtual_account"   => $va,
 				"datetime_expired"  => Carbon::now()->addWeek(1)->format('Y-m-d h:i:s'),
 				"description"       => $req->add_info1,
 			);
@@ -1505,22 +1631,30 @@ class CreateController extends Controller
 
 			$http = new Client(['verify' => false]);
 
-			$request = $http->post(env('URL_CREATE_TRANSACTION_VA'), [
-				'body' => $datajson,
-				'headers' => [
-					'Content-Type' => 'application/json',
-					'Origin' => 'String',
-					// 'Cache-Control' => ' max-age=0',
-					// 'Connection' => ' keep-alive',
-					// 'Accept-Language' => ' en-US,en;q=0.8,id;q=0.6',
-					// 'Authorization' => 'Bearer ' . $token
-				],
-				'connect_timeout' => 25
-			]);
+			if($req->amount > 0){
+				$request = $http->post(env('URL_CREATE_TRANSACTION_VA'), [
+					'body' => $datajson,
+					'headers' => [
+						'Content-Type' => 'application/json',
+						'Origin' => 'String',
+					],
+					'connect_timeout' => 25
+				]);
+	
+				$createVA = json_decode($request->getBody(), true);
+			}
 
-			$createVA = json_decode($request->getBody(), true);
+			
+			if ($req->amount == 0 || $req->amount == null) {
+				Registration::where('registration_number', $req->registration_number)->update([
+					'payment_status_id' => 1,
+					// 'payment_receipt_status' => "Lunas",
+					'payment_date' => Carbon::now(),
+					'payment_url' => "Free",
+				]);
+			}
 
-			if (isset($createVA['data'])) {
+			if (isset($createVA['data']) && $req->amount > 0) {
 				$parsedata = BniEnc::decrypt($createVA['data'], $client_id, $secret_key);
 
 				$dataToSend['va_number'] = $req->registration_number;
@@ -1537,27 +1671,40 @@ class CreateController extends Controller
 					'customer_name' => $dataToSend['customer_name'],
 					'customer_email' => $dataToSend['customer_email'],
 					'customer_phone' => $dataToSend['customer_phone'],
-					'virtual_account' => $parsedata->virtual_account,
-					'trx_id' => $parsedata->trx_id,
+					'virtual_account' => $parsedata['virtual_account'],
+					'trx_id' => $parsedata['trx_id'],
 					'datetime_expired' => $dataToSend['datetime_expired'],
 					'description' => $dataToSend['description'],
 					'type' => 'createBilling',
-					'json_response' => json_encode($createVA),
+					'json_response' => json_encode($parsedata),
 					'created_by' => $by,
 					'registration_number' => $req->registration_number
 				]);
 
+				$email = $req->participant_email;
+				$name = $req->participant_name;
+
+				$data = [
+					'virtual_account' => $parsedata['virtual_account'],
+					'expiredat' => $dataToSend['datetime_expired'],
+					'noreg' => $req->registration_number,
+				];
+
+				Mail::send('virtual_account_mail', $data, function ($message) use ($email, $name) {
+					$message->to($email, $name)->subject('Trisakti University Admission');
+				});
+
 				return response()->json([
 					'status' => 'Success',
 					'message' => 'Berhasil membuat VA',
-					// 'result' => $createVA
+					'result' => $parsedata
 				], 200);
 			} else {
 				return response()->json([
 					'status' => 'Success',
 					'message' => 'Berhasil membuat VA',
 					'result' => $createVA,
-					// 'payload'=> $request_body,
+					'payload'=> $request,
 					// 'hashdata' => $hashdata,
 					// 'datareal' => $hashdata = BniEnc::encrypt($request_body, $client_id, $secret_key) 
 				], 200);
@@ -1578,19 +1725,13 @@ class CreateController extends Controller
 				'message' => 'Transaction Failed',
 				'result' => $e->getMessage()
 			], 500);
-		} 
-		catch (\GuzzleHttp\Exception\BadResponseException $e) {
+		} catch (\GuzzleHttp\Exception\BadResponseException $e) {
 			return response()->json([
 				'status' => 'Failed',
 				'message' => 'Transaction Failed',
 				'result' => $e->getMessage()
 			], 500);
 		}
-		return response()->json([
-			'status' => 'Success',
-			'request_body' => $request_body,
-			'result' => $createVA
-		], 200);
 	}
 
 	public function RequestPinTransactionBackup(Request $req)
@@ -1713,9 +1854,10 @@ class CreateController extends Controller
 		try {
 			$create = Pin_Voucher::create([
 				'voucher' => strtoupper(Str::random(8)),
+				'description' => $req->description,
 				'type' => strtoupper($req->type),
 				'expire_date' => $req->expire_date,
-				'active_status' => true,
+				'active_status' => false,
 				'price' => $req->price,
 				'created_by' => $by,
 				'updated_by' => $by
@@ -1747,7 +1889,7 @@ class CreateController extends Controller
 			return response()->json([
 				"status" => "Failed",
 				"message" => "empty form-data",
-			], 500);
+			], 400);
 		}
 
 		//validate voucher
@@ -1757,46 +1899,14 @@ class CreateController extends Controller
 			return response()->json([
 				"status" => "Failed",
 				"message" => "Voucher invalid or expired",
-			], 500);
-		}
-
-		//validate registration
-		$registration = Registration::where('registration_number', '=', $req->registration_number)
-			->join('mapping_path_price as mpp', 'registrations.mapping_path_price_id', '=', 'mpp.id')
-			->first();
-
-		if ($registration == null) {
-			return response()->json([
-				"status" => "Failed",
-				"message" => "Registration not found",
-			], 500);
-		}
-
-		//validate price
-		if ((float) $registration->price != (float) $voucher->price) {
-			return response()->json([
-				"status" => "Failed",
-				"message" => "Cannot use voucher. the price of the voucher does not match",
-			], 500);
+			], 400);
 		}
 
 		//update registration
 		try {
-			Registration::find($req->registration_number)
-				->update([
-					'payment_status_id' => 1,
-					'payment_date' => date('Y-m-d H:i:s'),
-					'activation_pin' => true,
-					'updated_by' => $by
-				]);
 
 			//update voucher
 			try {
-				Pin_Voucher::find($req->voucher)
-					->update([
-						'active_status' => false,
-						'updated_by' => $by
-					]);
 
 				Transaction_Voucher::create([
 					'voucher' => $req->voucher,
@@ -2084,6 +2194,7 @@ class CreateController extends Controller
 				'session_one_end' => ($req->session_one_end) ? $req->session_one_end : $data->session_one_end,
 				'session_two_end' => ($req->session_two_end) ? $req->session_two_end : $data->session_two_end,
 				'session_three_end' => ($req->session_three_end) ? $req->session_three_end : $data->session_three_end,
+				'location' => ($req->location) ? $req->location : $data->location,
 				'updated_by' => $by
 			]);
 
@@ -2110,23 +2221,25 @@ class CreateController extends Controller
 			Passing_Grade::create([
 				'program_study_id' => $req->program_study_id,
 				'mapping_path_year_id' => $req->mapping_path_year_id,
-				'general_knowledge' => $req->general_knowledge,
-				'math' => $req->math,
-				'english' => $req->english,
-				'physics' => $req->physics,
-				'chemical' => $req->chemical,
-				'biology' => $req->biology,
-				'drawing' => $req->drawing,
-				'photography_knowledge' => $req->photography_knowledge,
 				'created_by' => $by,
 				'active_status' => $req->active_status,
 				'min_grade_value' => $req->min_grade_value,
-				'bahasa' => $req->bahasa,
-				'economy' => $req->economy,
-				'geography' => $req->geography,
-				'sociological' => $req->sociological,
-				'historical' => $req->historical,
-				'tpa' => $req->tpa
+				'mapel1' => $req->mapel1,
+				'mapel2' => $req->mapel2,
+				'mapel3' => $req->mapel3,
+				'mapel4' => $req->mapel4,
+				'mapel5' => $req->mapel5,
+				'mapel6' => $req->mapel6,
+				'mapel7' => $req->mapel7,
+				'mapel8' => $req->mapel8,
+				'mapel9' => $req->mapel9,
+				'mapel10' => $req->mapel10,
+				'mapel11' => $req->mapel11,
+				'mapel12' => $req->mapel12,
+				'mapel13' => $req->mapel13,
+				'mapel14' => $req->mapel14,
+				'mapel15' => $req->mapel15,
+				'mapel16' => $req->mapel16,
 			]);
 
 			return response()->json([
@@ -2154,19 +2267,22 @@ class CreateController extends Controller
 				],
 				[
 					'registration_number' => $req->registration_number,
-					'math' => $req->math,
-					'physics' => $req->physics,
-					'bahasa' => $req->bahasa,
-					'english' => $req->english,
-					'biology' => $req->biology,
-					'economy' => $req->economy,
-					'geography' => $req->geography,
-					'sociological' => $req->sociological,
-					'historical' => $req->historical,
-					'chemical' => $req->chemical,
-					'general_knowledge' => $req->general_knowledge,
-					'photography_knowledge' => $req->photography_knowledge,
-					'tpa' => $req->tpa,
+					'mapel1' => $req->mapel1,
+					'mapel2' => $req->mapel2,
+					'mapel3' => $req->mapel3,
+					'mapel4' => $req->mapel4,
+					'mapel5' => $req->mapel5,
+					'mapel6' => $req->mapel6,
+					'mapel7' => $req->mapel7,
+					'mapel8' => $req->mapel8,
+					'mapel9' => $req->mapel9,
+					'mapel10' => $req->mapel10,
+					'mapel11' => $req->mapel11,
+					'mapel12' => $req->mapel12,
+					'mapel13' => $req->mapel13,
+					'mapel14' => $req->mapel14,
+					'mapel15' => $req->mapel15,
+					'mapel16' => $req->mapel16,
 					'created_by' => $by,
 					'updated_by' => $by,
 					'grade_final' => $req->grade_final
@@ -2877,62 +2993,25 @@ class CreateController extends Controller
 		try {
 			$by = $req->header("X-I");
 
-			$datas = json_decode($req->json, true);
-
-			//insert to mapping path document
-			Mapping_Path_Document::updateOrCreate(
-				[
-					'selection_path_id' => $datas['selection_path_id'],
-					'document_type_id' => $datas['document_type_id']
-				],
-				[
-					'selection_path_id' => $datas['selection_path_id'],
-					'document_type_id' => $datas['document_type_id'],
-					'active_status' => $datas['active_status'],
-					'required' => $datas['required'],
-					'created_by' => $by
-				]
-			);
-
-			//insert science
 			Mapping_Utbk_Path::updateOrCreate(
 				[
-					'selection_path_id' => $datas['selection_path_id'],
-					'is_science' => true
+					'selection_path_id' => $req->selection_path_id,
+					'program_study_id' => $req->program_study_id,
 				],
 				[
-					'selection_path_id' => $datas['selection_path_id'],
-					'is_science' => true,
-					'math' => $datas['mapping_utbk_path_science']['math'],
-					'physics' => $datas['mapping_utbk_path_science']['physics'],
-					'biology' => $datas['mapping_utbk_path_science']['biology'],
-					'chemical' => $datas['mapping_utbk_path_science']['chemical'],
-					'economy' => $datas['mapping_utbk_path_science']['economy'],
-					'geography' => $datas['mapping_utbk_path_science']['geography'],
-					'sociological' => $datas['mapping_utbk_path_science']['sociological'],
-					'historical' => $datas['mapping_utbk_path_science']['historical'],
-					'created_by' => $by,
-					'active_status' => true
-				]
-			);
-
-			//insert legal social
-			Mapping_Utbk_Path::updateOrCreate(
-				[
-					'selection_path_id' => $datas['selection_path_id'],
-					'is_science' => false
-				],
-				[
-					'selection_path_id' => $datas['selection_path_id'],
-					'is_science' => false,
-					'math' => $datas['mapping_utbk_path_non_science']['math'],
-					'physics' => $datas['mapping_utbk_path_non_science']['physics'],
-					'biology' => $datas['mapping_utbk_path_non_science']['biology'],
-					'chemical' => $datas['mapping_utbk_path_non_science']['chemical'],
-					'economy' => $datas['mapping_utbk_path_non_science']['economy'],
-					'geography' => $datas['mapping_utbk_path_non_science']['geography'],
-					'sociological' => $datas['mapping_utbk_path_non_science']['sociological'],
-					'historical' => $datas['mapping_utbk_path_non_science']['historical'],
+					'selection_path_id' => $req->selection_path_id,
+					'program_study_id' => $req->program_study_id,
+					'is_science' => $req->is_science,
+					'mapel1' => $req->mapel1,
+					'mapel2' => $req->mapel2,
+					'mapel3' => $req->mapel3,
+					'mapel4' => $req->mapel4,
+					'mapel5' => $req->mapel5,
+					'mapel6' => $req->mapel6,
+					'mapel7' => $req->mapel7,
+					'mapel8' => $req->mapel8,
+					'mapel9' => $req->mapel9,
+					'mapel10' => $req->mapel10,
 					'created_by' => $by,
 					'active_status' => true
 				]
@@ -3232,14 +3311,16 @@ class CreateController extends Controller
 				[
 					'document_id' => $document->id,
 					'created_by' => $by,
-					'math' => $req->math,
-					'physics' => $req->physics,
-					'chemical' => $req->chemical,
-					'biology' => $req->biology,
-					'economy' => $req->economy,
-					'geography' => $req->geography,
-					'sociological' => $req->sociological,
-					'historical' => $req->historical,
+					'mapel1' => $req->mapel1,
+					'mapel2' => $req->mapel2,
+					'mapel3' => $req->mapel3,
+					'mapel4' => $req->mapel4,
+					'mapel5' => $req->mapel5,
+					'mapel6' => $req->mapel6,
+					'mapel7' => $req->mapel7,
+					'mapel8' => $req->mapel8,
+					'mapel9' => $req->mapel9,
+					'mapel10' => $req->mapel10,
 					'registration_number' => $req->registration_number,
 					'general_reasoning' => $req->general_reasoning,
 					'quantitative_knowledge' => $req->quantitative_knowledge,
@@ -3477,10 +3558,14 @@ class CreateController extends Controller
 			Mapping_New_Student_Document_Type::updateOrCreate(
 				[
 					'selection_path_id' => $req->selection_path_id,
+					'faculty_id' => $req->faculty_id,
+					'study_program_id' => $req->study_program_id,
 					'new_student_document_type_id' => $req->new_student_document_type_id
 				],
 				[
 					'selection_path_id' => $req->selection_path_id,
+					'faculty_id' => $req->faculty_id,
+					'study_program_id' => $req->study_program_id,
 					'new_student_document_type_id' => $req->new_student_document_type_id
 				]
 			);
@@ -3573,6 +3658,46 @@ class CreateController extends Controller
 			->count();
 
 		$increment = str_pad($increment + 1, 2, '0', STR_PAD_LEFT);
+
+		//result
+		$student_id = $tmp . $increment;
+		return $student_id;
+	}
+
+	function GenerateFormulirTrxId($registration_number)
+	{
+		$client_id = env('CLIENT_ID'); //client id from BNI
+		$prefix = env('PREFIX'); //prefix id from BNI
+		$tmp = $prefix . $client_id . $registration_number . 0; //tmp gabungan dari client id dan prefix;
+
+		/*
+			Nomor urut
+			*/
+		$increment = Transaction_Request::select('id')
+			->get()
+			->count();
+
+		$increment = str_pad($increment + 1, 3, '0', STR_PAD_LEFT);
+
+		//result
+		$student_id = $tmp . $increment;
+		return $student_id;
+	}
+
+	function GenerateFinalTrxId($registration_number)
+	{
+		$client_id = env('CLIENT_ID'); //client id from BNI
+		$prefix = env('PREFIX'); //prefix id from BNI
+		$tmp = $prefix . $client_id . $registration_number . '1'; //tmp gabungan dari client id dan prefix;
+
+		/*
+			Nomor urut
+			*/
+		$increment = Transaction_Billing::select('id')
+			->get()
+			->count();
+
+		$increment = str_pad($increment + 1, 3, '0', STR_PAD_LEFT);
 
 		//result
 		$student_id = $tmp . $increment;
@@ -3914,7 +4039,8 @@ class CreateController extends Controller
 				'faculty_name' => $req->faculty_name,
 				'acronim' => $req->acronim,
 				'acreditation' => $req->acreditation,
-				'quota' => $req->quota
+				'quota' => $req->quota,
+				'sks' => $req->sks
 			]);
 			DB::connection('pgsql')->commit();
 			return response([
@@ -3976,6 +4102,8 @@ class CreateController extends Controller
 				'nama_prodi' => $req->nama_prodi,
 				'nama_formulir' => $req->nama_formulir,
 				'harga' => $req->harga,
+				'add_cost' => $req->add_cost,
+				'exam_status' => $req->exam_status,
 				'kategori_formulir' => $req->kategori_formulir,
 			]);
 			DB::connection('pgsql')->commit();
@@ -4054,13 +4182,26 @@ class CreateController extends Controller
 
 	public function InsertStudyProgramSpecialization(Request $req)
 	{
+		if($req->class_type_id){
+			$class_id = $req->class_type_id;
+			$class = $req->class_type;
+		}else{
+			$data = Study_Program_Specialization::select(
+				'class_type', 'class_type_id as id'
+			)
+			->where('study_program_specializations.active_status', '=', true)
+			->distinct()->get()->count();
+			$class_id = $data + 1;
+			$class = $req->class_type;
+		}
+
 		try {
 			Study_Program_Specialization::create([
 				'specialization_name' => $req->specialization_name,
 				'specialization_code' => $req->specialization_code,
 				'active_status' => $req->active_status,
-				'class_type' => $req->class_type,
-				'class_type_id' => $req->class_type_id,
+				'class_type' => $class,
+				'class_type_id' => $class_id,
 				'classification_id' => $req->classification_id,
 			]);
 			DB::connection('pgsql')->commit();
@@ -4212,18 +4353,19 @@ class CreateController extends Controller
 	public function InsertPackageQuestionUsers(Request $req)
 	{
 		try {
-    		$exam_type = Exam_Type::where('id',$req->type_id)->first();
-            if(!$exam_type){
-                return response()->json([
-              		'message' => 'Exam type not found.'
-           	    ], 400);
-            }
-            $package = CBT_Package_Questions::where('type_id', $req->type_id)->inRandomOrder()->first();
-            if(!$package){
-                return response()->json([
-              		'message' => 'Package question not found.'
-           	    ], 400);
-            }
+			$exam_type = Exam_Type::where('id', $req->type_id)->first();
+			if (!$exam_type) {
+				return response()->json([
+					'message' => 'Exam type not found.'
+				], 400);
+			}
+			$package = CBT_Package_Questions::where('type_id', $req->type_id)->inRandomOrder()->first();
+			if (!$package) {
+				return response()->json([
+					'message' => 'Package question not found.'
+				], 400);
+			}
+			
 			CBT_Package_Question_Users::create([
 				'package_question_id' => $package->id,
 				'user_id' => $req->user_id,
@@ -4256,6 +4398,7 @@ class CreateController extends Controller
 				'kode_matakuliah_ex' => $req->kode_matakuliah_ex,
 				'nama_matakuliah_ex' => $req->nama_matakuliah_ex,
 				'sks_ex' => $req->sks_ex,
+				'nilai_ex' => $req->nilai_ex,
 				'kode_matakuliah' => $req->kode_matakuliah,
 				'nama_matakuliah' => $req->nama_matakuliah,
 				'sks' => $req->sks,
@@ -4294,14 +4437,16 @@ class CreateController extends Controller
 					'angsuran_ke' =>  $item->angsuran_ke,
 					'spp' => $item->spp,
 					'bpp'  => $item->bpp,
-					'praktikum'=> $item->praktikum,
-					'ujian'=> $item->ujian,
-					'lainnya'=> $item->lainnya,
-					'disc'=> $item->disc,
-					'disc_spp'=> $item->disc_spp,
-					'disc_bpp'=> $item->disc_bpp,
-					'disc_praktikum'=> $item->disc_praktikum,
-					'disc_lainnya'=> $item->disc_lainnya,
+					'bpp_sks'  => $item->bpp_sks,
+					'praktikum' => $item->praktikum,
+					'ujian' => $item->ujian,
+					'lainnya' => $item->lainnya,
+					'disc' => $item->disc,
+					'disc_spp' => $item->disc_spp,
+					'disc_bpp' => $item->disc_bpp,
+					'disc_bpp_sks' => $item->disc_bpp_sks,
+					'disc_praktikum' => $item->disc_praktikum,
+					'disc_lainnya' => $item->disc_lainnya,
 				]);
 			}
 
@@ -4318,5 +4463,201 @@ class CreateController extends Controller
 				'error' => $e->getMessage()
 			], 500);
 		}
+	}
+
+	public function RequestPinTransactionResult(Request $req)
+	{
+		$by = $req->header("X-I");
+		$ipfy = '';
+		$createVA = '';
+		$datajson = '';
+		$request_body = '';
+		try {
+			$client_id = env('CLIENT_ID'); //client id from BNI
+			$prefix = env('PREFIX'); //prefix id from BNI
+			$secret_key = env('SECRET_VA'); // secret key from BNI
+			$registration = Registration_Result::select(
+				'registration_result.registration_number',
+				DB::raw("substring(mpyi.year from 1 for 4) as year"),
+				'registration_result.semester',
+				'registration_result.program_study_id',
+				'registration_result.specialization_id',
+				'registration_result.end_date_1',
+				'sps.class_type_id',
+				DB::raw("case when registration_result.rank is null then 0 else registration_result.rank end as rank"),
+				'p.fullname',
+				'p.username',
+				'p.mobile_phone_number',
+				'tb.id as transaction_billing_id'
+			)
+				->join('registrations as r', 'registration_result.registration_number', '=', 'r.registration_number')
+				->join('participants as p', 'r.participant_id', '=', 'p.id')
+				->join('mapping_path_year_intake as mpyi', 'r.mapping_path_year_intake_id', '=', 'mpyi.id')
+				->join('study_program_specializations as sps', 'registration_result.specialization_id', '=', 'sps.id')
+				->leftJoin('transaction_billings as tb', 'registration_result.registration_number', '=', 'tb.registration_number')
+				->where('registration_result.registration_number', '=', $req->registration_number)
+				->first();
+
+			//validate registration
+			if ($registration == null) {
+				return response()->json([
+					'status' => 'Failed',
+					'message' => 'Registration result not found',
+				], 400);
+			}
+
+			//validate transaction billing agar tidak di execute berulang kali
+			//jika transaction biiling nya tidak null maka langsung return
+			if ($registration->virtual_account != null) {
+				return response()->json([
+					'status' => 'Success',
+					'message' => 'Billing has been generated'
+				], 200);
+			}
+
+
+			$trx_id = $this->GenerateFinalTrxId($req->registration_number);
+			$number = str_pad($req->registration_number, 12 , '0', STR_PAD_LEFT);
+			$va   = $prefix . $client_id. $number;
+			// $trx_id = strtotime("now") . $client_id . $req->registration_number;
+			$request_body = array(
+				"type"              => 'createbilling',
+				"client_id"         => $client_id,
+				"trx_id"            => $trx_id,
+				"trx_amount"        => $req->amount,
+				"billing_type"		=> "c",
+				"customer_name"     => $req->participant_name,
+				"customer_email"    => $req->participant_email,
+				"customer_phone"    => $req->participant_phone_number,
+				"virtual_account"   => $va,
+				"datetime_expired"  => Carbon::now()->addWeek(24)->format('Y-m-d h:i:s'),
+				"description"       => $req->add_info1,
+			);
+			$hashdata = BniEnc::encrypt($request_body, $client_id, $secret_key);
+			$datajson = json_encode(array(
+				'client_id' => $client_id,
+				'prefix' => $prefix,
+				'data' => $hashdata,
+			));
+
+			$http = new Client(['verify' => false]);
+
+			$request = $http->post(env('URL_CREATE_TRANSACTION_VA'), [
+				'body' => $datajson,
+				'headers' => [
+					'Content-Type' => 'application/json',
+					'Origin' => 'String',
+				],
+				'connect_timeout' => 25
+			]);
+
+			$createVA = json_decode($request->getBody(), true);
+
+			if (isset($createVA['data'])) {
+				$parsedata = BniEnc::decrypt($createVA['data'], $client_id, $secret_key);
+
+				$dataToSend['va_number'] = $req->registration_number;
+				$dataToSend['trx_amount'] = $req->amount;
+				$dataToSend['customer_name'] = $req->participant_name;
+				$dataToSend['customer_email'] = $req->participant_email;
+				$dataToSend['customer_phone'] = $req->participant_phone_number;
+				$dataToSend['datetime_expired'] = Carbon::now()->addWeek(24)->format('Y-m-d h:i:s');
+				$dataToSend['description'] = $req->add_info1;
+				//put param
+				$param = [
+					'registration_number' => $registration->registration_number,
+					'school_year' => $registration->year,
+					'semester' => $registration->semester,
+					'study_program_id' => $registration->program_study_id,
+					'specialization_id' => $registration->specialization_id,
+					'class_type_id' => $registration->class_type_id,
+					'spp_rank_id' => $registration->rank,
+					'email' => $registration->username,
+					'fullname' => $registration->fullname,
+					'total_cost' => $req->amount,
+					'mobile_phone_number' => $registration->mobile_phone_number,
+					'virtual_account' => $parsedata['virtual_account'],
+					'trx_id' => $parsedata['trx_id'],
+					'json_response' => $parsedata,
+				];
+
+
+				$param['created_by'] = $req->header('X-I');
+
+				//put param variable while insert or update data to transaction billings table
+				Transaction_Billing::updateOrCreate(['registration_number' => $req->registration_number], $param);
+
+				$email = $req->participant_email;
+				$name = $req->participant_name;
+
+				$data = [
+					'virtual_account' => $parsedata['virtual_account'],
+					'expiredat' => $registration->end_date_1,
+					'noreg' => $req->registration_number,
+				];
+
+				Mail::send('virtual_account_mail', $data, function ($message) use ($email, $name) {
+					$message->to($email, $name)->subject('Trisakti University Admission');
+				});
+
+				return response()->json([
+					'status' => 'Success',
+					'message' => 'Berhasil membuat VA',
+					'result' => $parsedata
+				], 200);
+			} else {
+				return response()->json([
+					'status' => 'Success',
+					'message' => 'Berhasil membuat VA',
+					// 'response' => $createVA
+				], 200);
+			}
+		} catch (\Throwable $e) {
+			return response()->json([
+				'status' => 'Failed',
+				'message' => 'Transaction Failed',
+				'result' => $e->getMessage()
+			], 500);
+		} catch (Exception $e) {
+			return response()->json([
+				'status' => 'Failed',
+				'message' => 'Transaction Failed',
+				'result' => $e->getMessage()
+			], 500);
+		} catch (\GuzzleHttp\Exception\BadResponseException $e) {
+			return response()->json([
+				'status' => 'Failed',
+				'message' => 'Transaction Failed',
+				'result' => $e->getMessage()
+			], 500);
+		}
+		return response()->json([
+			'status' => 'Success',
+			'request_body' => $request_body,
+			// 'result' => $createVA
+		], 200);
+	}
+
+	public function BodyEncrypt(Request $req)
+	{
+		$client_id = 19224; //client id from BNI
+		$prefix = 988; //prefix id from BNI
+		$secret_key = '7b5a74969ddeadff9e298eb08b9527dc'; // secret key from BNI
+		$request_body = array(
+			"cumulative_payment_amount" => $req->cumulative_payment_amount,
+			"customer_name" => $req->customer_name,
+			"datetime_payment" => $req->datetime_payment,
+			"datetime_payment_iso8601" => $req->datetime_payment_iso8601,
+			"payment_amount" => $req->payment_amount,
+			"payment_ntb" => $req->payment_ntb,
+			"trx_amount" => $req->trx_amount,
+			"trx_id" => $req->trx_id,
+			"virtual_account" => $req->virtual_account
+		);
+		$hash = BniEnc::encrypt($request_body, $client_id, $secret_key);
+		return response()->json([
+			"client_id" => $client_id,
+			"data" => $hash
+		]);
 	}
 }

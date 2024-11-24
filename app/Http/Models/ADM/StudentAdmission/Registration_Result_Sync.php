@@ -56,6 +56,7 @@ class Registration_Result_Sync extends Model {
         'package_id',
         'payment_method_id',
         'payment_status',
+        'total_amount',
     ];
     
     public $timestamps = true;

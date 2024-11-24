@@ -21,6 +21,7 @@ class Study_Program extends Model {
         'faculty_name',
         'acronim',
         'acreditation',
+        'sks',
         'quota'
     ];
     public $timestamps = false;
