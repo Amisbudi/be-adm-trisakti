@@ -43,6 +43,7 @@ class Registration_Result_Sync extends Model {
         'type',
         'oldstudentid',
         'reference_number',
+        'faculty_number',
         'password',
         'transfer_status',
         'transfer_program_study_id',

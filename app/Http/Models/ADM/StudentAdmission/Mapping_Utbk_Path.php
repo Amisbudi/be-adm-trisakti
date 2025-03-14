@@ -13,6 +13,7 @@ class Mapping_Utbk_Path extends Model {
     protected $fillable = [ 
         'selection_path_id',
         'is_science',
+        'name',
         'mapel1',
         'mapel2',
         'mapel3',

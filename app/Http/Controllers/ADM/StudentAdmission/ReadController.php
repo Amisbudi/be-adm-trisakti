@@ -43,8 +43,6 @@ use App\Http\Models\ADM\StudentAdmission\Registration;
 use App\Http\Models\ADM\StudentAdmission\Payment_Method;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Registration_Program_Study;
 use App\Http\Models\ADM\StudentAdmission\Study_Program;
-use App\Http\Models\ADM\StudentAdmission\Document;
-use App\Http\Models\ADM\StudentAdmission\Participant_Document;
 use App\Http\Models\ADM\StudentAdmission\Document_Publication;
 use App\Http\Models\ADM\StudentAdmission\Document_Report_Card;
 use App\Http\Models\ADM\StudentAdmission\Semester;
@@ -122,8 +120,11 @@ use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Minat;
 use App\Http\Models\ADM\StudentAdmission\Master_kelas;
 use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
+use App\Http\Models\ADM\StudentAdmission\Change_Program;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Ujian;
 use App\Http\Models\ADM\StudentAdmission\Master_Package;
 use App\Http\Models\ADM\StudentAdmission\Master_Package_Angsuran;
+use App\Http\Models\ADM\StudentAdmission\Refund_Request;
 use App\Http\Models\ADM\StudentAdmission\Transfer_Credit;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
 use GuzzleHttp\Exception\GuzzleException;
@@ -296,6 +297,7 @@ class ReadController extends Controller
             'mapping_path_year_intake.year as mapping_path_year_intake_year',
             'mapping_path_year_intake.notes',
             'mapping_path_year_intake.active_status',
+            'mapping_path_year_intake.nomor_reff',
             'mpy.id as mapping_path_year_id',
             'mpy.year',
             'mpy.school_year',
@@ -1191,39 +1193,39 @@ class ReadController extends Controller
             ->where([$participant_id, $registration_number, $mapping_location_selection_id])
             ->get();
 
-            foreach($data as $key => $value){
-                $query = Mapping_Registration_Program_Study::select(
-                    'mapping_registration_program_study.id',
-                    'mapping_registration_program_study.priority',
-                    't1.study_program_branding_name as study_program_name',
-                    't1.classification_id as study_program_id',
-                    't1.faculty_id',
-                    't1.faculty_name',
-                    'mps.id as mapping_path_program_study_id',
-                    'education_fund',
-                    'sps.classification_id',
-                    'sps.specialization_name',
-                    'sps.specialization_code',
-                    'sps.active_status as specialization_active_status',
-                    'sps.class_type',
-                    'mapping_registration_program_study.approval_faculty',
-                    'mapping_registration_program_study.approval_faculty_at',
-                    'mapping_registration_program_study.approval_faculty_by',
-                    'mapping_registration_program_study.rank'
-                )
-                    ->leftjoin('mapping_path_program_study as mps', 'mapping_registration_program_study.program_study_id', '=', 'mps.program_study_id')
-                    ->leftjoin('study_programs as t1', 'mapping_registration_program_study.program_study_id', '=', 't1.classification_id')
-                    ->leftjoin('study_program_specializations as sps', 'mapping_registration_program_study.study_program_specialization_id', '=', 'sps.id')
-        
-                    ->where('mapping_registration_program_study.registration_number', '=', $value['registration_number'])
-                    ->where('mps.selection_path_id', '=', $value['selection_path_id'])
-                    ->where('mps.active_status', '=', true)
-                    ->orderBy('mapping_registration_program_study.priority')
-                    ->get();
-        
-                $data[$key]['program_study'] = $query;
-            }
-            
+        foreach ($data as $key => $value) {
+            $query = Mapping_Registration_Program_Study::select(
+                'mapping_registration_program_study.id',
+                'mapping_registration_program_study.priority',
+                't1.study_program_branding_name as study_program_name',
+                't1.classification_id as study_program_id',
+                't1.faculty_id',
+                't1.faculty_name',
+                'mps.id as mapping_path_program_study_id',
+                'education_fund',
+                'sps.classification_id',
+                'sps.specialization_name',
+                'sps.specialization_code',
+                'sps.active_status as specialization_active_status',
+                'sps.class_type',
+                'mapping_registration_program_study.approval_faculty',
+                'mapping_registration_program_study.approval_faculty_at',
+                'mapping_registration_program_study.approval_faculty_by',
+                'mapping_registration_program_study.rank'
+            )
+                ->leftjoin('mapping_path_program_study as mps', 'mapping_registration_program_study.program_study_id', '=', 'mps.program_study_id')
+                ->leftjoin('study_programs as t1', 'mapping_registration_program_study.program_study_id', '=', 't1.classification_id')
+                ->leftjoin('study_program_specializations as sps', 'mapping_registration_program_study.study_program_specialization_id', '=', 'sps.id')
+
+                ->where('mapping_registration_program_study.registration_number', '=', $value['registration_number'])
+                ->where('mps.selection_path_id', '=', $value['selection_path_id'])
+                ->where('mps.active_status', '=', true)
+                ->orderBy('mapping_registration_program_study.priority')
+                ->get();
+
+            $data[$key]['program_study'] = $query;
+        }
+
 
         return DataTables::of($data)
             ->addIndexColumn()
@@ -1534,6 +1536,50 @@ class ReadController extends Controller
         return $data;
     }
 
+    function TableUTBK($noreg, $document_type_id)
+    {
+        $filter = DB::raw('1');
+
+        if ($document_type_id) {
+            $id = ['document_utbk.document_id', '=', $document_type_id];
+        } else {
+            $id = [$filter, '=', '1'];
+        }
+
+        if ($noreg) {
+            $registration_number = ['document_utbk.registration_number', '=', $noreg];
+        } else {
+            $registration_number = [$filter, '=', '1'];
+        }
+
+        $data = Document_Utbk::select(
+            'document_utbk.id',
+            'document_utbk.document_id',
+            'document_utbk.mapel1',
+            'document_utbk.mapel2',
+            'document_utbk.mapel3',
+            'document_utbk.mapel4',
+            'document_utbk.mapel5',
+            'document_utbk.mapel6',
+            'document_utbk.mapel7',
+            'document_utbk.mapel8',
+            'document_utbk.mapel9',
+            'document_utbk.mapel10',
+            'document_utbk.registration_number',
+            'document_utbk.general_reasoning',
+            'document_utbk.quantitative_knowledge',
+            'document_utbk.comprehension_general_knowledge',
+            'document_utbk.comprehension_reading_knowledge',
+            'document_utbk.major_type',
+            'd.document_type_id',
+            'd.url'
+        )
+            ->join('documents as d', 'document_utbk.document_id', '=', 'd.id')
+            ->where([$id, $registration_number])
+            ->first();
+        return $data;
+    }
+
     public function GetCertificateLevel()
     {
         $data = Certificate_Level::GetCertificateLevel();
@@ -1781,10 +1827,10 @@ class ReadController extends Controller
 
         if ($req->class_type) {
             $class_type = ['path_exam_details.class_type', '=', $req->class_type];
-            $date_exam = ['path_exam_details.exam_start_date',  '>=', Carbon::now()];
+            // $date_exam = ['path_exam_details.exam_start_date',  '>=', Carbon::now()];
         } else {
             $class_type = [$filter, '=', 1];
-            $date_exam = [$filter, '=', 1];
+            // $date_exam = [$filter, '=', 1];
         }
 
         $data = Path_Exam_Detail::select(
@@ -1817,7 +1863,7 @@ class ReadController extends Controller
         )
             ->leftjoin('location_exam as le', 'path_exam_details.exam_location_id', '=', 'le.id')
             ->leftjoin('exam_type as et', 'path_exam_details.exam_type_id', '=', 'et.id')
-            ->where([$selection_path_id, $exam_location_id, $active_status, $class_type, $exam_type_id, $id, $date_exam])
+            ->where([$selection_path_id, $exam_location_id, $active_status, $class_type, $exam_type_id, $id])
             ->orderBy('path_exam_details.id', 'asc')
             ->get();
 
@@ -1854,6 +1900,53 @@ class ReadController extends Controller
                 return $row->origin_end_date;
             })
             ->make(true);
+    }
+
+    public function GetPathExamGroup(Request $req)
+    {
+        $filter = DB::raw('1');
+
+        if ($req->active_status) {
+            $active_status = ['active_status', '=', $req->active_status];
+        } else {
+            $active_status = [$filter, '=', 1];
+        }
+
+        if ($req->class_type) {
+            $class_type = ['class_type', '=', $req->class_type];
+            // $date_exam = ['exam_start_date',  '>=', Carbon::now()];
+        } else {
+            $class_type = [$filter, '=', 1];
+            // $date_exam = [$filter, '=', 1];
+        }
+
+        if ($req->selection_path_id) {
+            $selection_path_id = ['selection_path_id', '=', $req->selection_path_id];
+            // $date_exam = ['path_exam_details.exam_start_date',  '>=', Carbon::now()];
+        } else {
+            $selection_path_id = [$filter, '=', 1];
+            // $date_exam = [$filter, '=', 1];
+        }
+
+        $data = Path_Exam_Detail::select(
+            DB::raw('TO_CHAR(exam_start_date,' . "'DD-MM-YYYY'" . ') as exam_date'),
+            'class_type',
+        )
+            ->whereDate('exam_start_date', '>=', Carbon::now()->format('Y-m-d'))
+            ->where([$active_status, $class_type, $selection_path_id])
+            ->orderBy('exam_date', 'asc')
+            ->distinct()
+            ->get();
+
+        $result = [];
+
+        foreach ($data as $key => $value) {
+            $result[$key]['total'] = CBT_Package_Question_Users::where(['classes' => $value->class_type, 'user_id' => $req->user_id])->whereDate('date_exam', '>=', Carbon::parse($value->exam_date)->format('Y-m-d'))->count();
+            $result[$key]['class_type'] = $value->class_type;
+            $result[$key]['exam_date'] = $value->exam_date;
+        }
+
+        return response()->json($result);
     }
 
     public function ViewParticipantList(Request $req)
@@ -2193,6 +2286,116 @@ class ReadController extends Controller
             ->make(true);
     }
 
+    public function ListSelectionFinalResult(Request $req)
+    {
+        $filter = DB::raw('1');
+
+
+        if ($req->selection_path_id) {
+            $selection_path_id = ['sp.id', '=', $req->selection_path_id];
+        } else {
+            $selection_path_id = [$filter, '=', '1'];
+        }
+
+        if ($req->mapping_path_year_id) {
+            $mapping_path_year_id = ['r.mapping_path_year_id', '=', $req->mapping_path_year_id];
+        } else {
+            $mapping_path_year_id = [$filter, '=', '1'];
+        }
+
+        if ($req->mapping_path_year_intake_id) {
+            $mapping_path_year_intake_id = ['r.mapping_path_year_intake_id', '=', $req->mapping_path_year_intake_id];
+        } else {
+            $mapping_path_year_intake_id = [$filter, '=', '1'];
+        }
+
+        $data = Mapping_Path_Study_Program::select(
+            'sp.id as selection_path_id',
+            'sp.name as selection_path_name',
+            'ps.classification_id as program_study_id',
+            'ps.study_program_branding_name as program_study',
+            'ps.faculty_name as faculty',
+            'msp.quota'
+        )
+            ->join('selection_paths as sp', 'msp.selection_path_id', '=', 'sp.id')
+            ->join('study_programs as ps', 'msp.program_study_id', '=', 'ps.classification_id')
+            ->where([$selection_path_id])
+            ->get();
+
+        foreach ($data as $key => $value) {
+            $data[$key]['mapping_path_year_intake_id'] = $req->mapping_path_year_intake_id;
+            $data[$key]['mapping_path_year_id'] = $req->mapping_path_year_id;
+            $data[$key]['total_participant'] = Registration::where(['selection_path_id' => $value->selection_path_id, 'mapping_path_year_intake_id' => $req->mapping_path_year_intake_id, 'mapping_path_year_id' => $req->mapping_path_year_id])->count();
+        }
+
+        foreach ($data as $key => $value) {
+            $data[$key]['paid'] = Registration_Result::where(['selection_path_id' => $value->selection_path_id, 'payment_status' => 'Lunas', 'program_study_id' => $value->program_study_id])->count();
+        }
+
+        $sub_step = "(
+            select
+                new_student_step_id,
+                new_student_id
+            from
+                mapping_new_student_step
+            where
+                new_student_step_id = 3
+            group by
+                new_student_step_id,
+                new_student_id
+        ) as step";
+
+        foreach ($data as $key => $value) {
+            $data[$key]['verified'] = New_Student::select(
+                'new_student.registration_number',
+            )
+                ->join('registrations as r', 'new_student.registration_number', '=', 'r.registration_number')
+                ->join('selection_paths as sp', 'r.selection_path_id', '=', 'sp.id')
+                ->join('study_programs as sps', 'new_student.program_study_id', '=', 'sps.classification_id')
+                ->join('participants as p', 'new_student.participant_id', '=', 'p.id')
+                ->leftjoin(DB::raw($sub_step), 'new_student.id', '=', 'step.new_student_id')
+                ->where(['selection_path_id' => $value->selection_path_id, 'new_student.program_study_id' => $value->program_study_id, $mapping_path_year_intake_id, $mapping_path_year_id])->whereNotNull('step.new_student_id')
+                ->count();
+        }
+        // return response()->json($data);
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('selection_path_id', function ($row) {
+                return $row->selection_path_id;
+            })
+            ->addColumn('selection_path_name', function ($row) {
+                return $row->selection_path_name;
+            })
+            ->addColumn('program_study_id', function ($row) {
+                return $row->program_study_id;
+            })
+            ->addColumn('program_study', function ($row) {
+                return $row->program_study;
+            })
+            ->addColumn('faculty', function ($row) {
+                return $row->faculty;
+            })
+            ->addColumn('quota', function ($row) {
+                return $row->quota;
+            })
+            ->addColumn('mapping_path_year_intake_id', function ($row) {
+                return $row->mapping_path_year_intake_id;
+            })
+            ->addColumn('mapping_path_year_id', function ($row) {
+                return $row->mapping_path_year_id;
+            })
+            ->addColumn('total_participant', function ($row) {
+                return $row->total_participant;
+            })
+            ->addColumn('paid', function ($row) {
+                return $row->paid;
+            })
+            ->addColumn('verified', function ($row) {
+                return $row->verified;
+            })
+            ->make(true);
+    }
+
     public function GetParticipantDetail(Request $req)
     {
         $filter = DB::raw('1');
@@ -2385,6 +2588,14 @@ class ReadController extends Controller
             $mapping_path_year_id = [$filter, '=', '1'];
         }
 
+        if ($req->status) {
+            $status = ['registration_result.pass_status', '=', 't'];
+            $payment = ['registration_result.payment_status', '=', 'Lunas'];
+        } else {
+            $status = [$filter, '=', '1'];
+            $payment = [$filter, '=', '1'];
+        }
+
         $pass_status =  DB::raw('case when registration_result.pass_status = ' . "'f'" . ' and now() >= publication_date then ' . "'Tidak Lulus'" . ' when registration_result.pass_status = ' . "'t'" . ' and now() >= publication_date then ' . "'Lulus'" . ' else ' . "'Belum Ditentukan'" . ' end as pass_status_name');
 
         $data = Registration::select(
@@ -2452,7 +2663,7 @@ class ReadController extends Controller
             ->leftjoin('study_programs as ps', 'registration_result.program_study_id', '=', 'ps.classification_id')
             ->leftjoin('study_programs as tps', 'registration_result.transfer_program_study_id', '=', 'tps.classification_id')
             ->leftjoin('payment_methods as pm', 'pm.id', '=', 'registration_result.payment_method_id')
-            ->where([$selection_path, $registration_number, $participant_id, $mapping_path_year_id])
+            ->where([$selection_path, $registration_number, $participant_id, $mapping_path_year_id, $status, $payment])
             ->get();
 
         return DataTables::of($data)
@@ -2621,10 +2832,11 @@ class ReadController extends Controller
 
         //participant biodata
         $participantdata = Registration::GetRegistrationParticipant($request->registration_number, null);
-        
+
         //participant session
         $session = $this->ViewExamSessionCard($participantdata['data']->identify_number);
         //tahun ajaran
+        // return $session;
         $school_year = Mapping_Path_Year::select()
             ->where('selection_path_id', '=', $participantdata['data']->selection_path_id)
             ->where('active_status', '=', true)
@@ -2642,36 +2854,43 @@ class ReadController extends Controller
             }
         }
 
-        $rapor = $this->TableReportCard($request->registration_number,7);
+        $rapor = $this->TableReportCard($request->registration_number, 7);
+        $utbk = $this->TableUTBK($request->registration_number, null);
+        $mapelUtbk = null;
+        if ($utbk) {
+            $mapelUtbk = Mapping_Utbk_Path::select('*')->where('id', $utbk->major_type)->first();
+        }
+        // return $mapelUtbk;
         $filenames = 'registration_card/' . $request->registration_number . '_registrationcard.pdf';
         $path = env('FTP_URL') . $filenames;
         $payload['url'] = $path;
-        
+
         $tr = Transaction_Request::where('registration_number', '=', $request->registration_number)->first();
-        if(!$tr){
+        if (!$tr) {
             $payload['payment_status_id'] = 1;
             $payload['payment_date'] = Carbon::now();
             $payload['payment_url'] = $path;
             $payload['activation_pin'] = true;
-            
         }
         Registration::where('registration_number', '=', $request->registration_number)->update($payload);
         $data = [
             'program_study' => $listprodi,
             'participant' => $participantdata['data'],
-            'rapor' => $rapor['data'],
+            'rapor' => count($rapor['data']) > 0 ? $rapor['data'] : null,
             'mapel' => $mapel,
+            'mapelUtbk' => $mapelUtbk,
+            'utbk' => $utbk,
             'sessions' => $session,
             'school_year' => ($school_year == null || $school_year->year == null) ? (date("Y") + 1) . '/' . (date('Y') + 2) : $school_year->year,
             'qrcode' => $path,
         ];
 
         try {
-            if($participantdata['data']->exam_status_id == 1 || $participantdata['data']->exam_status_id == 6){ //rapor & utbk
+            if ($participantdata['data']->exam_status_id == 1 || $participantdata['data']->exam_status_id == 6) { //rapor & utbk
                 $pdf = PDF::loadView('rapor_card', $data)->setPaper('a4', 'potrait');
-            }else if($participantdata['data']->exam_status_id == 2 || $participantdata['data']->exam_status_id == 3){ // usm
+            } else if ($participantdata['data']->exam_status_id == 2 || $participantdata['data']->exam_status_id == 3) { // usm
                 $pdf = PDF::loadView('registration_card', $data)->setPaper('a4', 'potrait');
-            }else{ //yang lainnya
+            } else { //yang lainnya
                 $pdf = PDF::loadView('other_card', $data)->setPaper('a4', 'potrait');
             }
             // return $pdf->stream();
@@ -2770,14 +2989,25 @@ class ReadController extends Controller
     function ViewExamSessionCard($registration_number)
     {
         $result = CBT_Package_Question_Users::select(
+            // 'cbt_package_question_users.id',
             'et.name as nama_ujian',
-            DB::raw('TO_CHAR(cbt_package_question_users.date_exam,' . "'DD-MM-YYYY'" . ') as exam_date'),
-            'cbt_package_question_users.date_start',
-            'cbt_package_question_users.date_end',
+            DB::raw('TO_CHAR(cbt_package_question_users.date_exam at time zone ' . "'Asia/Jakarta'" . ',' . "'DD-MM-YYYY'" . ') as exam_date'),
+            DB::raw('TO_CHAR(cbt_package_question_users.date_start at time zone ' . "'Asia/Jakarta'" . ',' . "'hh24:mi'" . ') as date_start'),
+            DB::raw('TO_CHAR(cbt_package_question_users.date_end at time zone ' . "'Asia/Jakarta'" . ',' . "'hh24:mi'" . ') as date_end'),
+            // 'cbt_package_question_users.date_start',
+            // 'cbt_package_question_users.date_end',
+            // 'ped.exam_start_date',
+            'ped.location'
         )
-        ->join('cbt_package_questions as cpq', 'cbt_package_question_users.package_question_id', '=', 'cpq.id')
-        ->join('exam_type as et', 'cpq.type_id', '=', 'et.id')
-        ->where('user_id', '=', $registration_number)
+            ->join('cbt_package_questions as cpq', 'cbt_package_question_users.package_question_id', '=', 'cpq.id')
+            ->join('exam_type as et', 'cpq.type_id', '=', 'et.id')
+            ->join('path_exam_details as ped', function ($join) {
+                $join->on('ped.exam_type_id', '=', 'et.id');
+            })
+            ->where(['user_id' => $registration_number, 'ped.active_status' => 'true'])
+            ->whereColumn('ped.exam_start_date', '>=', 'cbt_package_question_users.date_exam')
+            ->whereColumn('ped.exam_start_date', '<=', 'cbt_package_question_users.date_end')
+            ->distinct()
             ->get();
 
         return $result;
@@ -3768,28 +3998,31 @@ class ReadController extends Controller
             'spt.name as selection_path_name',
             'tb.school_year as schoolyear',
             'registration_result.transfer_status',
+            'tsp.study_program_branding_name as transfer_program_study_name',
+            'tsp.faculty_name as transfer_faculty_name',
             DB::raw("CASE WHEN spt.english_name IS NULL THEN spt.name ELSE spt.english_name END AS selection_path_name_en"),
             DB::raw("CASE WHEN p.gender = 2 THEN 'Ms.' ELSE 'Mr.' END AS pronouns"),
             'tb.json_response as transaction_billing'
         )
             ->join('registrations as r', 'registration_result.registration_number', '=', 'r.registration_number')
-            ->join('transaction_billings as tb', 'registration_result.registration_number', '=', 'tb.registration_number')
+            ->leftJoin('transaction_billings as tb', 'registration_result.registration_number', '=', 'tb.registration_number')
             ->join('study_programs as sp', 'tb.study_program_id', '=', 'sp.classification_id')
-            ->join('study_program_specializations as sps', function ($join) {
-                $join->on('tb.specialization_id', '=', 'sps.id')
-                    ->on('tb.class_type_id', '=', 'sps.class_type_id');
-            })
+            ->leftJoin('study_programs as tsp', 'registration_result.transfer_program_study_id', '=', 'tsp.classification_id')
+            ->join('study_program_specializations as sps', 'registration_result.specialization_id', '=', 'sps.id')
+
             ->join('participants as p', 'r.participant_id', '=', 'p.id')
             ->join('selection_paths as spt', 'r.selection_path_id', '=', 'spt.id')
             ->where('registration_result.registration_number', '=', $req->registration_number)
             ->first();
+
+        // return $data;
 
         //convert string json to object
         // $data->transaction_billing = json_decode($data->transaction_billing, true);
         // $data->transaction_billing['registration_number'] // how to call json response
 
         //validate before generating PDF
-        if ($data == null) {
+        if (!$data) {
             return response()->json([
                 'status' => 'Failed',
                 'message' => 'Failed to generated exam pass letter',
@@ -3801,6 +4034,7 @@ class ReadController extends Controller
         try {
             $pdf = PDF::loadView('exam_pass', $data)
                 ->setPaper('a4', 'potrait');
+            // return $pdf->stream();
 
             $filenames = 'DEV/ADM/Participant/exam_pass/' . $data->registration_number . '.pdf';
             $content = $pdf->download()->getOriginalContent();
@@ -4556,7 +4790,14 @@ class ReadController extends Controller
             $mapping_path_year_id = [$filter, '=', '1'];
         }
 
+        if ($req->status) {
+            $status = ['registration_result.pass_status', '=', $req->status];
+        } else {
+            $status = [$filter, '=', '1'];
+        }
+
         $pass_status =  DB::raw('case when registration_result.pass_status = ' . "'f'" . ' then ' . "'Tidak Lulus'" . ' when registration_result.pass_status = ' . "'t'" . ' then ' . "'Lulus'" . ' else ' . "'Belum Ditentukan'" . ' end as pass_status_name');
+
 
         $data = Registration::select(
             'registrations.participant_id',
@@ -4590,6 +4831,7 @@ class ReadController extends Controller
             'registration_result.type',
             'registration_result.oldstudentid',
             'registration_result.reference_number',
+            'registration_result.faculty_number',
             'registration_result.password',
             'registration_result.transfer_status',
             'registration_result.transfer_program_study_id',
@@ -4614,7 +4856,7 @@ class ReadController extends Controller
             ->leftjoin('selection_paths as sp', 'registrations.selection_path_id', '=', 'sp.id')
             ->leftjoin('study_programs as ps', 'registration_result.program_study_id', '=', 'ps.classification_id')
             ->leftjoin('study_programs as tps', 'registration_result.transfer_program_study_id', '=', 'tps.classification_id')
-            ->where([$selection_path, $registration_number, $participant_id, $mapping_path_year_id])
+            ->where([$selection_path, $registration_number, $participant_id, $mapping_path_year_id, $status])
             ->paginate(20)
             ->setPath(env('URL_ACCESS') . '/a2f9f8b8b19f9cefaf03477df54389ed');
 
@@ -5188,25 +5430,69 @@ class ReadController extends Controller
     //api for insert mapping report subject path
     public function ViewMappingUtbkPath(Request $req)
     {
-        $mpd = Mapping_Path_Document::select(
-            'md.id',
-            'md.selection_path_id',
-            'md.document_type_id',
-            'md.required',
-            'md.active_status',
-            'dt.name as document_type'
-        )
-            ->leftjoin('document_type as dt', 'md.document_type_id', '=', 'dt.id')
-            ->where('md.selection_path_id', '=', $req->selection_path_id)
-            ->where('md.document_type_id', '=', $req->document_type_id)
-            ->where('md.active_status', '=', $req->active_status)
-            ->first();
+        // $mpd = Mapping_Path_Document::select(
+        //     'md.id',
+        //     'md.selection_path_id',
+        //     'md.document_type_id',
+        //     'md.required',
+        //     'md.active_status',
+        //     'dt.name as document_type'
+        // )
+        //     ->leftjoin('document_type as dt', 'md.document_type_id', '=', 'dt.id')
+        //     ->where('md.selection_path_id', '=', $req->selection_path_id)
+        //     ->where('md.document_type_id', '=', $req->document_type_id)
+        //     ->where('md.active_status', '=', $req->active_status)
+        //     ->first();
 
-        $science = Mapping_Utbk_Path::select(
+        // $science = Mapping_Utbk_Path::select(
+        //     'mapping_utbk_path.id',
+        //     'mapping_utbk_path.selection_path_id',
+        //     'mapping_utbk_path.program_study_id',
+        //     'mapping_utbk_path.is_science',
+        //     'mapping_utbk_path.name',
+        //     'mapping_utbk_path.mapel1',
+        //     'mapping_utbk_path.mapel2',
+        //     'mapping_utbk_path.mapel3',
+        //     'mapping_utbk_path.mapel4',
+        //     'mapping_utbk_path.mapel5',
+        //     'mapping_utbk_path.mapel6',
+        //     'mapping_utbk_path.mapel7',
+        //     'mapping_utbk_path.mapel8',
+        //     'mapping_utbk_path.mapel9',
+        //     'mapping_utbk_path.mapel10',
+        //     'mapping_utbk_path.active_status'
+        // )
+        //     ->where('mapping_utbk_path.selection_path_id', '=', $req->selection_path_id)
+        //     ->where('mapping_utbk_path.is_science', '=', true)
+        //     ->where('mapping_utbk_path.active_status', '=', $req->active_status)
+        //     ->first();
+
+        $filter = DB::raw('1');
+
+        if ($req->selection_path_id) {
+            $selection_path_id = ['mapping_utbk_path.selection_path_id', '=', $req->selection_path_id];
+        } else {
+            $selection_path_id = [$filter, '=', '1'];
+        }
+
+        if ($req->is_science) {
+            $is_science = ['mapping_utbk_path.is_science', '=', $req->is_science];
+        } else {
+            $is_science = [$filter, '=', '1'];
+        }
+
+        if ($req->active_status) {
+            $active_status = ['mapping_utbk_path.active_status', '=', $req->active_status];
+        } else {
+            $active_status = [$filter, '=', '1'];
+        }
+
+        $data = Mapping_Utbk_Path::select(
             'mapping_utbk_path.id',
             'mapping_utbk_path.selection_path_id',
             'mapping_utbk_path.program_study_id',
             'mapping_utbk_path.is_science',
+            'mapping_utbk_path.name',
             'mapping_utbk_path.mapel1',
             'mapping_utbk_path.mapel2',
             'mapping_utbk_path.mapel3',
@@ -5219,38 +5505,15 @@ class ReadController extends Controller
             'mapping_utbk_path.mapel10',
             'mapping_utbk_path.active_status'
         )
-            ->where('mapping_utbk_path.selection_path_id', '=', $req->selection_path_id)
-            ->where('mapping_utbk_path.is_science', '=', true)
-            ->where('mapping_utbk_path.active_status', '=', $req->active_status)
-            ->first();
-
-        $non_science = Mapping_Utbk_Path::select(
-            'mapping_utbk_path.id',
-            'mapping_utbk_path.selection_path_id',
-            'mapping_utbk_path.program_study_id',
-            'mapping_utbk_path.is_science',
-            'mapping_utbk_path.mapel1',
-            'mapping_utbk_path.mapel2',
-            'mapping_utbk_path.mapel3',
-            'mapping_utbk_path.mapel4',
-            'mapping_utbk_path.mapel5',
-            'mapping_utbk_path.mapel6',
-            'mapping_utbk_path.mapel7',
-            'mapping_utbk_path.mapel8',
-            'mapping_utbk_path.mapel9',
-            'mapping_utbk_path.mapel10',
-        )
-            ->where('mapping_utbk_path.selection_path_id', '=', $req->selection_path_id)
-            ->where('mapping_utbk_path.is_science', '=', false)
-            ->where('mapping_utbk_path.active_status', '=', $req->active_status)
-            ->first();
+            ->where([$selection_path_id, $is_science, $active_status])
+            ->get();
 
         //response
-        $response = $mpd;
-        $response['mapping_utbk_path_science'] = $science;
-        $response['mapping_utbk_path_non_science'] = $non_science;
+        // $response = $mpd;
+        // $response['mapping_utbk_path_science'] = $science;
+        // $response['mapping_utbk_path_non_science'] = $non_science;
 
-        return response()->json($response, 200);
+        return response()->json($data, 200);
     }
 
     //api for insert mapping report subject path
@@ -5435,6 +5698,7 @@ class ReadController extends Controller
             'mapping_path_year_intake.notes',
             'mapping_path_year_intake.active_status',
             'mapping_path_year_intake.mapping_path_year_id',
+            'mapping_path_year_intake.nomor_reff',
             'mpy.year as mapping_path_year_year',
             'mpy.school_year as mapping_path_year_school_year',
             'mpy.start_date',
@@ -5502,6 +5766,7 @@ class ReadController extends Controller
             'mapping_path_year_intake.notes',
             'mapping_path_year_intake.active_status',
             'mapping_path_year_intake.mapping_path_year_id',
+            'mapping_path_year_intake.nomor_reff',
             'mpy.year as mapping_path_year_year',
             'mpy.school_year as mapping_path_year_school_year',
             'mpy.start_date',
@@ -5965,8 +6230,7 @@ class ReadController extends Controller
                 $mapel9 += $data->mapel9;
                 $mapel10 += $data->mapel10;
                 $mapel11 += $data->mapel11;
-                $mapel12 += $data->mapel12; 
-                
+                $mapel12 += $data->mapel12;
             }
         }
 
@@ -6109,7 +6373,8 @@ class ReadController extends Controller
     {
 
         $data = Study_Program_Specialization::select(
-            'class_type', 'class_type_id as id'
+            'class_type',
+            'class_type_id as id'
         )
             ->where('study_program_specializations.active_status', '=', true)
             ->distinct()
@@ -6136,6 +6401,7 @@ class ReadController extends Controller
 
         $data = Registration::select(
             'p.fullname',
+            'registrations.participant_id',
             'registrations.registration_number',
             'registrations.mapping_path_year_intake_id',
             'pgp.id as participant_grade_id',
@@ -6155,6 +6421,7 @@ class ReadController extends Controller
             'pgp.mapel14',
             'pgp.mapel15',
             'pgp.mapel16',
+            'pgp.grade_final as score',
             'mrps.approval_faculty',
             'mrps.approval_faculty_at',
             'mrps.approval_faculty_by',
@@ -6190,6 +6457,7 @@ class ReadController extends Controller
         $result = array();
 
         foreach ($data as $key => $value) {
+            $total_credit = Transfer_Credit::where('participant_id', $value->participant_id)->count();
             $mapel1 = ($passing_grade->mapel1 == 0 || $passing_grade->mapel1 == null) ? 0 : ($passing_grade->mapel1 / 100) * $value['mapel1'];
             $mapel2 = ($passing_grade->mapel2 == 0 || $passing_grade->mapel2 == null) ? 0 : ($passing_grade->mapel2 / 100) * $value['mapel2'];
             $mapel3 = ($passing_grade->mapel3 == 0 || $passing_grade->mapel3 == null) ? 0 : ($passing_grade->mapel3 / 100) * $value['mapel3'];
@@ -6225,12 +6493,12 @@ class ReadController extends Controller
                 $mapel15 +
                 $mapel16;
 
-            $value['pass_status_grade'] = ($value['grade_final'] >= $passing_grade->min_grade_value) ? true : false;
+            $value['pass_status_grade'] = ($value['grade_final'] >= $passing_grade->min_grade_value || $value->score >= $passing_grade->min_grade_value) ? true : false;
 
             array_push($result, [
                 'fullname' => $value['fullname'],
                 'registration_number' => $value['registration_number'],
-                'grade_final' => $value['grade_final'],
+                'grade_final' => $value->score >= $passing_grade->min_grade_value ? $value->score : $value['grade_final'],
                 'pass_status_grade' => $value['pass_status_grade'],
                 'pass_status_grade' => $value['pass_status_grade'],
                 'approval_faculty' => $value['approval_faculty'],
@@ -6245,7 +6513,8 @@ class ReadController extends Controller
                 'is_art' => $value['is_art'],
                 'study_program_id' => $value['classification_id'],
                 'faculty_id' => $value['faculty_id'],
-                'study_program_name' => $value['study_program_branding_name']
+                'study_program_name' => $value['study_program_branding_name'],
+                'total_credit' => $total_credit,
             ]);
         }
 
@@ -8156,21 +8425,21 @@ class ReadController extends Controller
             'mpp.price',
             'mpp.is_medical'
         )
-        ->join('mapping_registration_program_study', 'mapping_registration_program_study.registration_number', '=', 'registrations.registration_number')
-        ->join('study_programs as sp', 'mapping_registration_program_study.program_study_id', '=', 'sp.classification_id')
-        ->leftJoin('mapping_path_price AS mpp', function ($join) {
-            $join->on('registrations.selection_path_id', '=', 'mpp.selection_path_id');
-            // Optional: Add filtering conditions on 'mpp' table if needed
-            $join->on('mapping_registration_program_study.program_study_id', '=', 'mpp.study_program_id');
-        })
-        ->where('registrations.registration_number', '=', $req->registration_number)
-        ->get();
+            ->join('mapping_registration_program_study', 'mapping_registration_program_study.registration_number', '=', 'registrations.registration_number')
+            ->join('study_programs as sp', 'mapping_registration_program_study.program_study_id', '=', 'sp.classification_id')
+            ->leftJoin('mapping_path_price AS mpp', function ($join) {
+                $join->on('registrations.selection_path_id', '=', 'mpp.selection_path_id');
+                // Optional: Add filtering conditions on 'mpp' table if needed
+                $join->on('mapping_registration_program_study.program_study_id', '=', 'mpp.study_program_id');
+            })
+            ->where('registrations.registration_number', '=', $req->registration_number)
+            ->get();
         $price = 0;
         foreach ($prices as $key => $val) {
-            if($key == 0 && $val['is_medical'] != true){
+            if ($key == 0 && $val['is_medical'] != true) {
                 $price = $price + $val['price'];
             }
-            if($val['is_medical'] == true){
+            if ($val['is_medical'] == true) {
                 $price = $price + $val['price'];
             }
         }
@@ -8467,6 +8736,12 @@ class ReadController extends Controller
             $selection_path_id = [$filter, '=', '1'];
         }
 
+        if ($req->program_study_id) {
+            $program_study_id = ['new_student.program_study_id', '=', $req->program_study_id];
+        } else {
+            $program_study_id = [$filter, '=', '1'];
+        }
+
         if ($req->mapping_path_year_id) {
             $mapping_path_year_id = ['r.mapping_path_year_id', '=', $req->mapping_path_year_id];
         } else {
@@ -8516,7 +8791,7 @@ class ReadController extends Controller
             ->join('study_programs as sps', 'new_student.program_study_id', '=', 'sps.classification_id')
             ->join('participants as p', 'new_student.participant_id', '=', 'p.id')
             ->leftjoin(DB::raw($sub_step), 'new_student.id', '=', 'step.new_student_id')
-            ->where([$id, $registration_number, $participant_id, $selection_path_id, $mapping_path_year_id, $mapping_path_year_intake_id])
+            ->where([$id, $registration_number, $participant_id, $selection_path_id, $mapping_path_year_id, $mapping_path_year_intake_id, $program_study_id])
             ->orderBy('new_student.created_at', 'DESC')
             ->get();
 
@@ -8812,9 +9087,22 @@ class ReadController extends Controller
             $document_type_id = [$filter, '=', '1'];
         }
 
+        if ($req->selection_path_id) {
+            $selection_path_id = ['sd.selection_path_id', '=', $req->selection_path_id];
+        } else {
+            $selection_path_id = [$filter, '=', 1];
+        }
+
+        if ($req->study_program_id) {
+            $study_program_id = ['sd.study_program_id', '=', $req->study_program_id];
+        } else {
+            $study_program_id = [$filter, '=', 1];
+        }
+
         $sub_document = "(
             select
                 a.selection_path_id,
+                a.study_program_id,
                 b.name as selection_path,
                 a.new_student_document_type_id,
                 c.name as new_student_document_type,
@@ -8842,7 +9130,7 @@ class ReadController extends Controller
         )
             ->join('registrations as r', 'new_student.registration_number', '=', 'r.registration_number')
             ->join(DB::raw($sub_document), 'r.selection_path_id', '=', 'sd.selection_path_id')
-            ->where([$id, $document_type_id])
+            ->where([$id, $document_type_id, $selection_path_id, $study_program_id])
             ->orderBy('sd.new_student_document_type_id', 'ASC')
             ->get();
 
@@ -8908,6 +9196,12 @@ class ReadController extends Controller
             $selection_path_id = ['mapping_new_student_document_path.selection_path_id', '=', $req->selection_path_id];
         } else {
             $selection_path_id = [$filter, '=', 1];
+        }
+
+        if ($req->study_program_id) {
+            $study_program_id = ['mapping_new_student_document_path.study_program_id', '=', $req->study_program_id];
+        } else {
+            $study_program_id = [$filter, '=', 1];
         }
 
         //yng dipakai buat left join participant, raport dan utbk
@@ -9011,7 +9305,7 @@ class ReadController extends Controller
                 $join->on('dt.id', '=', 'du.document_type_id')
                     ->on('r.registration_number', '=', 'du.registration_number');
             })
-            ->where([$registration_number, $selection_path_id])
+            ->where([$registration_number, $selection_path_id, $study_program_id])
             ->get();
 
         $result = array();
@@ -9246,30 +9540,48 @@ class ReadController extends Controller
 
         //get data
         $role = Framework_Mapping_User_Role::select('admin_faculty_id', 'id', 'oauth_role_id')
-            ->where('oauth_role_id', '=', 1025)
+            // ->where('oauth_role_id', '=', 1025)
             ->where('user_id', '=', $by)
             ->first();
 
-        //validate data
-        if ($role == null) return [];
+        $data = [];
 
-        //get study programs by faculty id
-        $data = Study_Program::select(
-            'study_programs.classification_id as study_program_id',
-            'study_programs.study_program_branding_name as study_program_name',
-            'study_programs.faculty_id',
-            'study_programs.faculty_name',
-            'study_programs.category',
-            'study_programs.acronim',
-            'study_programs.sks',
-            'study_programs.quota',
-            'study_programs.acreditation'
-        )
-            ->join('mapping_path_program_study as mpps', 'study_programs.classification_id', '=', 'mpps.program_study_id')
-            ->where('study_programs.faculty_id', '=', $role->admin_faculty_id)
-            ->where('mpps.selection_path_id', '=', $req->selection_path_id)
-            ->where('mpps.active_status', '=', true)
-            ->get();
+        //validate data
+        if ($role->oauth_role_id == 1025) {
+            //get study programs by faculty id
+            $data = Study_Program::select(
+                'study_programs.classification_id as study_program_id',
+                'study_programs.study_program_branding_name as study_program_name',
+                'study_programs.faculty_id',
+                'study_programs.faculty_name',
+                'study_programs.category',
+                'study_programs.acronim',
+                'study_programs.sks',
+                'study_programs.quota',
+                'study_programs.acreditation'
+            )
+                ->join('mapping_path_program_study as mpps', 'study_programs.classification_id', '=', 'mpps.program_study_id')
+                ->where('study_programs.faculty_id', '=', $role->admin_faculty_id)
+                ->where('mpps.selection_path_id', '=', $req->selection_path_id)
+                ->where('mpps.active_status', '=', true)
+                ->get();
+        } else if ($role->oauth_role_id == 1027) {
+            $data = Study_Program::select(
+                'study_programs.classification_id as study_program_id',
+                'study_programs.study_program_branding_name as study_program_name',
+                'study_programs.faculty_id',
+                'study_programs.faculty_name',
+                'study_programs.category',
+                'study_programs.acronim',
+                'study_programs.sks',
+                'study_programs.quota',
+                'study_programs.acreditation'
+            )
+                ->join('mapping_path_program_study as mpps', 'study_programs.classification_id', '=', 'mpps.program_study_id')
+                ->where('mpps.selection_path_id', '=', $req->selection_path_id)
+                ->where('mpps.active_status', '=', true)
+                ->get();
+        }
 
         return response()->json($data, 200);
     }
@@ -9612,9 +9924,30 @@ class ReadController extends Controller
             'mapping_prodi_formulir.add_cost',
             'c.name as kategori_formulir_name',
         )
-        ->leftJoin('forms as c', 'mapping_prodi_formulir.kategori_formulir', '=', 'c.id')
-        ->where([$study_program_id])
-        ->get();
+            ->leftJoin('forms as c', 'mapping_prodi_formulir.kategori_formulir', '=', 'c.id')
+            ->where([$study_program_id])
+            ->get();
+        return response()->json($data);
+    }
+
+    public function GetMappingProdiUjian(Request $req)
+    {
+        $filter = DB::raw('1');
+
+        if ($req->study_program_id != null) {
+            $study_program_id = ['mapping_prodi_ujian.study_program_id', '=', $req->study_program_id];
+        } else {
+            $study_program_id = [$filter, '=', '1'];
+        }
+        $data = Mapping_Prodi_Ujian::select(
+            'mapping_prodi_ujian.*',
+            'et.name as exam_type',
+            'sp.study_program_branding_name as nama_prodi'
+        )
+            ->join('exam_type as et', 'mapping_prodi_ujian.exam_type_id', '=', 'et.id')
+            ->join('study_programs as sp', 'mapping_prodi_ujian.study_program_id', '=', 'sp.classification_id')
+            ->where([$study_program_id])
+            ->get();
         return response()->json($data);
     }
 
@@ -9731,7 +10064,6 @@ class ReadController extends Controller
                 'registration_result.payment_method_id',
                 'registration_result.payment_status',
                 'registration_result.total_amount',
-                // 'tb.study_program_id as program_study_id',
                 'sp.study_program_branding_name as program_study_name',
                 'sp.faculty_id',
                 'sp.faculty_name',
@@ -9754,17 +10086,15 @@ class ReadController extends Controller
                 'tb.json_response as transaction_billing'
             )
                 ->join('registrations as r', 'registration_result.registration_number', '=', 'r.registration_number')
-                ->join('transaction_billings as tb', 'registration_result.registration_number', '=', 'tb.registration_number')
+                ->leftJoin('transaction_billings as tb', 'registration_result.registration_number', '=', 'tb.registration_number')
                 ->join('study_programs as sp', 'tb.study_program_id', '=', 'sp.classification_id')
-                ->join('study_program_specializations as sps', function ($join) {
-                    $join->on('tb.specialization_id', '=', 'sps.id');
-                })
+                ->join('study_program_specializations as sps', 'registration_result.specialization_id', '=', 'sps.id')
                 ->join('participants as p', 'r.participant_id', '=', 'p.id')
                 ->join('selection_paths as spt', 'r.selection_path_id', '=', 'spt.id')
                 ->where('registration_result.registration_number', '=', $req->registration_number)
                 ->first();
 
-            $data['biaya'] = Mapping_Prodi_Biaya::where(['prodi_fk'=> $data->program_study_id, 'kelas_fk' => $data->class_type])->orderByDesc('id')->first();
+            $data['biaya'] = Mapping_Prodi_Biaya::where(['prodi_fk' => $data->program_study_id, 'kelas_fk' => $data->class_type])->orderByDesc('id')->first();
 
             return response()->json($data, 200);
         } catch (\Exception $e) {
@@ -9863,37 +10193,195 @@ class ReadController extends Controller
             $http = new Client(['verify' => false]);
 
             $datajson = json_encode(array(
-				'curriculum_code' => $req->curriculum_code,
-				'study_program_code' => $req->study_program_code,
-				'token' => '7L70syG1PKrqzK8L1lW=AgNhqg=N9hKs8mFIgQuRiaqPl-!muUJqxGExZ/l?SlKWs1ZNYYUFmwqy?V5jbHywb6DT-47kTGMiV7mxF6xux8KSBAl9fqcAlOt5daun-F7g5bs?e7?rtBvp!?NwlMhZm88g7g7a0qM/!jh4e?-xZ2gY76FrD?xSuhj7jvDUz?B9z9YgpYVQoIi590Ahih0wzo5FgUB5pq=MSZS7Uw59v-KbxXA1KD5TTjOaozctTzXt',
-			));
+                'curriculum_code' => $req->curriculum_code,
+                'study_program_code' => $req->study_program_code,
+                'token' => '7L70syG1PKrqzK8L1lW=AgNhqg=N9hKs8mFIgQuRiaqPl-!muUJqxGExZ/l?SlKWs1ZNYYUFmwqy?V5jbHywb6DT-47kTGMiV7mxF6xux8KSBAl9fqcAlOt5daun-F7g5bs?e7?rtBvp!?NwlMhZm88g7g7a0qM/!jh4e?-xZ2gY76FrD?xSuhj7jvDUz?B9z9YgpYVQoIi590Ahih0wzo5FgUB5pq=MSZS7Uw59v-KbxXA1KD5TTjOaozctTzXt',
+            ));
 
             $request = $http->post('https://sis.trisakti.ac.id/api/getsubject', [
-				'body' => $datajson,
-				'headers' => [
-					'Content-Type' => 'application/json',
-					'Origin' => 'String',
-				],
-				'connect_timeout' => 25
-			]);
+                'body' => $datajson,
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Origin' => 'String',
+                ],
+                'connect_timeout' => 25
+            ]);
 
             $response = json_decode($request->getBody(), true);
 
-            if(!isset($response['status'])){
+            if (!isset($response['status'])) {
                 return response()->json($response);
-            }else{
+            } else {
                 return response()->json([
                     'status' => 'Failed',
                     'message' => 'Transaction Failed',
                     'result' => $response['msg']
                 ], 400);
             }
-            
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'Failed',
                 'message' => 'Transaction Failed',
                 'result' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function GetRefundRequest(Request $req)
+    {
+
+        if ($req->participant_id) {
+            $reg = Registration_Result::where('participant_id', $req->participant_id)->pluck('registration_number');
+            $data = Refund_Request::whereIn('registration_number', $reg)->get();
+        } else {
+            $data = Refund_Request::all();
+        }
+
+        if ($req->registration_number) {
+            $data = Refund_Request::where('registration_number', $req->registration_number)->first();
+        }
+
+        return response()->json($data);
+    }
+
+    public function GetChangePrograms(Request $req)
+    {
+        if ($req->participant_id) {
+            $reg = Registration_Result::where('participant_id', $req->participant_id)->pluck('registration_number');
+            $data = Change_Program::select(
+                'change_programs.*',
+                'p.id as participant_id',
+                'p.identify_number',
+                'p.fullname',
+                'p.username as email',
+                'xsp.study_program_branding_name as program_study_ex',
+                'xsp.faculty_name as faculty_ex',
+                'sp.study_program_branding_name as program_study',
+                'sp.faculty_name as faculty',
+            )
+                ->join('study_programs as xsp', 'change_programs.study_programs_id_ex', '=', 'xsp.classification_id')
+                ->join('study_programs as sp', 'change_programs.study_programs_id', '=', 'sp.classification_id')
+                ->join('registrations as r', 'r.registration_number', '=', 'change_programs.registration_number')
+                ->leftjoin('participants as p', 'r.participant_id', '=', 'p.id')
+                ->whereIn('registration_number', $reg)
+                ->get();
+        } else {
+            $data = Change_Program::select(
+                'change_programs.*',
+                'p.id as participant_id',
+                'p.identify_number',
+                'p.fullname',
+                'p.username as email',
+                'xsp.study_program_branding_name as program_study_ex',
+                'xsp.faculty_name as faculty_ex',
+                'sp.study_program_branding_name as program_study',
+                'sp.faculty_name as faculty',
+            )
+                ->join('study_programs as xsp', 'change_programs.study_programs_id_ex', '=', 'xsp.classification_id')
+                ->join('study_programs as sp', 'change_programs.study_programs_id', '=', 'sp.classification_id')
+                ->join('registrations as r', 'r.registration_number', '=', 'change_programs.registration_number')
+                ->leftjoin('participants as p', 'r.participant_id', '=', 'p.id')
+                ->get();
+        }
+
+        if ($req->registration_number) {
+            $data = Change_Program::select(
+                'change_programs.*',
+                'p.id as participant_id',
+                'p.identify_number',
+                'p.fullname',
+                'p.username as email',
+                'xsp.study_program_branding_name as program_study_ex',
+                'xsp.faculty_name as faculty_ex',
+                'sp.study_program_branding_name as program_study',
+                'sp.faculty_name as faculty',
+            )->join('study_programs as xsp', 'change_programs.study_programs_id_ex', '=', 'xsp.classification_id')
+                ->join('study_programs as sp', 'change_programs.study_programs_id', '=', 'sp.classification_id')
+                ->join('registrations as r', 'r.registration_number', '=', 'change_programs.registration_number')
+                ->leftjoin('participants as p', 'r.participant_id', '=', 'p.id')
+                ->where('change_programs.registration_number', $req->registration_number)->first();
+        }
+
+        return response()->json($data);
+    }
+
+    public function RefundQuitForm(Request $request)
+    {
+        //participant biodata
+        $participantdata = Registration::GetRegistrationParticipant($request->registration_number, null);
+        $registration = Registration_Result::select(
+            'registration_result.*',
+            'sp.study_program_branding_name as program_study',
+            'sp.faculty_name as faculty',
+            'mpb.nama_paket',
+            'p.address_detail',
+            'p.address_disctrict',
+            'p.address_city',
+            'p.address_province',
+            'p.address_country',
+        )
+            ->join('study_programs as sp', 'registration_result.program_study_id', '=', 'sp.classification_id')
+            ->join('master_package_biaya as mpb', 'registration_result.package_id', '=', 'mpb.id')
+            ->join('participants as p', 'registration_result.participant_id', '=', 'p.id')
+            ->where('registration_number', $request->registration_number)->first();
+
+        if (isset($registration->address_disctrict)) {
+            $registration['address_disctrict_name'] = District::GetDistrictName($registration->address_disctrict)->detail_name;
+        } else {
+            $registration['address_disctrict_name'] = '';
+        }
+
+        if (isset($registration->address_city)) {
+            $registration['address_city_name'] = City_Region::GetCityName($registration->address_city)->city;
+        } else {
+            $registration['address_city_name'] = '';
+        }
+
+        if (isset($registration->address_province)) {
+            $registration['address_province_name'] = Province::GetProvinceName($registration->address_province)->detail_name;
+        } else {
+            $registration['address_province_name'] = '';
+        }
+
+        if (isset($registration->address_country)) {
+            $registration['address_country_name'] = Country::GetCountryName($registration->address_country)->detail_name;
+        } else {
+            $registration['address_country_name'] = '';
+        }
+
+        $refund = Refund_Request::where('registration_number', $request->registration_number)->first();
+
+        $school_year = Mapping_Path_Year::select()
+            ->where('selection_path_id', '=', $participantdata['data']->selection_path_id)
+            ->where('active_status', '=', true)
+            ->first();
+
+        $filenames = 'refund/' . $request->registration_number . '_quit_form.pdf';
+        $path = env('FTP_URL') . $filenames;
+        $payload['url'] = $path;
+
+        $data = [
+            'participant' => $participantdata['data'],
+            'registration' => $registration,
+            'refund' => $refund,
+            'school_year' => ($school_year == null || $school_year->year == null) ? (date("Y") + 1) . '/' . (date('Y') + 2) : $school_year->year,
+        ];
+
+        // return $data;
+
+        try {
+            $pdf = PDF::loadView('quit_form', $data)->setPaper('a4', 'potrait');
+
+            // return $pdf->stream();
+            $content = $pdf->download()->getOriginalContent();
+            Storage::put($filenames, $content);
+
+            return response()->json(['urls' => $path], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Failed to generated registration card',
+                'error' => $th->getMessage(),
+                'urls' => null
             ], 500);
         }
     }

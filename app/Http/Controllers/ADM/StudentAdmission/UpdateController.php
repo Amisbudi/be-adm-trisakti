@@ -77,8 +77,11 @@ use App\Http\Models\ADM\StudentAdmission\Schedule;
 use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
 use App\Http\Models\ADM\StudentAdmission\Document_Type;
 use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
+use App\Http\Models\ADM\StudentAdmission\Change_Program;
 use App\Http\Models\ADM\StudentAdmission\Master_Package;
 use App\Http\Models\ADM\StudentAdmission\Master_Package_Angsuran;
+use App\Http\Models\ADM\StudentAdmission\New_Student_Document_Type;
+use App\Http\Models\ADM\StudentAdmission\Refund_Request;
 use App\Http\Models\ADM\StudentAdmission\Transaction_Billing;
 use App\Http\Models\ADM\StudentAdmission\Transfer_Credit;
 use Exception;
@@ -1565,6 +1568,7 @@ class UpdateController extends Controller
 				'notes' => (isset($_POST['notes'])) ? $req->notes : $mpy->notes,
 				'active_status' => (isset($_POST['active_status'])) ? $req->active_status : $mpy->active_status,
 				'year' => (isset($_POST['year'])) ? $req->year : $mpy->year,
+				'nomor_reff' => (isset($_POST['nomor_reff'])) ? $req->nomor_reff : $mpy->nomor_reff,
 				'updated_by' => $by
 			]);
 			DB::connection('pgsql')->commit();
@@ -1804,52 +1808,29 @@ class UpdateController extends Controller
 		try {
 			$by = $req->header("X-I");
 
-			$datas = json_decode($req->json, true);
-
-			//update to mapping path document
-			Mapping_Path_Document::where('id', '=', $datas['id'])->update([
-				'selection_path_id' => $datas['selection_path_id'],
-				'document_type_id' => $datas['document_type_id'],
-				'active_status' => $datas['active_status'],
-				'required' => $datas['required'],
-				'updated_by' => $by
-			]);
-
-			//update science
-			Mapping_Utbk_Path::where('id', '=', $datas['mapping_utbk_path_science']['id'])->update([
-				'selection_path_id' => $datas['selection_path_id'],
-				'is_science' => $datas['mapping_utbk_path_science']['is_science'],
-				'math' => $datas['mapping_utbk_path_science']['math'],
-				'physics' => $datas['mapping_utbk_path_science']['physics'],
-				'biology' => $datas['mapping_utbk_path_science']['biology'],
-				'chemical' => $datas['mapping_utbk_path_science']['chemical'],
-				'economy' => $datas['mapping_utbk_path_science']['economy'],
-				'geography' => $datas['mapping_utbk_path_science']['geography'],
-				'sociological' => $datas['mapping_utbk_path_science']['sociological'],
-				'historical' => $datas['mapping_utbk_path_science']['historical'],
-				'active_status' => $datas['mapping_utbk_path_science']['active_status'],
-				'updated_by' => $by
-			]);
-
 			//update non science
-			Mapping_Utbk_Path::where('id', '=', $datas['mapping_utbk_path_non_science']['id'])->update([
-				'selection_path_id' => $datas['selection_path_id'],
-				'is_science' => $datas['mapping_utbk_path_non_science']['is_science'],
-				'math' => $datas['mapping_utbk_path_non_science']['math'],
-				'physics' => $datas['mapping_utbk_path_non_science']['physics'],
-				'biology' => $datas['mapping_utbk_path_non_science']['biology'],
-				'chemical' => $datas['mapping_utbk_path_non_science']['chemical'],
-				'economy' => $datas['mapping_utbk_path_non_science']['economy'],
-				'geography' => $datas['mapping_utbk_path_non_science']['geography'],
-				'sociological' => $datas['mapping_utbk_path_non_science']['sociological'],
-				'historical' => $datas['mapping_utbk_path_non_science']['historical'],
-				'active_status' => $datas['mapping_utbk_path_non_science']['active_status'],
+			Mapping_Utbk_Path::where('id', '=', $req->id)->update([
+				'selection_path_id' => $req->selection_path_id,
+				'program_study_id' => $req->program_study_id,
+				'is_science' => $req->is_science,
+				'name' => $req->name,
+				'mapel1' => $req->mapel1,
+				'mapel2' => $req->mapel2,
+				'mapel3' => $req->mapel3,
+				'mapel4' => $req->mapel4,
+				'mapel5' => $req->mapel5,
+				'mapel6' => $req->mapel6,
+				'mapel7' => $req->mapel7,
+				'mapel8' => $req->mapel8,
+				'mapel9' => $req->mapel9,
+				'mapel10' => $req->mapel10,
+				'active_status' => $req->active_status,
 				'updated_by' => $by
 			]);
 
 			return response()->json([
 				'status' => 'Success',
-				'message' => 'Berhasil memperbaruhi data'
+				'message' => 'Berhasil memperbarui data'
 			], 200);
 		} catch (\Throwable $e) {
 			return response()->json([
@@ -1871,15 +1852,18 @@ class UpdateController extends Controller
 					'registration_number' => $req->registration_number
 				],
 				[
-				'approval_faculty' => $req->approval_faculty,
-				'approval_faculty_by' => $by,
-				'approval_faculty_at' => Carbon::now(),
-				'grade_final' => $req->grade_final,
-				'mapel13' => $req->mapel13,
-				'mapel14' => $req->mapel14,
-				'mapel15' => $req->mapel15,
-				'mapel16' => $req->mapel16
-				]);
+					'approval_faculty' => $req->approval_faculty,
+					'approval_faculty_by' => $by,
+					'approval_faculty_at' => Carbon::now(),
+					'grade_final' => $req->grade_final,
+					'mapel11' => $req->mapel11,
+					'mapel12' => $req->mapel12,
+					'mapel13' => $req->mapel13,
+					'mapel14' => $req->mapel14,
+					'mapel15' => $req->mapel15,
+					'mapel16' => $req->mapel16
+				]
+			);
 
 			$mrps = Mapping_Registration_Program_Study::select()
 				->where('mapping_registration_program_study.registration_number', '=', $req->registration_number)
@@ -1910,8 +1894,8 @@ class UpdateController extends Controller
 					'total_score' => $req->grade_final,
 					'pass_status' => $req->approval_faculty,
 					'publication_status' => false,
-					'program_study_id' => $req->program_study_id,
-					'specialization_id' => $req->specialization_id,
+					'program_study_id' => $mrps->program_study_id,
+					'specialization_id' => $mrps->study_program_specialization_id,
 					'participant_id' => $participant->participant_id,
 					'rank' => $req->rank,
 					'selection_path_id' => $participant->selection_path_id
@@ -3075,6 +3059,7 @@ class UpdateController extends Controller
 				'bpp_ii' => $req->bpp_ii,
 				'bpp_iii' => $req->bpp_iii,
 				'biaya_ujian' => $req->biaya_ujian,
+				'add_foreign' => $req->add_foreign,
 				'biaya_lainnya' => $req->biaya_lainnya
 			]);
 			return response([
@@ -3176,11 +3161,21 @@ class UpdateController extends Controller
 		$by = $req->header("X-I");
 		try {
 			$document = Document_Type::where('id', $req->id)->first();
+			New_Student_Document_Type::updateOrCreate(
+				[
+					'id' => $document->id,
+				],
+				[
+					'document_type_id' => $document->id,
+					'name' => $req->name,
+				]
+			);
 			$document->update([
 				'name' => $req->name,
 				'description' => $req->description,
 
 			]);
+			
 			return response([
 				'status' => 'Success',
 				'message' => 'Data Tersimpan'
@@ -3394,11 +3389,11 @@ class UpdateController extends Controller
 			if ($req->payment_approval_by) {
 				$data['payment_approval_by'] = $req->payment_approval_by;
 			}
-			
+
 			if ($req->payment_url) {
 				$data['payment_url'] = env('FTP_URL') . $req->file('payment_url')->store('DEV/ADM/Selection/registration_result');
 			}
-			
+
 
 			$update = Registration_Result::where('registration_number', '=', $req->registration_number)->update($data);
 
@@ -3430,6 +3425,61 @@ class UpdateController extends Controller
 				'status' => 'Failed',
 				'message' => 'Mohon maaf, data gagal disimpan',
 				'error' => $e->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateStatusChangePrograms(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$data = Change_Program::where('registration_number', $req->registration_number)->first();
+			$data->update([
+				'approval_fakultas' => (isset($req->approval_fakultas) != null) ? $req->approval_fakultas : $change_programs->approval_fakultas ?? '',
+				'approval_fakultas_date' => (isset($req->approval_fakultas) != null) ? now() : $change_programs->approval_universitas_date ?? null,
+				'approval_fakultas_by' => (isset($req->approval_fakultas) != null) ? $by : $change_programs->approval_fakultas_by ?? '',
+				'approval_universitas' => (isset($req->approval_universitas) != null) ? $req->approval_universitas : $change_programs->approval_universitas ?? '',
+				'approval_universitas_by' => (isset($req->approval_universitas) != null) ? $by : $change_programs->approval_universitas_by ?? '',
+				'approval_universitas_date' => (isset($req->approval_universitas) != null) ? now() : $change_programs->approval_universitas_date ?? null,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateStatusRefund(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$data = Refund_Request::where('registration_number', $req->registration_number)->first();
+			$data->update([
+				'approval_keuangan' => (isset($req->approval_keuangan) != null) ? $req->approval_keuangan : $change_programs->approval_keuangan ?? '',
+				'approval_keuangan_date' => (isset($req->approval_keuangan) != null) ? now() : $change_programs->approval_universitas_date ?? null,
+				'approval_keuangan_by' => (isset($req->approval_keuangan) != null) ? $by : $change_programs->approval_keuangan_by ?? '',
+				'approval_fakultas' => (isset($req->approval_fakultas) != null) ? $req->approval_fakultas : $change_programs->approval_fakultas ?? '',
+				'approval_fakultas_date' => (isset($req->approval_fakultas) != null) ? now() : $change_programs->approval_universitas_date ?? null,
+				'approval_fakultas_by' => (isset($req->approval_fakultas) != null) ? $by : $change_programs->approval_fakultas_by ?? '',
+				'approval_universitas' => (isset($req->approval_universitas) != null) ? $req->approval_universitas : $change_programs->approval_universitas ?? '',
+				'approval_universitas_by' => (isset($req->approval_universitas) != null) ? $by : $change_programs->approval_universitas_by ?? '',
+				'approval_universitas_date' => (isset($req->approval_universitas) != null) ? now() : $change_programs->approval_universitas_date ?? null,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
 			], 500);
 		}
 	}

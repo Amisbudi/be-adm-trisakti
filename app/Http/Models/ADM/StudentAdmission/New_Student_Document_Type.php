@@ -16,6 +16,10 @@ class New_Student_Document_Type extends Model {
     protected $connection = 'pgsql';
     protected $table = 'new_student_document_type';
     protected $primaryKey = 'id';
+    protected $fillable = [ 
+        'name',
+        'document_type_id',
+    ];
 
     //function for getting participant document for new student
     public static function GetDocumentParticipant($participant_id, $document_type_id)

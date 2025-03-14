@@ -44,6 +44,7 @@ class Registration_Result extends Model {
         'type',
         'oldstudentid',
         'reference_number',
+        'faculty_number',
         'password',
         'transfer_status',
         'transfer_program_study_id',

@@ -51,10 +51,12 @@ use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Minat;
 use App\Http\Models\ADM\StudentAdmission\Study_Program;
 use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
 use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
+use App\Http\Models\ADM\StudentAdmission\Change_Program;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Path_Document;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Path_Study_Program;
 use App\Http\Models\ADM\StudentAdmission\Master_Package;
 use App\Http\Models\ADM\StudentAdmission\Master_Package_Angsuran;
+use App\Http\Models\ADM\StudentAdmission\New_Student_Document_Type;
 use App\Http\Models\ADM\StudentAdmission\Refund_Request;
 use App\Http\Models\ADM\StudentAdmission\Transfer_Credit;
 use Exception;
@@ -326,7 +328,29 @@ class DeleteController extends Controller
         ->where('registration_number', '=', $req->registration_number)
         ->first();    //return $id->id;
       if ($id) {
-        $deletedata = Registration_History::where('id', '=', $id->id)->delete();
+        $deletedata = Refund_Request::where('id', '=', $id->id)->delete();
+        return response()->json([
+          'status' => 'Success',
+          'Message' => 'No. ' . $id->registration_number . ' Deleted'
+        ], 200);
+      }
+    } catch (Exception $e) {
+      DB::connection('pgsql')->rollBack();
+      return response()->json([
+        'status' => 'Failed',
+        'Message' => 'Cant delete data'
+      ], 500);
+    }
+  }
+
+  public function DeleteChangeProgram(Request $req)
+  {
+    try {
+      $id = Change_Program::select('id')
+        ->where('registration_number', '=', $req->registration_number)
+        ->first();    //return $id->id;
+      if ($id) {
+        $deletedata = Change_Program::where('id', '=', $id->id)->delete();
         return response()->json([
           'status' => 'Success',
           'Message' => 'No. ' . $id->registration_number . ' Deleted'
@@ -1519,8 +1543,9 @@ class DeleteController extends Controller
   public function DeleteDocumentType(Request $req)
   {
     try {
-      $study_program = Document_Type::where('id', $req->id)->first();
-      $study_program->delete();
+      $document = Document_Type::where('id', $req->id)->first();
+      New_Student_Document_Type::where('id', $req->id)->delete();
+      $document->delete();
 
       return response([
         'status' => 'Success',

@@ -25,6 +25,7 @@ class Mapping_Prodi_Biaya extends Model
         'bpp_ii',
         'bpp_iii',
         'biaya_ujian',
+        'add_foreign',
         'biaya_lainnya'
     ];
     public $timestamps = false;

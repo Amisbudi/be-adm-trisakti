@@ -18,6 +18,7 @@ class Mapping_Path_Year_Intake extends Model {
     	'notes',
         'created_by',
         'updated_by',
+        'nomor_reff',
         'active_status'
     ];
 
