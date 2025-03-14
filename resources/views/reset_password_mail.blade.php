@@ -123,7 +123,7 @@
                 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
                     <tr>
                         <td bgcolor="#ffffff" align="center" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #111111; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; letter-spacing: 2px; line-height: 48px;">
-                            <h1 style="font-size: 48px; font-weight: 400; margin: 2;">Reset Password Trisakti Admission</h1> <img src="https://stptrisakti.ac.id/wp-content/uploads/2016/02/trisakti_logo_02resize.png" width="125" height="120" style="margin-top: 20px; display: block; border: 0px;" />
+                            <h1 style="font-size: 48px; font-weight: 400; margin: 2;">Reset Password Trisakti Admission</h1> <img src="https://fileserver.telkomuniversity.ac.id/dev-trisakti/DEV/ADM/logo/trisakti.png" width="125" height="120" style="margin-top: 20px; display: block; border: 0px;" />
                         </td>
                     </tr>
                 </table>
@@ -154,7 +154,7 @@
                     </tr>
                     <tr>
                         <td bgcolor="#ffffff" align="left" style="padding: 0px 30px 20px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-                            <p style="margin: 0;">If you have any questions, please contact us by email (info@trisakti.ac.id).</p>
+                            <p style="margin: 0;">If you have any questions, please contact us by email (baa@trisakti.ac.id).</p>
                         </td>
                     </tr>
                     <tr>
@@ -170,7 +170,7 @@
                 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
                     <tr>
                         <td bgcolor="#f4f4f4" align="left" style="padding: 0px 30px 30px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 18px;"> <br>
-                            <p style="margin: 0;"><a target="_blank" href="https://spmb.trisakti.ac.id/">https://spmb.trisakti.ac.id/</a></p>
+                            <p style="margin: 0;"><a target="_blank" href="https://admisi.trisakti.ac.id/">https://admisi.trisakti.ac.id/</a></p>
                         </td>
                     </tr>
                 </table>

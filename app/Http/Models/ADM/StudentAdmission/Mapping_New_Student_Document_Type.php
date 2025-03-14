@@ -12,6 +12,8 @@ class Mapping_New_Student_Document_Type extends Model {
 
     protected $fillable = [ 
         'selection_path_id',
+        'faculty_id',
+        'study_program_id',
         'new_student_document_type_id'
     ];
 

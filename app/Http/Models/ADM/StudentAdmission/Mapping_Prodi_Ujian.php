@@ -5,19 +5,15 @@ namespace app\Http\Models\ADM\StudentAdmission;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 
-class Mapping_Prodi_Formulir extends Model
+class Mapping_Prodi_Ujian extends Model
 {
     protected $connection = 'pgsql';
-    protected $table = 'mapping_prodi_formulir';
+    protected $table = 'mapping_prodi_ujian';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'prodi_fk',
-        'nama_prodi',
-        'nama_formulir',
-        'harga',
-        'add_cost',
-        'exam_status',
-        'kategori_formulir'
+        'study_program_id',
+        'exam_type_id',
+        'status'
     ];
     public $timestamps = false;
 }

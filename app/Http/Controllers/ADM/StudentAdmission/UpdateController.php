@@ -2,6 +2,7 @@
 
 namespace app\Http\Controllers\ADM\StudentAdmission;
 
+use App\Http\Controllers\ADM\StudentAdmission\BniEnc;
 use App\Http\Controllers\Controller;
 use App\Http\Models\ADM\StudentAdmission\Announcement_Registration_Card;
 use Illuminate\Http\Request;
@@ -17,6 +18,7 @@ use App\Http\Models\ADM\StudentAdmission\Selection_Programs;
 use App\Http\Models\ADM\StudentAdmission\Location_Exam;
 use App\Http\Models\ADM\StudentAdmission\Selection_Path;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Path_Program;
+use App\Http\Models\ADM\StudentAdmission\Transaction_Request;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Path_Document;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Path_Step_upt;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Path_Study_Program;
@@ -75,6 +77,13 @@ use App\Http\Models\ADM\StudentAdmission\Schedule;
 use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
 use App\Http\Models\ADM\StudentAdmission\Document_Type;
 use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
+use App\Http\Models\ADM\StudentAdmission\Change_Program;
+use App\Http\Models\ADM\StudentAdmission\Master_Package;
+use App\Http\Models\ADM\StudentAdmission\Master_Package_Angsuran;
+use App\Http\Models\ADM\StudentAdmission\New_Student_Document_Type;
+use App\Http\Models\ADM\StudentAdmission\Refund_Request;
+use App\Http\Models\ADM\StudentAdmission\Transaction_Billing;
+use App\Http\Models\ADM\StudentAdmission\Transfer_Credit;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
@@ -122,6 +131,7 @@ class UpdateController extends Controller
 				'name' => (isset($_POST['name'])) ? $req->name : $path->name,
 				'english_name' => (isset($_POST['english_name'])) ? $req->english_name : $path->english_name,
 				'active_status' => (isset($_POST['active_status'])) ? $req->active_status : $path->active_status,
+				'maks_program' => (isset($_POST['maks_program'])) ? $req->maks_program : $path->maks_program,
 				'exam_status' => (isset($_POST['exam_status'])) ? $req->exam_status : $path->exam_status
 			]);
 
@@ -188,6 +198,7 @@ class UpdateController extends Controller
 				'session_two_end' => $req->session_two_end,
 				'session_three_end' => $req->session_three_end,
 				'exam_type_id' => $req->exam_type_id,
+				'location' => $req->location,
 				'class_type' => $req->class_type
 			]);
 
@@ -235,15 +246,19 @@ class UpdateController extends Controller
 	{
 		try {
 			$by = $req->header("X-I");
-			$id = Mapping_Path_Document::select('id')->where('id', '=', $req->id)->first();
-			$update = Mapping_Path_Document::where('md.id', $id->id)->update([
-				'selection_path_id' => $req->selection_path_id,
-				'document_type_id' => $req->document_type_id,
-				'active_status' => $req->active_status,
-				'updated_by' => $by,
-				'required' => $req->required,
-				'is_value' => $req->is_value
-			]);
+			$update = Mapping_Path_Document::updateOrCreate(
+				[
+					'selection_path_id' => $req->selection_path_id,
+					'document_type_id' => $req->document_type_id,
+					'program_study_id' => $req->program_study_id,
+				],
+				[
+					'active_status' => $req->active_status,
+					'updated_by' => $by,
+					'required' => $req->required,
+					'is_value' => $req->is_value
+				]
+			);
 			DB::connection('pgsql')->commit();
 			return response([
 				'status' => 'Success',
@@ -349,8 +364,11 @@ class UpdateController extends Controller
 			if ($req->birth_city) {
 				$data['birth_city'] = $req->birth_city;
 			}
+			if ($req->birth_place) {
+				$data['birth_place'] = strtoupper($req->birth_place);
+			}
 			if ($req->birth_date) {
-				$data['birth_date'] = $req->birth_date;
+				$data['birth_date'] = Carbon::parse($req->birth_date)->format('Y-m-d');
 			}
 			if ($req->nationality) {
 				$data['nationality'] = $req->nationality;
@@ -436,6 +454,9 @@ class UpdateController extends Controller
 			if ($req->nis) {
 				$data['nis'] = $req->nis;
 			}
+			if ($req->size_almamater) {
+				$data['size_almamater'] = $req->size_almamater;
+			}
 
 			$update = Participant::find($id->id)->update($data);
 			DB::connection('pgsql')->commit();
@@ -501,7 +522,7 @@ class UpdateController extends Controller
 				'family_name' => $req->family_name,
 				'email' => $req->email,
 				'mobile_phone_number' => $req->mobile_phone_number,
-				'birth_place' => $req->birth_place,
+				'birth_place' => strtoupper($req->birth_place),
 				'birth_date' => $req->birth_date,
 				'gender' => $req->gender,
 				'education_degree_id' => $req->education_degree_id,
@@ -906,44 +927,100 @@ class UpdateController extends Controller
 				$dataReport['range_score'] = $req->range_score;
 			}
 
-			if ($req->math != null) {
-				$dataReport['math'] = $req->math;
+			if ($req->mapel1 != null) {
+				$dataReport['mapel1'] = $req->mapel1;
 			}
 
-			if ($req->physics != null) {
-				$dataReport['physics'] = $req->physics;
+			if ($req->mapel2 != null) {
+				$dataReport['mapel2'] = $req->mapel2;
 			}
 
-			if ($req->bahasa != null) {
-				$dataReport['bahasa'] = $req->bahasa;
+			if ($req->mapel3 != null) {
+				$dataReport['mapel3'] = $req->mapel3;
 			}
 
-			if ($req->english != null) {
-				$dataReport['english'] = $req->english;
+			if ($req->mapel4 != null) {
+				$dataReport['mapel4'] = $req->mapel4;
 			}
 
-			if ($req->biology != null) {
-				$dataReport['biology'] = $req->biology;
+			if ($req->mapel5 != null) {
+				$dataReport['mapel5'] = $req->mapel5;
 			}
 
-			if ($req->economy != null) {
-				$dataReport['economy'] = $req->economy;
+			if ($req->mapel6 != null) {
+				$dataReport['mapel6'] = $req->mapel6;
 			}
 
-			if ($req->geography != null) {
-				$dataReport['geography'] = $req->geography;
+			if ($req->mapel7 != null) {
+				$dataReport['mapel7'] = $req->mapel7;
 			}
 
-			if ($req->sociological != null) {
-				$dataReport['sociological'] = $req->sociological;
+			if ($req->mapel8 != null) {
+				$dataReport['mapel8'] = $req->mapel8;
 			}
 
-			if ($req->historical != null) {
-				$dataReport['historical'] = $req->historical;
+			if ($req->mapel9 != null) {
+				$dataReport['mapel9'] = $req->mapel9;
 			}
 
-			if ($req->chemical != null) {
-				$dataReport['chemical'] = $req->chemical;
+			if ($req->mapel10 != null) {
+				$dataReport['mapel10'] = $req->mapel10;
+			}
+
+			if ($req->mapel11 != null) {
+				$dataReport['mapel11'] = $req->mapel11;
+			}
+
+			if ($req->mapel12 != null) {
+				$dataReport['mapel12'] = $req->mapel12;
+			}
+
+			if ($req->alias1 != null) {
+				$dataReport['alias1'] = $req->alias1;
+			}
+
+			if ($req->alias2 != null) {
+				$dataReport['alias2'] = $req->alias2;
+			}
+
+			if ($req->alias3 != null) {
+				$dataReport['alias3'] = $req->alias3;
+			}
+
+			if ($req->alias4 != null) {
+				$dataReport['alias4'] = $req->alias4;
+			}
+
+			if ($req->alias5 != null) {
+				$dataReport['alias5'] = $req->alias5;
+			}
+
+			if ($req->alias6 != null) {
+				$dataReport['alias6'] = $req->alias6;
+			}
+
+			if ($req->alias7 != null) {
+				$dataReport['alias7'] = $req->alias7;
+			}
+
+			if ($req->alias8 != null) {
+				$dataReport['alias8'] = $req->alias8;
+			}
+
+			if ($req->alias9 != null) {
+				$dataReport['alias9'] = $req->alias9;
+			}
+
+			if ($req->alias10 != null) {
+				$dataReport['alias10'] = $req->alias10;
+			}
+
+			if ($req->alias11 != null) {
+				$dataReport['alias11'] = $req->alias11;
+			}
+
+			if ($req->alias12 != null) {
+				$dataReport['alias12'] = $req->alias12;
 			}
 
 			if ($req->registration_number) {
@@ -1024,36 +1101,35 @@ class UpdateController extends Controller
 			//document utbk
 			$id_utbk = Document_Utbk::select('id')->where('id', '=', $req->utbk_id)->first();
 
-			if ($req->math != null) {
-				$dataUtbk['math'] = $req->math;
+			if ($req->mapel1 != null) {
+				$dataUtbk['mapel1'] = $req->mapel1;
 			}
-
-			if ($req->physics != null) {
-				$dataUtbk['physics'] = $req->physics;
+			if ($req->mapel2 != null) {
+				$dataUtbk['mapel2'] = $req->mapel2;
 			}
-
-			if ($req->chemical != null) {
-				$dataUtbk['chemical'] = $req->chemical;
+			if ($req->mapel3 != null) {
+				$dataUtbk['mapel3'] = $req->mapel3;
 			}
-
-			if ($req->biology != null) {
-				$dataUtbk['biology'] = $req->biology;
+			if ($req->mapel4 != null) {
+				$dataUtbk['mapel4'] = $req->mapel4;
 			}
-
-			if ($req->economy != null) {
-				$dataUtbk['economy'] = $req->economy;
+			if ($req->mapel5 != null) {
+				$dataUtbk['mapel5'] = $req->mapel5;
 			}
-
-			if ($req->geography != null) {
-				$dataUtbk['geography'] = $req->geography;
+			if ($req->mapel6 != null) {
+				$dataUtbk['mapel6'] = $req->mapel6;
 			}
-
-			if ($req->sociological != null) {
-				$dataUtbk['sociological'] = $req->sociological;
+			if ($req->mapel7 != null) {
+				$dataUtbk['mapel7'] = $req->mapel7;
 			}
-
-			if ($req->historical != null) {
-				$dataUtbk['historical'] = $req->historical;
+			if ($req->mapel8 != null) {
+				$dataUtbk['mapel8'] = $req->mapel8;
+			}
+			if ($req->mapel9 != null) {
+				$dataUtbk['mapel9'] = $req->mapel9;
+			}
+			if ($req->mapel10 != null) {
+				$dataUtbk['mapel10'] = $req->mapel10;
 			}
 
 			if ($req->registration_number) {
@@ -1420,6 +1496,15 @@ class UpdateController extends Controller
 				$data['price'] = $req->price;
 			}
 
+			if ($req->description) {
+				$data['description'] = $req->description;
+			}
+
+			if ($req->approved_at) {
+				$data['approved_at'] = Carbon::now();
+				$data['approved_by'] = $by;
+			}
+
 			$data['updated_by'] = $by;
 
 			$update = Pin_Voucher::find($req->voucher)->update($data);
@@ -1483,6 +1568,7 @@ class UpdateController extends Controller
 				'notes' => (isset($_POST['notes'])) ? $req->notes : $mpy->notes,
 				'active_status' => (isset($_POST['active_status'])) ? $req->active_status : $mpy->active_status,
 				'year' => (isset($_POST['year'])) ? $req->year : $mpy->year,
+				'nomor_reff' => (isset($_POST['nomor_reff'])) ? $req->nomor_reff : $mpy->nomor_reff,
 				'updated_by' => $by
 			]);
 			DB::connection('pgsql')->commit();
@@ -1682,23 +1768,25 @@ class UpdateController extends Controller
 			Passing_Grade::find($req->id)->update([
 				'program_study_id' => ($req->program_study_id == null) ? $data->program_study_id : $req->program_study_id,
 				'mapping_path_year_id' => ($req->mapping_path_year_id == null) ? $data->mapping_path_year_id : $req->mapping_path_year_id,
-				'general_knowledge' => ($req->general_knowledge == null) ? $data->general_knowledge : $req->general_knowledge,
-				'math' => ($req->math == null) ? $data->math : $req->math,
-				'english' => ($req->english == null) ? $data->english : $req->english,
-				'physics' => ($req->physics == null) ? $data->physics : $req->physics,
-				'chemical' => ($req->chemical == null) ? $data->chemical : $req->chemical,
-				'biology' => ($req->biology == null) ? $data->biology : $req->biology,
-				'drawing' => ($req->drawing == null) ? $data->drawing : $req->drawing,
-				'photography_knowledge' => ($req->photography_knowledge == null) ? $data->photography_knowledge : $req->photography_knowledge,
+				'mapel1' => ($req->mapel1 == null) ? $data->mapel1 : $req->mapel1,
+				'mapel2' => ($req->mapel2 == null) ? $data->mapel2 : $req->mapel2,
+				'mapel3' => ($req->mapel3 == null) ? $data->mapel3 : $req->mapel3,
+				'mapel4' => ($req->mapel4 == null) ? $data->mapel4 : $req->mapel4,
+				'mapel5' => ($req->mapel5 == null) ? $data->mapel5 : $req->mapel5,
+				'mapel6' => ($req->mapel6 == null) ? $data->mapel6 : $req->mapel6,
+				'mapel7' => ($req->mapel7 == null) ? $data->mapel7 : $req->mapel7,
+				'mapel8' => ($req->mapel8 == null) ? $data->mapel8 : $req->mapel8,
+				'mapel9' => ($req->mapel9 == null) ? $data->mapel9 : $req->mapel9,
+				'mapel10' => ($req->mapel10 == null) ? $data->mapel10 : $req->mapel10,
+				'mapel11' => ($req->mapel11 == null) ? $data->mapel11 : $req->mapel11,
+				'mapel12' => ($req->mapel12 == null) ? $data->mapel12 : $req->mapel12,
+				'mapel13' => ($req->mapel13 == null) ? $data->mapel13 : $req->mapel13,
+				'mapel14' => ($req->mapel14 == null) ? $data->mapel14 : $req->mapel14,
+				'mapel15' => ($req->mapel15 == null) ? $data->mapel15 : $req->mapel15,
+				'mapel16' => ($req->mapel16 == null) ? $data->mapel16 : $req->mapel16,
 				'updated_by' => $by,
 				'active_status' => ($req->active_status == null) ? $data->active_status : $req->active_status,
 				'min_grade_value' => ($req->min_grade_value == null) ? $data->min_grade_value : $req->min_grade_value,
-				'bahasa' => ($req->bahasa == null) ? $data->bahasa : $req->bahasa,
-				'economy' => ($req->economy == null) ? $data->economy : $req->economy,
-				'geography' => ($req->geography == null) ? $data->geography : $req->geography,
-				'sociological' => ($req->sociological == null) ? $data->sociological : $req->sociological,
-				'historical' => ($req->historical == null) ? $data->historical : $req->historical,
-				'tpa' => ($req->tpa == null) ? $data->tpa : $req->tpa
 			]);
 
 			return response()->json([
@@ -1720,52 +1808,29 @@ class UpdateController extends Controller
 		try {
 			$by = $req->header("X-I");
 
-			$datas = json_decode($req->json, true);
-
-			//update to mapping path document
-			Mapping_Path_Document::where('id', '=', $datas['id'])->update([
-				'selection_path_id' => $datas['selection_path_id'],
-				'document_type_id' => $datas['document_type_id'],
-				'active_status' => $datas['active_status'],
-				'required' => $datas['required'],
-				'updated_by' => $by
-			]);
-
-			//update science
-			Mapping_Utbk_Path::where('id', '=', $datas['mapping_utbk_path_science']['id'])->update([
-				'selection_path_id' => $datas['selection_path_id'],
-				'is_science' => $datas['mapping_utbk_path_science']['is_science'],
-				'math' => $datas['mapping_utbk_path_science']['math'],
-				'physics' => $datas['mapping_utbk_path_science']['physics'],
-				'biology' => $datas['mapping_utbk_path_science']['biology'],
-				'chemical' => $datas['mapping_utbk_path_science']['chemical'],
-				'economy' => $datas['mapping_utbk_path_science']['economy'],
-				'geography' => $datas['mapping_utbk_path_science']['geography'],
-				'sociological' => $datas['mapping_utbk_path_science']['sociological'],
-				'historical' => $datas['mapping_utbk_path_science']['historical'],
-				'active_status' => $datas['mapping_utbk_path_science']['active_status'],
-				'updated_by' => $by
-			]);
-
 			//update non science
-			Mapping_Utbk_Path::where('id', '=', $datas['mapping_utbk_path_non_science']['id'])->update([
-				'selection_path_id' => $datas['selection_path_id'],
-				'is_science' => $datas['mapping_utbk_path_non_science']['is_science'],
-				'math' => $datas['mapping_utbk_path_non_science']['math'],
-				'physics' => $datas['mapping_utbk_path_non_science']['physics'],
-				'biology' => $datas['mapping_utbk_path_non_science']['biology'],
-				'chemical' => $datas['mapping_utbk_path_non_science']['chemical'],
-				'economy' => $datas['mapping_utbk_path_non_science']['economy'],
-				'geography' => $datas['mapping_utbk_path_non_science']['geography'],
-				'sociological' => $datas['mapping_utbk_path_non_science']['sociological'],
-				'historical' => $datas['mapping_utbk_path_non_science']['historical'],
-				'active_status' => $datas['mapping_utbk_path_non_science']['active_status'],
+			Mapping_Utbk_Path::where('id', '=', $req->id)->update([
+				'selection_path_id' => $req->selection_path_id,
+				'program_study_id' => $req->program_study_id,
+				'is_science' => $req->is_science,
+				'name' => $req->name,
+				'mapel1' => $req->mapel1,
+				'mapel2' => $req->mapel2,
+				'mapel3' => $req->mapel3,
+				'mapel4' => $req->mapel4,
+				'mapel5' => $req->mapel5,
+				'mapel6' => $req->mapel6,
+				'mapel7' => $req->mapel7,
+				'mapel8' => $req->mapel8,
+				'mapel9' => $req->mapel9,
+				'mapel10' => $req->mapel10,
+				'active_status' => $req->active_status,
 				'updated_by' => $by
 			]);
 
 			return response()->json([
 				'status' => 'Success',
-				'message' => 'Berhasil memperbaruhi data'
+				'message' => 'Berhasil memperbarui data'
 			], 200);
 		} catch (\Throwable $e) {
 			return response()->json([
@@ -1782,16 +1847,23 @@ class UpdateController extends Controller
 		$by = $req->header("X-I");
 
 		try {
-			Participant_Grade::where('registration_number', '=', $req->registration_number)->update([
-				'approval_faculty' => $req->approval_faculty,
-				'approval_faculty_by' => $by,
-				'approval_faculty_at' => Carbon::now(),
-				'grade_final' => $req->grade_final,
-				'interview_test' => $req->interview_test,
-				'psychological_test' => $req->psychological_test,
-				'drawing_test' => $req->drawing_test,
-				'tpa' => $req->tpa
-			]);
+			Participant_Grade::updateOrCreate(
+				[
+					'registration_number' => $req->registration_number
+				],
+				[
+					'approval_faculty' => $req->approval_faculty,
+					'approval_faculty_by' => $by,
+					'approval_faculty_at' => Carbon::now(),
+					'grade_final' => $req->grade_final,
+					'mapel11' => $req->mapel11,
+					'mapel12' => $req->mapel12,
+					'mapel13' => $req->mapel13,
+					'mapel14' => $req->mapel14,
+					'mapel15' => $req->mapel15,
+					'mapel16' => $req->mapel16
+				]
+			);
 
 			$mrps = Mapping_Registration_Program_Study::select()
 				->where('mapping_registration_program_study.registration_number', '=', $req->registration_number)
@@ -1822,9 +1894,10 @@ class UpdateController extends Controller
 					'total_score' => $req->grade_final,
 					'pass_status' => $req->approval_faculty,
 					'publication_status' => false,
-					'program_study_id' => $req->program_study_id,
-					'specialization_id' => $req->specialization_id,
+					'program_study_id' => $mrps->program_study_id,
+					'specialization_id' => $mrps->study_program_specialization_id,
 					'participant_id' => $participant->participant_id,
+					'rank' => $req->rank,
 					'selection_path_id' => $participant->selection_path_id
 				]
 			);
@@ -2166,6 +2239,9 @@ class UpdateController extends Controller
 			if ($req->birth_city) {
 				$data['birth_city'] = $req->birth_city;
 			}
+			if ($req->birth_place) {
+				$data['birth_place'] = strtoupper($req->birth_place);
+			}
 			if ($req->birth_date) {
 				$data['birth_date'] = $req->birth_date;
 			}
@@ -2249,6 +2325,9 @@ class UpdateController extends Controller
 			}
 			if ($req->nis) {
 				$data['nis'] = $req->nis;
+			}
+			if ($req->size_almamater) {
+				$data['size_almamater'] = $req->size_almamater;
 			}
 			if ($req->diploma_number) {
 				$data['diploma_number'] = $req->diploma_number;
@@ -2520,7 +2599,7 @@ class UpdateController extends Controller
 		Kode Prodi ada yang 3 / 4 / 5 digit. Untuk prodi yang hanya
 		ada 3 atau 4 digit, sisanya diganti dengan angka 0
 		*/
-		$program_study = str_pad($data->program_study_id, 5, '0', STR_PAD_LEFT);
+		$program_study = str_pad($data->program_study_id, 4, '0', STR_PAD_LEFT);
 
 		/*
 		Tahun ajaran masuk
@@ -2830,7 +2909,7 @@ class UpdateController extends Controller
 	{
 		$by = $req->header("X-I");
 		try {
-			$schedule = Education_Major::findOrFail($req->id);
+			$schedule = Education_Major::where('id', $req->id);
 			$schedule->update([
 				'major' => $req->major,
 				'education_degree_id' => $req->education_degree_id,
@@ -2884,19 +2963,15 @@ class UpdateController extends Controller
 	{
 		$by = $req->header("X-I");
 		try {
-			$schedule = Study_Program::where('classification_id', $req->classification_id);
+			$schedule = Study_Program::where('classification_id', $req->id);
 			$schedule->update([
-				'program_study_id' => $req->program_study_id,
-				'faculty_id' => $req->faculty_id,
 				'category' => $req->category,
 				'classification_name' => $req->classification_name,
-				'study_program_branding_name' => $req->study_program_branding_name,
+				'study_program_branding_name' => $req->study_program_name,
 				'study_program_name' => $req->study_program_name,
-				'study_program_name_en' => $req->study_program_name_en,
-				'study_program_acronim' => $req->study_program_acronim,
-				'faculty_name' => $req->faculty_name,
 				'acronim' => $req->acronim,
-				'acreditation' => $req->acreditation
+				'quota' => $req->quota,
+				'sks' => $req->sks
 			]);
 			return response([
 				'status' => 'Success',
@@ -2946,6 +3021,8 @@ class UpdateController extends Controller
 				'nama_prodi' => $req->nama_prodi,
 				'nama_formulir' => $req->nama_formulir,
 				'harga' => $req->harga,
+				'add_cost' => $req->add_cost,
+				'exam_status' => $req->exam_status,
 				'kategori_formulir' => $req->kategori_formulir,
 			]);
 			return response([
@@ -2976,6 +3053,14 @@ class UpdateController extends Controller
 				'spp_ii' => $req->spp_ii,
 				'spp_iii' => $req->spp_iii,
 				'praktikum' => $req->praktikum,
+				'bpp_pokok' => $req->bpp_pokok,
+				'bpp_sks' => $req->bpp_sks,
+				'bpp_i' => $req->bpp_i,
+				'bpp_ii' => $req->bpp_ii,
+				'bpp_iii' => $req->bpp_iii,
+				'biaya_ujian' => $req->biaya_ujian,
+				'add_foreign' => $req->add_foreign,
+				'biaya_lainnya' => $req->biaya_lainnya
 			]);
 			return response([
 				'status' => 'Success',
@@ -3017,21 +3102,14 @@ class UpdateController extends Controller
 	{
 		$by = $req->header("X-I");
 		try {
-			$MasterKelas = Study_Program_Specialization::findOrFail($req->id);
+			$MasterKelas = Study_Program_Specialization::where('id', $req->id);
 			$MasterKelas->update([
-				'specialization_name_ori ' => $req->specialization_name_ori,
 				'specialization_name' => $req->specialization_name,
 				'specialization_code' => $req->specialization_code,
 				'active_status' => $req->active_status,
 				'class_type' => $req->class_type,
-				'program_study_id' => $req->program_study_id,
-				'faculty_id' => $req->faculty_id,
-				'faculty_name' => $req->faculty_name,
-				'category' => $req->category,
-				'classification_name' => $req->classification_name,
-				'study_program_name' => $req->study_program_name,
-				'study_program_name_en' => $req->study_program_name_en,
-				'acronim' => $req->acronim
+				'class_type_id' => $req->class_type_id,
+				'classification_id' => $req->classification_id,
 			]);
 			return response([
 				'status' => 'Success',
@@ -3083,66 +3161,21 @@ class UpdateController extends Controller
 		$by = $req->header("X-I");
 		try {
 			$document = Document_Type::where('id', $req->id)->first();
+			New_Student_Document_Type::updateOrCreate(
+				[
+					'id' => $document->id,
+				],
+				[
+					'document_type_id' => $document->id,
+					'name' => $req->name,
+				]
+			);
 			$document->update([
 				'name' => $req->name,
 				'description' => $req->description,
 
 			]);
-			return response([
-				'status' => 'Success',
-				'message' => 'Data Tersimpan'
-			], 200);
-		} catch (\Throwable $th) {
-			return response([
-				'status' => 'Failed',
-				'message' => 'Mohon maaf, data gagal disimpan',
-				'error' => $th->getMessage()
-			], 500);
-		}
-	}
-
-	public function UpdateMappingProdiMatapelajaran(Request $req)
-	{
-		$by = $req->header("X-I");
-		try {
-			$document = Mapping_Prodi_Matapelajaran::where('id', $req->id)->first();
-			$document->update([
-				'fakultas' => $req->fakultas,
-				'fakultas_id' => $req->fakultas_id,
-				'prodi_id' => $req->prodi_id,
-				'nama_prodi' => $req->nama_prodi,
-				'mata_pelajaran' => $req->mata_pelajaran,
-				'pelajaran_id' => $req->pelajaran_id,
-				'status' => $req->status
-			]);
-			return response([
-				'status' => 'Success',
-				'message' => 'Data Tersimpan'
-			], 200);
-		} catch (\Throwable $th) {
-			return response([
-				'status' => 'Failed',
-				'message' => 'Mohon maaf, data gagal disimpan',
-				'error' => $th->getMessage()
-			], 500);
-		}
-	}
-
-	public function UpdateMappingProdiMinat(Request $req)
-	{
-		$by = $req->header("X-I");
-		try {
-			$document = Mapping_Prodi_Minat::where('id', $req->id)->first();
-			$document->update([
-				'fakultas' => $req->fakultas,
-				'fakultas_id' => $req->fakultas_id,
-				'prodi_id' => $req->prodi_id,
-				'nama_prodi' => $req->nama_prodi,
-				'nama_minat' => $req->nama_minat,
-				'minat_id' => $req->minat_id,
-				'quota' => $req->quota,
-				'status' => $req->status
-			]);
+			
 			return response([
 				'status' => 'Success',
 				'message' => 'Data Tersimpan'
@@ -3169,6 +3202,274 @@ class UpdateController extends Controller
 				'date_start' => $req->date_start,
 				'date_end' => $req->date_end,
 				'status' => $req->status
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateTransferCredit(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$data = Transfer_Credit::where('id', $req->id)->first();
+			$data->update([
+				'participant_id' => $req->participant_id,
+				'kode_matakuliah_ex' => $req->kode_matakuliah_ex,
+				'nama_matakuliah_ex' => $req->nama_matakuliah_ex,
+				'sks_ex' => $req->sks_ex,
+				'nilai_ex' => $req->nilai_ex,
+				'kode_matakuliah' => $req->kode_matakuliah,
+				'nama_matakuliah' => $req->nama_matakuliah,
+				'sks' => $req->sks,
+				'nilai' => $req->nilai
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateMasterPackage(Request $req)
+	{
+		try {
+			DB::connection('pgsql')->beginTransaction();
+			$datas = json_decode($req->json);
+
+			$paket = Master_Package::where('id', '=', $req->id)->first();
+			Master_Package_Angsuran::where('package_id', $paket->id)->delete();
+			$paket->update([
+				'nama_paket'  	=> json_decode($req->nama_paket),
+				'angsuran' 		=> $req->angsuran,
+			]);
+
+			foreach ($datas->angsuran as $key => $item) {
+				Master_Package_Angsuran::create([
+					'package_id' => $paket->id,
+					'angsuran_ke' =>  $item->angsuran_ke,
+					'spp' => $item->spp,
+					'bpp'  => $item->bpp,
+					'bpp_sks'  => $item->bpp_sks,
+					'praktikum' => $item->praktikum,
+					'ujian' => $item->ujian,
+					'lainnya' => $item->lainnya,
+					'disc' => $item->disc,
+					'disc_spp' => $item->disc_spp,
+					'disc_bpp' => $item->disc_bpp,
+					'disc_bpp_sks' => $item->disc_bpp_sks,
+					'disc_praktikum' => $item->disc_praktikum,
+					'disc_lainnya' => $item->disc_lainnya,
+				]);
+			}
+
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan',
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdatePinTransaction(Request $request)
+	{
+		try {
+			$client_id = env('CLIENT_ID'); //client id from BNI
+			$secret_key = env('SECRET_VA'); // secret key from BNI
+			$body = $request->getContent();
+			$data_json = json_decode($body, true);
+
+			if (!$data_json) {
+				return response()->json([
+					'status' => '999',
+					'message' => 'Invalid request data'
+				], 400);
+			}
+
+			if ($data_json['client_id'] != $client_id) {
+				return response()->json([
+					'status' => '999',
+					'message' => 'Unauthorized access'
+				], 401);
+			}
+
+			$data_asli = BniEnc::decrypt(
+				$data_json['data'],
+				$client_id,
+				$secret_key
+			);
+
+
+			if (!$data_asli) {
+				return response()->json([
+					'status' => '999',
+					'message' => 'Invalid data or incorrect secret key'
+				], 400);
+			}
+
+			// Insert data_asli into your database using Eloquent
+			$model = Transaction_Request::where([
+				'client_id' => $data_json['client_id'],
+				'trx_id' => $data_asli['trx_id']
+			])->first();
+
+			if ($model) {
+				Registration::where('registration_number', $model->registration_number)->update([
+					'payment_status_id' => 1,
+					'payment_date' => Carbon::now(),
+					'activation_pin' => true,
+					'payment_url' => "VA Callback",
+				]);
+			}
+
+			$billing = Transaction_Billing::where('registration_number', $model->registration_number)->first();
+
+			if ($billing) {
+				Registration_Result::where('registration_number', $model->registration_number)->update(
+					[
+						'payment_status' => "Lunas",
+					]
+				);
+			}
+
+			return response()->json([
+				'status' => 'Success',
+				'message' => 'Data update successfully',
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdatetoRegistrationResult(Request $req)
+	{
+		try {
+			$by = $req->header("X-I");
+			$id = Registration_Result::select('*')->where('registration_number', '=', $req->registration_number)->first();
+
+			$data['updated_by'] = $by;
+
+			if ($req->payment_method) {
+				$data['payment_method_id'] = $req->payment_method;
+			}
+			if ($req->payment_status) {
+				$data['payment_status'] = $req->payment_status;
+			}
+			if ($req->payment_date) {
+				$data['payment_date'] = $req->payment_date;
+			}
+			if ($req->payment_approval_date) {
+				$data['payment_approval_date'] = $req->payment_approval_date;
+			}
+			if ($req->payment_approval_by) {
+				$data['payment_approval_by'] = $req->payment_approval_by;
+			}
+
+			if ($req->payment_url) {
+				$data['payment_url'] = env('FTP_URL') . $req->file('payment_url')->store('DEV/ADM/Selection/registration_result');
+			}
+
+
+			$update = Registration_Result::where('registration_number', '=', $req->registration_number)->update($data);
+
+			if (isset($req->payment_method)) {
+				$data = Payment_Method::select('method')->where('id', '=', $req->payment_method)->first();
+				DB::connection('pgsql')->commit();
+
+				return response([
+					'status' => 'Success',
+					'message' => 'Data Tersimpan',
+					'payment_method_id' => $req->payment_method,
+					'payment_method_name' => $data->method,
+					'registration_number' => $id->registration_number,
+				], 200);
+			} else {
+				DB::connection('pgsql')->commit();
+
+				return response([
+					'status' => 'Success',
+					'message' => 'Data Tersimpan',
+					'payment_method_id' => $id->payment_method_id,
+					'payment_method_name' => null,
+					'registration_number' => $id->registration_number,
+				], 200);
+			}
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateStatusChangePrograms(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$data = Change_Program::where('registration_number', $req->registration_number)->first();
+			$data->update([
+				'approval_fakultas' => (isset($req->approval_fakultas) != null) ? $req->approval_fakultas : $change_programs->approval_fakultas ?? '',
+				'approval_fakultas_date' => (isset($req->approval_fakultas) != null) ? now() : $change_programs->approval_universitas_date ?? null,
+				'approval_fakultas_by' => (isset($req->approval_fakultas) != null) ? $by : $change_programs->approval_fakultas_by ?? '',
+				'approval_universitas' => (isset($req->approval_universitas) != null) ? $req->approval_universitas : $change_programs->approval_universitas ?? '',
+				'approval_universitas_by' => (isset($req->approval_universitas) != null) ? $by : $change_programs->approval_universitas_by ?? '',
+				'approval_universitas_date' => (isset($req->approval_universitas) != null) ? now() : $change_programs->approval_universitas_date ?? null,
+			]);
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Throwable $th) {
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $th->getMessage()
+			], 500);
+		}
+	}
+
+	public function UpdateStatusRefund(Request $req)
+	{
+		$by = $req->header("X-I");
+		try {
+			$data = Refund_Request::where('registration_number', $req->registration_number)->first();
+			$data->update([
+				'approval_keuangan' => (isset($req->approval_keuangan) != null) ? $req->approval_keuangan : $change_programs->approval_keuangan ?? '',
+				'approval_keuangan_date' => (isset($req->approval_keuangan) != null) ? now() : $change_programs->approval_universitas_date ?? null,
+				'approval_keuangan_by' => (isset($req->approval_keuangan) != null) ? $by : $change_programs->approval_keuangan_by ?? '',
+				'approval_fakultas' => (isset($req->approval_fakultas) != null) ? $req->approval_fakultas : $change_programs->approval_fakultas ?? '',
+				'approval_fakultas_date' => (isset($req->approval_fakultas) != null) ? now() : $change_programs->approval_universitas_date ?? null,
+				'approval_fakultas_by' => (isset($req->approval_fakultas) != null) ? $by : $change_programs->approval_fakultas_by ?? '',
+				'approval_universitas' => (isset($req->approval_universitas) != null) ? $req->approval_universitas : $change_programs->approval_universitas ?? '',
+				'approval_universitas_by' => (isset($req->approval_universitas) != null) ? $by : $change_programs->approval_universitas_by ?? '',
+				'approval_universitas_date' => (isset($req->approval_universitas) != null) ? now() : $change_programs->approval_universitas_date ?? null,
 			]);
 			return response([
 				'status' => 'Success',

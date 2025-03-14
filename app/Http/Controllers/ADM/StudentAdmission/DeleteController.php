@@ -44,13 +44,21 @@ use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Biaya;
 use App\Http\Models\ADM\StudentAdmission\Master_kelas;
 use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\Schedule;
-use App\Http\Models\ADM\StudentAdmission\Selection_Path;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Path_Price;
 use App\Http\Models\ADM\StudentAdmission\Document_Type;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Matapelajaran;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Minat;
 use App\Http\Models\ADM\StudentAdmission\Study_Program;
 use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
 use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
+use App\Http\Models\ADM\StudentAdmission\Change_Program;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Path_Document;
+use App\Http\Models\ADM\StudentAdmission\Mapping_Path_Study_Program;
+use App\Http\Models\ADM\StudentAdmission\Master_Package;
+use App\Http\Models\ADM\StudentAdmission\Master_Package_Angsuran;
+use App\Http\Models\ADM\StudentAdmission\New_Student_Document_Type;
+use App\Http\Models\ADM\StudentAdmission\Refund_Request;
+use App\Http\Models\ADM\StudentAdmission\Transfer_Credit;
 use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Database\QueryException;
@@ -66,6 +74,28 @@ class DeleteController extends Controller
       $id = Mapping_Registration_Program_Study::select('id')->where('id', '=', $req->id)->first();    //return $id->id;
       if ($id) {
         $deletedata = Mapping_Registration_Program_Study::where('id', '=', $id->id)->delete();
+
+        return response()->json([
+          'status' => 'Success',
+          'Message' => 'ID ' . $id->id . ' Deleted'
+        ], 200);
+      }
+    } catch (Exception $e) {
+      DB::connection('pgsql')->rollBack();
+      return response()->json([
+        'status' => 'Failed',
+        'Message' => 'Cant delete data',
+				'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteMappingPathStudyProgram(Request $req)
+  {
+    try {
+      $id = Mapping_Path_Study_Program::select('id')->where('id', '=', $req->id)->first();    //return $id->id;
+      if ($id) {
+        $deletedata = Mapping_Path_Study_Program::where('id', '=', $id->id)->delete();
 
         return response()->json([
           'status' => 'Success',
@@ -280,6 +310,50 @@ class DeleteController extends Controller
         return response()->json([
           'status' => 'Success',
           'Message' => 'ID ' . $id->id . ' Deleted'
+        ], 200);
+      }
+    } catch (Exception $e) {
+      DB::connection('pgsql')->rollBack();
+      return response()->json([
+        'status' => 'Failed',
+        'Message' => 'Cant delete data'
+      ], 500);
+    }
+  }
+
+  public function DeleteRefundRequest(Request $req)
+  {
+    try {
+      $id = Refund_Request::select('id')
+        ->where('registration_number', '=', $req->registration_number)
+        ->first();    //return $id->id;
+      if ($id) {
+        $deletedata = Refund_Request::where('id', '=', $id->id)->delete();
+        return response()->json([
+          'status' => 'Success',
+          'Message' => 'No. ' . $id->registration_number . ' Deleted'
+        ], 200);
+      }
+    } catch (Exception $e) {
+      DB::connection('pgsql')->rollBack();
+      return response()->json([
+        'status' => 'Failed',
+        'Message' => 'Cant delete data'
+      ], 500);
+    }
+  }
+
+  public function DeleteChangeProgram(Request $req)
+  {
+    try {
+      $id = Change_Program::select('id')
+        ->where('registration_number', '=', $req->registration_number)
+        ->first();    //return $id->id;
+      if ($id) {
+        $deletedata = Change_Program::where('id', '=', $id->id)->delete();
+        return response()->json([
+          'status' => 'Success',
+          'Message' => 'No. ' . $id->registration_number . ' Deleted'
         ], 200);
       }
     } catch (Exception $e) {
@@ -1246,12 +1320,12 @@ class DeleteController extends Controller
 
       return response()->json([
         'status' => 'Success',
-        'message' => 'Document category has been deleted successfully',
+        'message' => 'Deleted successfully',
       ], 200);
     } catch (\Exception $e) {
       return response()->json([
         'status' => 'Failed',
-        'message' => 'Failed to delete the document category',
+        'message' => 'Failed to delete',
         'error' => $e->getMessage()
       ], 500);
     }
@@ -1265,12 +1339,12 @@ class DeleteController extends Controller
 
       return response()->json([
         'status' => 'Success',
-        'message' => 'Document category has been deleted successfully',
+        'message' => 'Deleted successfully',
       ], 200);
     } catch (\Exception $e) {
       return response()->json([
         'status' => 'Failed',
-        'message' => 'Failed to delete the document category',
+        'message' => 'Failed to delete',
         'error' => $e->getMessage()
       ], 500);
     }
@@ -1279,17 +1353,17 @@ class DeleteController extends Controller
   public function DeleteStudentInterest(Request $req)
   {
     try {
-      $documentCategory = Education_Major::findOrFail($req->id);
-      $documentCategory->delete();
+      $data = Education_Major::findOrFail($req->id);
+      $data->delete();
 
       return response()->json([
         'status' => 'Success',
-        'message' => 'Document category has been deleted successfully',
+        'message' => 'Deleted successfully',
       ], 200);
     } catch (\Exception $e) {
       return response()->json([
         'status' => 'Failed',
-        'message' => 'Failed to delete the document category',
+        'message' => 'Failed to delete',
         'error' => $e->getMessage()
       ], 500);
     }
@@ -1298,17 +1372,17 @@ class DeleteController extends Controller
   public function DeleteEducationDegree(Request $req)
   {
     try {
-      $educationDegree = Education_Degree::findOrFail($req->id);
-      $educationDegree->delete();
+      $data = Education_Degree::findOrFail($req->id);
+      $data->delete();
 
       return response()->json([
         'status' => 'Success',
-        'message' => 'Education Degree has been deleted successfully',
+        'message' => 'Deleted successfully',
       ], 200);
     } catch (\Exception $e) {
       return response()->json([
         'status' => 'Failed',
-        'message' => 'Failed to delete the education degree',
+        'message' => 'Failed to delete',
         'error' => $e->getMessage()
       ], 500);
     }
@@ -1317,12 +1391,12 @@ class DeleteController extends Controller
   public function DeleteStudyProgram(Request $req)
   {
     try {
-      $studyProgram = Study_Program::findOrFail($req->id);
+      $studyProgram = Study_Program::where('classification_id', $req->id)->first();
       $studyProgram->delete();
 
       return response()->json([
         'status' => 'Success',
-        'message' => 'Education Degree has been deleted successfully',
+        'message' => 'Deleted successfully',
       ], 200);
     } catch (\Exception $e) {
       return response()->json([
@@ -1469,8 +1543,9 @@ class DeleteController extends Controller
   public function DeleteDocumentType(Request $req)
   {
     try {
-      $study_program = Document_Type::where('id', $req->id)->first();
-      $study_program->delete();
+      $document = Document_Type::where('id', $req->id)->first();
+      New_Student_Document_Type::where('id', $req->id)->delete();
+      $document->delete();
 
       return response([
         'status' => 'Success',
@@ -1480,44 +1555,6 @@ class DeleteController extends Controller
       return response([
         'status' => 'Failed',
         'message' => 'Gagal menghapus dokumen',
-        'error' => $e->getMessage()
-      ], 500);
-    }
-  }
-
-  public function DeleteMappingProdiMatapelajaran(Request $req)
-  {
-    try {
-      $mapping_prodi_matapellajaran = Mapping_Prodi_Matapelajaran::where('id', $req->id)->first();
-      $mapping_prodi_matapellajaran->delete();
-
-      return response([
-        'status' => 'Success',
-        'message' => 'Mapping Prodi Mata Pelajaran telah dihapus',
-      ], 200);
-    } catch (\Exception $e) {
-      return response([
-        'status' => 'Failed',
-        'message' => 'Gagal menghapus Mapping Prodi Mata Pelajaran',
-        'error' => $e->getMessage()
-      ], 500);
-    }
-  }
-
-  public function DeleteMappingProdiMinat(Request $req)
-  {
-    try {
-      $data = Mapping_Prodi_Minat::where('id', $req->id)->first();
-      $data->delete();
-
-      return response([
-        'status' => 'Success',
-        'message' => 'Mapping Prodi minat telah dihapus',
-      ], 200);
-    } catch (\Exception $e) {
-      return response([
-        'status' => 'Failed',
-        'message' => 'Gagal menghapus Mapping Prodi Mata Pelajaran',
         'error' => $e->getMessage()
       ], 500);
     }
@@ -1537,6 +1574,84 @@ class DeleteController extends Controller
       return response([
         'status' => 'Failed',
         'message' => 'Gagal menghapus Package Question Users',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteTransferCredit(Request $req)
+  {
+    try {
+      $data = Transfer_Credit::where('id', $req->id)->first();
+      $data->delete();
+
+      return response([
+        'status' => 'Success',
+        'message' => 'Transfer credit telah dihapus',
+      ], 200);
+    } catch (\Exception $e) {
+      return response([
+        'status' => 'Failed',
+        'message' => 'Gagal menghapus transfer credit',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteMappingPathPrice(Request $req)
+  {
+    try {
+      $data = Mapping_Path_Price::where('id', $req->id)->first();
+      $data->delete();
+
+      return response()->json([
+        'status' => 'Success',
+        'message' => 'Mapping Path Price deleted successfully',
+      ], 200);
+    } catch (\Exception $e) {
+      return response()->json([
+        'status' => 'Failed',
+        'message' => 'Failed to delete the Mapping Path Price',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteMappingPathDocument(Request $req)
+  {
+    try {
+      $data = Mapping_Path_Document::where(['program_study_id' => $req->id, 'selection_path_id' => $req->path_id])->delete();
+
+      return response()->json([
+        'status' => 'Success',
+        'message' => 'Mapping Path Document deleted successfully',
+      ], 200);
+    } catch (\Exception $e) {
+      return response()->json([
+        'status' => 'Failed',
+        'message' => 'Failed to delete the Mapping Path Document',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteMasterPackage(Request $req)
+  {
+    try {
+			DB::connection('pgsql')->beginTransaction();
+			$paket = Master_Package::where('id', $req->id)->first();
+      $paket->delete();
+			Master_Package_Angsuran::where('package_id', $paket->id)->delete();
+      DB::connection('pgsql')->commit();
+      return response()->json([
+        'status' => 'Success',
+        'message' => 'Master package deleted successfully',
+      ], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+      return response()->json([
+        'status' => 'Failed',
+        'message' => 'Failed to delete the master package',
         'error' => $e->getMessage()
       ], 500);
     }

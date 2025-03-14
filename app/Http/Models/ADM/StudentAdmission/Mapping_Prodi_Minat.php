@@ -20,5 +20,5 @@ class Mapping_Prodi_Minat extends Model
         'quota',
         'status'
     ];
-    public $timestamps = true;
+    public $timestamps = false;
 }

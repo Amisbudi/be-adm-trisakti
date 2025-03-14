@@ -123,7 +123,7 @@
 						<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
 							<tr>
 								<td bgcolor="#ffffff" align="center" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #111111; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; letter-spacing: 2px; line-height: 48px;">
-									<h1 style="font-size: 48px; font-weight: 400; margin: 2;">Welcome to Universitas Trisakti Admission</h1> <img src="https://fileserver.telkomuniversity.ac.id/dev-trisakti/DEV/ADM/logo/trisakti.png" width="125" height="120" style="margin-top: 20px; display: block; border: 0px;" />
+									<h1 style="font-size: 48px; font-weight: 400; margin: 2;">Welcome to Trisakti University Admission</h1> <img src="https://fileserver.telkomuniversity.ac.id/dev-trisakti/DEV/ADM/logo/trisakti.png" width="125" height="120" style="margin-top: 20px; display: block; border: 0px;" />
 								</td>
 							</tr>
 						</table>
@@ -134,10 +134,10 @@
 						<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
 							<tr>
 								<td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-									<p style="margin: 0;">Thank you for registering. You have successfully registered in Universitas Trisakti Admission. Please verify your account by clicking link below:</p>
+									<p style="margin: 0;">Thank you for registering. You have successfully got virtual account number in Trisakti Univeristy Admission. Please pay your invoice by number below:</p>
 								</td>
 							</tr>
-							<tr>
+							{{-- <tr>
 								<td bgcolor="#ffffff" align="left">
 									<table width="100%" border="0" cellspacing="0" cellpadding="0">
 										<tr>
@@ -153,13 +153,13 @@
 										</tr>
 									</table>
 								</td>
-							</tr> <!-- COPY -->
+							</tr> <!-- COPY --> --}}
 							<tr>
 								<td bgcolor="#ffffff" align="left" style="padding: 0px 30px 20px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
 									<p style="margin: 0;">
-									Save your login information below : <br><br>
-									Username : {{ $email }}<br>
-									Password  : {{ $password }}<br>
+									Registration Number : {{ $noreg }}<br>
+									Virtual Account : {{ $virtual_account }}<br>
+									Expired At  : {{ $expiredat }}<br>
 									Save this email for your account reminder.
 									Please do not share anything and to anyone about your account.</p>
 								</td>
@@ -171,12 +171,12 @@
 							</tr>
 							<tr>
 								<td bgcolor="#ffffff" align="left" style="padding: 0px 30px 20px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-									<p style="margin: 0;">If you have any questions, please contact us by WA (+62) 882 194 856 74.</p>
+									<p style="margin: 0;">If you have any questions, please contact us by email (baa@trisakti.ac.id).</p>
 								</td>
 							</tr>
 							<tr>
 								<td bgcolor="#ffffff" align="left" style="padding: 0px 30px 40px 30px; border-radius: 0px 0px 4px 4px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-									<p style="margin: 0;">Thanks and Regards<br><b>Universitas Trisakti Admission Team</b></p>
+									<p style="margin: 0;">Thanks and Regards<br><b>Trisakti Univeristy Admission Team</b></p>
 								</td>
 							</tr>
 						</table>

@@ -85,8 +85,8 @@
             <th>Jadwal Pembayaran</th>
             <th>Nomor Tagihan</th>
         </tr>
-        @if($transaction_billing != null)
-        @foreach ($transaction_billing['bills_detail'] as $item)
+        {{-- @if($transaction_billing != null) --}}
+        {{-- @foreach ($transaction_billing['bills_detail'] as $item)
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td><b>{{ $item['bills_name'] }}</b></td>
@@ -94,8 +94,8 @@
                 <td style='text-align: center;'>{{  \Carbon\Carbon::parse($start_date_payment)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('d M Y') . ' - ' . \Carbon\Carbon::parse($end_date_payment)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('d M Y') }}</td>
                 <td style='text-align: center;'>{{ $virtual_account }}</td>
             </tr>
-        @endforeach
-        @endif
+        @endforeach --}}
+        {{-- @endif --}}
         <tr>
             <td colspan='2' style='text-align: center;'><b>TOTAL BIAYA</b></td>
             <td><b>Rp. {{ number_format($total_cost, '0', '.', '.') }}</b></td>
@@ -124,7 +124,7 @@
     </p>
 
     <p style='text-align: justify;'>
-        Silahkan Saudara melakukan registrasi online di <a href='https://spmb.trisakti.ac.id/'>https://spmb.trisakti.ac.id/</a> setelah melakukan
+        Silahkan Saudara melakukan registrasi online di <a href='https://admisi.trisakti.ac.id/'>https://admisi.trisakti.ac.id/</a> setelah melakukan
         pembayaran biaya pendidikan. Calon mahasiswa baru wajib melaksanakan <b>registrasi online</b> sesuai jadwal yang
         ditentukan. Apabila tidak melaksanakan registrasi tersebut dianggap <b>mengundurkan diri,</b> meskipun telah melakukan
         pembayaran sesuai yang dipersyaratkan. Mekanisme registrasi online adalah sebagai berikut:
@@ -137,7 +137,7 @@
     <ol style='clear:both;'>
         <li value='1' style='margin: 10px 0;'>
             Registrasi Online Tahap 1 <br>
-            Calon mahasiswa mengisi biodata secara <b>valid</b> melalui <a href='https://spmb.trisakti.ac.id/'>https://spmb.trisakti.ac.id/</a><br>
+            Calon mahasiswa mengisi biodata secara <b>valid</b> melalui <a href='https://admisi.trisakti.ac.id/'>https://admisi.trisakti.ac.id/</a><br>
             Registrasi Online Tahap 1 dapat dilakukan jika Saudara sudah melakukan pembayaran biaya pendidikan Uang
             Partisipasi Penyelenggaraan Pendidikan (UP3). Batas registrasi online tahap 1 atau pengajuan verifikasi berkas<br>
             Registrasi Online mewajibkan calon mahasiswa LOG IN dengan menggunakan :<br>
@@ -147,7 +147,7 @@
 
         <li style='margin: 10px 0;'>
             Registrasi Online Tahap 2 <br>
-            Calon mahasiswa melakukan UPLOAD berkas melalui <a href='https://spmb.trisakti.ac.id/'>https://spmb.trisakti.ac.id/</a> sesuai pada
+            Calon mahasiswa melakukan UPLOAD berkas melalui <a href='https://admisi.trisakti.ac.id/'>https://admisi.trisakti.ac.id/</a> sesuai pada
             <b>lampiran I.</b> Registrasi Online Tahap 2 dapat dilakukan apabila sudah melakukan pembayaran biaya pendidikan
             secara <b> LUNAS.</b>
         </li>
@@ -175,7 +175,7 @@
 
     <p>Hormat Kami, <br>
     <img src="https://www.smartgetspaid.com/wp-content/uploads/2018/11/B_signed3-01-crop.png" width="64px"/><br>
-    <u>Heru Pringgodani Sanusi, SH, MH </u><br>Wakil Rektor III Universitas Trisakti</p>
+    <u>- </u><br>Wakil Rektor III Universitas Trisakti</p>
     <h2 style='margin-top:36px;'>LAMPIRAN</h2>
     <p style='font-size:10px'>
         Lampiran I : Petunjuk REGISTRASI ON-LINE<br>

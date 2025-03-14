@@ -103,10 +103,10 @@
             <p style="font-size: small;">Jl. Kyai Tapa No.1, RT.6/RW.16, Grogol, Kec. Grogol petamburan, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11440<br>spmb.trisakti.ac.id</p>
         </div>
         <div class="left">
-            <img src='https://stptrisakti.ac.id/wp-content/uploads/2016/02/trisakti_logo_02resize.png' width="100px" />
+            <img src='https://fileserver.telkomuniversity.ac.id/dev-trisakti/DEV/ADM/logo/trisakti.png' width="100px" />
         </div>
         <div class="right">
-            <img src="data:image/png;base64, {{ base64_encode(QrCode::format('svg')->size(100)->generate('https://spmb.trisakti.ac.id/')) }}" width="100px" />
+            <img src="data:image/png;base64, {{ base64_encode(QrCode::format('svg')->size(100)->generate('https://admisi.trisakti.ac.id/')) }}" width="100px" />
         </div>
     </div>
     <hr>

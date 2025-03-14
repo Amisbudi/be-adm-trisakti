@@ -19,5 +19,13 @@ class Selection_Category extends Model {
         return $data;
     }
 
+    public static function getCategoryName($id) {
+        $data = Selection_Category::select('name')
+            ->where('id','=',$id)
+            ->first();
+        
+        return $data;
+    }
+
 }
 ?>

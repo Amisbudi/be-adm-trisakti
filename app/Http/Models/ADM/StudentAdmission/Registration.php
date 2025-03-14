@@ -29,6 +29,7 @@ class Registration extends Model {
         'activation_pin',
         'mapping_location_selection_id',
         'mapping_path_year_id',
+        'url',
         'mapping_path_year_intake_id'
     ];
     public $timestamps = true;
@@ -37,7 +38,9 @@ class Registration extends Model {
         $data['data'] = Registration::select(
             'registrations.registration_number',
             'p.id as participant_id',
+            'p.identify_number',
             'p.fullname',
+            'p.username as email',
             'p.mobile_phone_number',
             'sp.name as selection_path_name',
             'sp.id as selection_path_id',
@@ -49,14 +52,18 @@ class Registration extends Model {
             DB::raw('CONCAT(TO_CHAR(exam_start_date, '."'HH12:MI:SS'".'),'."' s/d '".',TO_CHAR(exam_end_date, '."'HH12:MI:SS'".')) as exam_hour'),
             'registrations.activation_pin',
             'p.photo_url',
+            'participant_educations.education_major_id',
+            'em.major as education_major',
             'registrations.path_exam_detail_id'
             )
                 ->leftjoin('participants as p','registrations.participant_id','=','p.id')
+                ->leftJoin('participant_educations', 'participant_educations.participant_id', '=', 'p.id')
                 ->leftjoin('selection_paths as sp','registrations.selection_path_id','=','sp.id')
                 ->leftjoin('path_exam_details as pe','registrations.path_exam_detail_id','=','pe.id')
                 ->leftjoin('mapping_location_selection as mls', 'registrations.mapping_location_selection_id', '=', 'mls.id')
                 ->leftjoin('location_exam as le', 'mls.location_exam_id', '=', 'le.id')
                 ->leftjoin('exam_type as es','sp.exam_status','=','es.id')
+                ->leftjoin('education_majors as em', 'participant_educations.education_major_id', '=', 'em.id')
                 ->where('registrations.registration_number','=',$registration_number)
                 ->first();
 
