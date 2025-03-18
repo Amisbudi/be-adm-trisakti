@@ -1672,7 +1672,7 @@ class CreateController extends Controller
 				"customer_name"     => $req->participant_name,
 				"customer_email"    => $req->participant_email,
 				"customer_phone"    => $req->participant_phone_number,
-				// "virtual_account"   => $va,
+				"virtual_account"   => $va,
 				"datetime_expired"  => Carbon::now()->addWeek(1)->format('Y-m-d h:i:s'),
 				"description"       => $req->add_info1,
 			);
@@ -4648,7 +4648,7 @@ class CreateController extends Controller
 				"customer_name"     => $req->participant_name,
 				"customer_email"    => $req->participant_email,
 				"customer_phone"    => $req->participant_phone_number,
-				// "virtual_account"   => $va,
+				"virtual_account"   => $va,
 				"datetime_expired"  => Carbon::now()->addWeek(24)->format('Y-m-d h:i:s'),
 				"description"       => $req->add_info1,
 			);

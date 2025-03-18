@@ -10263,7 +10263,7 @@ class ReadController extends Controller
                 ->join('study_programs as sp', 'change_programs.study_programs_id', '=', 'sp.classification_id')
                 ->join('registrations as r', 'r.registration_number', '=', 'change_programs.registration_number')
                 ->leftjoin('participants as p', 'r.participant_id', '=', 'p.id')
-                ->whereIn('registration_number', $reg)
+                ->whereIn('change_programs.registration_number', $reg)
                 ->get();
         } else {
             $data = Change_Program::select(
