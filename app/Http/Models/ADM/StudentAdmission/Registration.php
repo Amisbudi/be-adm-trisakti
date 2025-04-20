@@ -52,6 +52,8 @@ class Registration extends Model {
             DB::raw('CONCAT(TO_CHAR(exam_start_date, '."'HH12:MI:SS'".'),'."' s/d '".',TO_CHAR(exam_end_date, '."'HH12:MI:SS'".')) as exam_hour'),
             'registrations.activation_pin',
             'p.photo_url',
+            'p.color_blind',
+            'p.special_needs',
             'participant_educations.education_major_id',
             'em.major as education_major',
             'registrations.path_exam_detail_id'
