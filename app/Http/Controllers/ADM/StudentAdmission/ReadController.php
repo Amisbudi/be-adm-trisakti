@@ -4813,6 +4813,11 @@ class ReadController extends Controller
 
         $data = Registration::select(
             'registrations.participant_id',
+            'p.fullname',
+            'p.username as email',
+            'p.mobile_phone_number',
+            'p.color_blind',
+            'p.special_needs',
             'sp.id as selection_path_id',
             'sp.name as selection_path_name',
             'registrations.registration_number',
@@ -4866,6 +4871,7 @@ class ReadController extends Controller
         )
             ->leftjoin('registration_result', 'registration_result.registration_number', '=', 'registrations.registration_number')
             ->leftjoin('selection_paths as sp', 'registrations.selection_path_id', '=', 'sp.id')
+            ->leftjoin('participants as p', 'registrations.participant_id', '=', 'p.id')
             ->leftjoin('study_programs as ps', 'registration_result.program_study_id', '=', 'ps.classification_id')
             ->leftjoin('study_programs as tps', 'registration_result.transfer_program_study_id', '=', 'tps.classification_id')
             ->where([$selection_path, $registration_number, $participant_id, $mapping_path_year_id, $status])
