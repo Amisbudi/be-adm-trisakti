@@ -7,7 +7,7 @@ use DB;
 
 class Pin_Voucher extends Model {
     protected $connection = 'pgsql';
-    protected $table = 'pin_voucher as pv';
+    protected $table = 'pin_voucher';
 
     protected $primaryKey = 'voucher';
     public $incrementing = false;
