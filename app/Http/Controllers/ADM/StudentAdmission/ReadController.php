@@ -4076,31 +4076,31 @@ class ReadController extends Controller
         $filter = DB::raw('1');
 
         if ($req->voucher != null) {
-            $voucher = ['voucher', '=', $req->voucher];
+            $voucher = ['pin_voucher.voucher', '=', $req->voucher];
         } else {
             $voucher = [$filter, '=', '1'];
         }
 
         if ($req->type != null) {
-            $type = ['type', '=', strtoupper($req->type)];
+            $type = ['pin_voucher.type', '=', strtoupper($req->type)];
         } else {
             $type = [$filter, '=', '1'];
         }
 
         if ($req->active_status != null) {
-            $active_status = ['active_status', '=', $req->active_status];
+            $active_status = ['pin_voucher.active_status', '=', $req->active_status];
         } else {
             $active_status = [$filter, '=', '1'];
         }
 
         if ($req->study_program_id) {
-            $study_program_id = ['pg.program_study_id', '=', $req->study_program_id];
+            $study_program_id = ['pin_voucher.program_study_id', '=', $req->study_program_id];
         } else {
             $study_program_id = [$filter, '=', '1'];
         }
 
         $data = Pin_Voucher::select(
-            'pv.*',
+            'pin_voucher.*',
             DB::raw("CASE 
                 WHEN (active_status = 'f' OR active_status IS NULL) THEN 'Voucher Not Active' 
                 WHEN (active_status = 't' AND expire_date >= current_date) THEN 'Voucher Active' 
@@ -4109,7 +4109,7 @@ class ReadController extends Controller
             "), 
             'sp.study_program_branding_name as program_study_name'
         )
-        ->join('study_programs as sp', 'pv.study_program_id', '=', 'sp.classification_id')
+        ->join('study_programs as sp', 'pin_voucher.study_program_id', '=', 'sp.classification_id')
         ->where([$voucher, $type, $active_status, $study_program_id])
         ->orderBy('created_at', 'DESC')
         ->get();
@@ -10095,14 +10095,14 @@ class ReadController extends Controller
     {
         $filter = DB::raw('1');
         if ($req->study_program_id) {
-            $study_program_id = ['pg.program_study_id', '=', $req->study_program_id];
+            $study_program_id = ['master_package_biaya.program_study_id', '=', $req->study_program_id];
         } else {
             $study_program_id = [$filter, '=', '1'];
         }
 
         $result = [];
-        $data = Master_Package::select('mpb.*', 'sp.study_program_branding_name as program_study_name')
-        ->join('study_programs as sp', 'mpb.study_program_id', '=', 'sp.classification_id')
+        $data = Master_Package::select('master_package_biaya.*', 'sp.study_program_branding_name as program_study_name')
+        ->join('study_programs as sp', 'master_package_biaya.study_program_id', '=', 'sp.classification_id')
         ->where([$study_program_id])
         ->get();
 
@@ -10416,7 +10416,7 @@ class ReadController extends Controller
             'registration_result.*',
             'sp.study_program_branding_name as program_study',
             'sp.faculty_name as faculty',
-            'mpb.nama_paket',
+            'master_package_biaya.nama_paket',
             'p.address_detail',
             'p.address_disctrict',
             'p.address_city',
@@ -10424,7 +10424,7 @@ class ReadController extends Controller
             'p.address_country',
         )
             ->join('study_programs as sp', 'registration_result.program_study_id', '=', 'sp.classification_id')
-            ->join('master_package_biaya as mpb', 'registration_result.package_id', '=', 'mpb.id')
+            ->join('master_package_biaya as master_package_biaya', 'registration_result.package_id', '=', 'master_package_biaya.id')
             ->join('participants as p', 'registration_result.participant_id', '=', 'p.id')
             ->where('registration_number', $request->registration_number)->first();
 
