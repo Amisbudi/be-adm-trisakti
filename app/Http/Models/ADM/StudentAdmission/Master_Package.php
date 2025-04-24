@@ -8,7 +8,7 @@ use DB;
 class Master_Package extends Model
 {
     protected $connection = 'pgsql';
-    protected $table = 'master_package_biaya as mpb';
+    protected $table = 'master_package_biaya';
     protected $primaryKey = 'id';
     protected $fillable = [
         'nama_paket',
