@@ -7,13 +7,14 @@ use DB;
 
 class Pin_Voucher extends Model {
     protected $connection = 'pgsql';
-    protected $table = 'pin_voucher';
+    protected $table = 'pin_voucher as pv';
 
     protected $primaryKey = 'voucher';
     public $incrementing = false;
     protected $keyType = 'string';
 
     protected $fillable = [ 
+        'study_program_id',
         'voucher',
         'type',
         'price',
