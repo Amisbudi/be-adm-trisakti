@@ -4093,18 +4093,26 @@ class ReadController extends Controller
             $active_status = [$filter, '=', '1'];
         }
 
+        if ($req->study_program_id) {
+            $study_program_id = ['pg.program_study_id', '=', $req->study_program_id];
+        } else {
+            $study_program_id = [$filter, '=', '1'];
+        }
+
         $data = Pin_Voucher::select(
-            '*',
+            'pv.*',
             DB::raw("CASE 
                 WHEN (active_status = 'f' OR active_status IS NULL) THEN 'Voucher Not Active' 
                 WHEN (active_status = 't' AND expire_date >= current_date) THEN 'Voucher Active' 
                 WHEN (active_status = 't' AND expire_date < current_date) THEN 'Voucher Expired' 
                 END AS status
-            ")
+            "), 
+            'sp.study_program_branding_name as program_study_name'
         )
-            ->where([$voucher, $type, $active_status])
-            ->orderBy('created_at', 'DESC')
-            ->get();
+        ->join('study_programs as sp', 'pv.study_program_id', '=', 'sp.classification_id')
+        ->where([$voucher, $type, $active_status, $study_program_id])
+        ->orderBy('created_at', 'DESC')
+        ->get();
 
         return response()->json($data, 200);
     }
@@ -10085,8 +10093,19 @@ class ReadController extends Controller
 
     public function GetMasterPackage(Request $req)
     {
+        $filter = DB::raw('1');
+        if ($req->study_program_id) {
+            $study_program_id = ['pg.program_study_id', '=', $req->study_program_id];
+        } else {
+            $study_program_id = [$filter, '=', '1'];
+        }
+
         $result = [];
-        $data = Master_Package::all();
+        $data = Master_Package::select('mpb.*', 'sp.study_program_branding_name as program_study_name')
+        ->join('study_programs as sp', 'mpb.study_program_id', '=', 'sp.classification_id')
+        ->where([$study_program_id])
+        ->get();
+
         foreach ($data as $key => $paket) {
             $result[$key] = $paket;
             $result[$key]['detail'] = Master_Package_Angsuran::where('package_id', $paket->id)->orderBy('angsuran_ke', 'ASC')->get();

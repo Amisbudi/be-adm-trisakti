@@ -1908,6 +1908,7 @@ class CreateController extends Controller
 		try {
 			$create = Pin_Voucher::create([
 				'voucher' => strtoupper(Str::random(8)),
+				'study_program_id' => $req->study_program_id,
 				'description' => $req->description,
 				'type' => strtoupper($req->type),
 				'expire_date' => $req->expire_date,
@@ -4547,6 +4548,7 @@ class CreateController extends Controller
 			$paket = Master_Package::create([
 				'nama_paket'  	=> json_decode($req->nama_paket),
 				'angsuran' 		=> $req->angsuran,
+				'study_program_id' => $req->study_program_id,
 			]);
 			\Log::info('Request data: ', $req->all()); // Tambahkan log untuk melihat input JSON
 
