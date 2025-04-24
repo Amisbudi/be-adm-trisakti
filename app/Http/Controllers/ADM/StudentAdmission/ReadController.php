@@ -4109,7 +4109,7 @@ class ReadController extends Controller
             "), 
             'sp.study_program_branding_name as program_study_name'
         )
-        ->join('study_programs as sp', 'pin_voucher.study_program_id', '=', 'sp.classification_id')
+        ->leftJoin('study_programs as sp', 'pin_voucher.study_program_id', '=', 'sp.classification_id')
         ->where([$voucher, $type, $active_status, $study_program_id])
         ->orderBy('created_at', 'DESC')
         ->get();
@@ -10102,7 +10102,7 @@ class ReadController extends Controller
 
         $result = [];
         $data = Master_Package::select('master_package_biaya.*', 'sp.study_program_branding_name as program_study_name')
-        ->join('study_programs as sp', 'master_package_biaya.study_program_id', '=', 'sp.classification_id')
+        ->leftJoin('study_programs as sp', 'master_package_biaya.study_program_id', '=', 'sp.classification_id')
         ->where([$study_program_id])
         ->get();
 
