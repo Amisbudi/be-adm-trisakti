@@ -1505,6 +1505,10 @@ class UpdateController extends Controller
 				$data['approved_by'] = $by;
 			}
 
+			if ($req->study_program_id) {
+				$data['study_program_id'] = $req->study_program_id;
+			}
+			
 			$data['updated_by'] = $by;
 
 			$update = Pin_Voucher::find($req->voucher)->update($data);
@@ -3256,6 +3260,7 @@ class UpdateController extends Controller
 			$paket->update([
 				'nama_paket'  	=> json_decode($req->nama_paket),
 				'angsuran' 		=> $req->angsuran,
+				'study_program_id' => $req->study_program_id,
 			]);
 
 			foreach ($datas->angsuran as $key => $item) {
