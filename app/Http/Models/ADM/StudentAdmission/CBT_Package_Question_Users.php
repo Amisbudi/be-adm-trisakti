@@ -12,6 +12,7 @@ class CBT_Package_Question_Users extends Model
     protected $primaryKey = 'id';
     protected $fillable = [
         'package_question_id',
+        'registration_number',
         'user_id',
         'classes',
         'date_exam',

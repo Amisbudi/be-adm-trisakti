@@ -20,3 +20,9 @@ CREATE TABLE transfer_credit (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE public.master_package_biaya ADD study_program_id INT NULL;
+ALTER TABLE public.pin_voucher ADD study_program_id INT NULL;
+ALTER TABLE public.cbt_package_question_users ADD registration_number varchar(25) NULL;
+ALTER TABLE public.cbt_question_users ADD registration_number varchar(25) NULL;
+ALTER TABLE public.cbt_records ADD registration_number varchar(25) NULL;

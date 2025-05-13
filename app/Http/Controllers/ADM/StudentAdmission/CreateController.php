@@ -1672,7 +1672,7 @@ class CreateController extends Controller
 				"customer_name"     => $req->participant_name,
 				"customer_email"    => $req->participant_email,
 				"customer_phone"    => $req->participant_phone_number,
-				// "virtual_account"   => $va,
+				"virtual_account"   => $va,
 				"datetime_expired"  => Carbon::now()->addWeek(1)->format('Y-m-d h:i:s'),
 				"description"       => $req->add_info1,
 			);
@@ -1771,18 +1771,21 @@ class CreateController extends Controller
 			return response()->json([
 				'status' => 'Failed',
 				'message' => 'Transaction Failed',
+				'data' => $createVA,
 				'result' => $e->getMessage()
 			], 500);
 		} catch (Exception $e) {
 			return response()->json([
 				'status' => 'Failed',
 				'message' => 'Transaction Failed',
+				'data' => $createVA,
 				'result' => $e->getMessage()
 			], 500);
 		} catch (\GuzzleHttp\Exception\BadResponseException $e) {
 			return response()->json([
 				'status' => 'Failed',
 				'message' => 'Transaction Failed',
+				'data' => $createVA,
 				'result' => $e->getMessage()
 			], 500);
 		}
@@ -4453,6 +4456,7 @@ class CreateController extends Controller
 						'package_question_id' => $package->id,
 						'user_id' => $req->user_id,
 						'classes' => $req->class_type,
+						'registration_number' => $req->registration_number,
 						'date_exam' => Carbon::parse($req->date_exam)->format('Y-m-d'),
 						'date_start' => ($req->class_type == "Reguler") ? Carbon::parse($req->date_exam . $ped->session_one_start)->format('Y-m-d H:i:s') : $ped->exam_start_date,
 						'date_end' => ($req->class_type == "Reguler") ? Carbon::parse($req->date_exam . $ped->session_one_end)->format('Y-m-d H:i:s') : $ped->exam_end_date,
@@ -4650,7 +4654,7 @@ class CreateController extends Controller
 				"customer_name"     => $req->participant_name,
 				"customer_email"    => $req->participant_email,
 				"customer_phone"    => $req->participant_phone_number,
-				// "virtual_account"   => $va,
+				"virtual_account"   => $va,
 				"datetime_expired"  => Carbon::now()->addWeek(24)->format('Y-m-d h:i:s'),
 				"description"       => $req->add_info1,
 			);

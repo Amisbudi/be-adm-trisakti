@@ -115,9 +115,9 @@
             <table style="border: #000 1px solid; width: 100%; border-collapse: collapse;">
                 <thead>
                     <tr style="border-bottom: 1px solid #000;">
-                        <td style="width: 30%; text-align: center; border-right: 1px solid #000;">#</td>
-                        <td style="width: 30%; text-align: center; border-right: 1px solid #000;">Materi Ujian</td>
-                        <td style="width: 15%; text-align: center; border-right: 1px solid #000;">Waktu</td>
+                        <td style="width: 10%; text-align: center; border-right: 1px solid #000;">#</td>
+                        <td style="width: 40%; text-align: center; border-right: 1px solid #000;">Materi Ujian</td>
+                        <td style="width: 25%; text-align: center; border-right: 1px solid #000;">Waktu</td>
                         <td style="width: 55%; text-align: center;">Lokasi Ujian</td>
                     </tr>
                 </thead>
@@ -125,7 +125,7 @@
                     @if(isset($sessions))
                     @foreach ($sessions as $key => $session )
                     <tr>
-                        <td>{{ $key + 1 }}</td>
+                        <td  style="width: 10%; text-align: center;">{{ $key + 1 }}</td>
                         <td style="padding: 0 5px 0 5px;">{{ $session['nama_ujian'] }}</td>
                         <td  style="padding: 0 5px 0 5px; text-align: center;">{{ $session['date_start'] }} WIB</td>
                         <td style="padding: 0 5px 0 5px;">{{ $session['location'] ?? $session['date_end']. 'WIB' }} </td>
