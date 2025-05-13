@@ -1771,18 +1771,21 @@ class CreateController extends Controller
 			return response()->json([
 				'status' => 'Failed',
 				'message' => 'Transaction Failed',
+				'data' => $createVA,
 				'result' => $e->getMessage()
 			], 500);
 		} catch (Exception $e) {
 			return response()->json([
 				'status' => 'Failed',
 				'message' => 'Transaction Failed',
+				'data' => $createVA,
 				'result' => $e->getMessage()
 			], 500);
 		} catch (\GuzzleHttp\Exception\BadResponseException $e) {
 			return response()->json([
 				'status' => 'Failed',
 				'message' => 'Transaction Failed',
+				'data' => $createVA,
 				'result' => $e->getMessage()
 			], 500);
 		}
