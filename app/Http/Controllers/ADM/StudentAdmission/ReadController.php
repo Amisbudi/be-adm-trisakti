@@ -2842,7 +2842,7 @@ class ReadController extends Controller
         $participantdata = Registration::GetRegistrationParticipant($request->registration_number, null);
 
         //participant session
-        $session = $this->ViewExamSessionCard($participantdata['data']->identify_number);
+        $session = $this->ViewExamSessionCard($participantdata['data']->identify_number, $request->registration_number);
         //tahun ajaran
         // return $session;
         $school_year = Mapping_Path_Year::select()
@@ -2994,7 +2994,7 @@ class ReadController extends Controller
         return $data;
     }
 
-    function ViewExamSessionCard($registration_number)
+    function ViewExamSessionCard($identify_number, $registration_number)
     {
         $result = CBT_Package_Question_Users::select(
             // 'cbt_package_question_users.id',
@@ -3012,7 +3012,7 @@ class ReadController extends Controller
             ->join('path_exam_details as ped', function ($join) {
                 $join->on('ped.exam_type_id', '=', 'et.id');
             })
-            ->where(['user_id' => $registration_number, 'ped.active_status' => 'true'])
+            ->where(['user_id' => $identify_number, 'registration_number' => $registration_number, 'ped.active_status' => 'true'])
             ->whereColumn('ped.exam_start_date', '>=', 'cbt_package_question_users.date_exam')
             ->whereColumn('ped.exam_start_date', '<=', 'cbt_package_question_users.date_end')
             ->distinct()
