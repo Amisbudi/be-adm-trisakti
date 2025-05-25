@@ -57,6 +57,11 @@
             line-height: 1;
         }
 
+        p {
+            font-size: 12px;
+            line-height: 1;
+        }
+
         .signature {
             margin-left: 48%;
             text-align: left;
@@ -64,8 +69,8 @@
         }
 
         .ttd {
-            margin-top: 40px;
-            margin-bottom: 40px;
+            margin-top: 35px;
+            margin-bottom: 35px;
         }
 
         .qr-code {
@@ -122,8 +127,8 @@
         </div>
     </div>
     <div class="par-1">
-        <p><strong>BUKTI PENDAFTARAN CALON MAHASISWA</strong></p>
-        <P><strong style="text-transform: uppercase">{{ $participant->selection_path_name }} </strong></P>
+        <h4>BUKTI PENDAFTARAN CALON MAHASISWA</h4>
+        <h4 style="text-transform: uppercase">{{ $participant->selection_path_name }} </h4>
     </div>
     <div style="display: flex; justify-content: space-between; align-items: flex-start;">
         <div class="text" style="flex-grow: 1; margin-right: 20px;">
@@ -182,15 +187,42 @@
         </tbody>
     </table>
 
+    <p><strong>4. JADWAL</strong></p>
+    @php
+       $hariIni = new DateTime();
+
+        // Menambahkan 2 minggu (14 hari)
+        $duaMingguKedepan = clone $hariIni;
+        $duaMingguKedepan->add(new DateInterval('P14D')); 
+    @endphp
+    <table style="margin-left: 15px; border-collapse: collapse; width: 100%; table-layout: auto;">
+        <tbody>
+            <tr>
+                <td style="padding: 4px; width: 22%; text-align: left;">- Pengumuman Hasil Seleksi</td>
+                <td style="padding: 4px; width: 45%; text-align: left;">: Paling lambat diumumkan tanggal {{ $duaMingguKedepan->format('d F Y') }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <p><strong>5. INFORMASI LEBIH LANJUT</strong><br>
+        Silahkan menghubungi:</p>
+    
+        <p><strong>Promosi PMB Universitas Trisakti:</strong><br>
+        Lobby Gedung Sjarif Thajeb (M)<br>
+        Telepon: 021-5663232, 021-5694343, ext: 8100, 8888</p>
+    
+        <p><strong>BAA Universitas Trisakti:</strong><br>
+        Gedung Sjarif Thajeb (M) Lantai VII<br>
+        Jl. Kyai Tapa No.1 - Grogol<br>
+        No Telepon: 021.5663232, ext: 8116 dan 8124</p>
     <div class="signature">
-        <p style="margin: 0">Jakarta, {{ date('d F Y') }}</p>
-        <p style="margin: 0">
-            Penanggung Jawab PMB Universitas Trisakti Tahun Akademik
-            {{ $school_year }}
+        <p style="margin: 0 0 5px 0">Jakarta, {{ date('d F Y') }}</p>
+        <p style="margin: 0 0 5px 0">
+            Ketua Penyelenggara SPMB Universitas Trisakti
         </p>
-        <br>
-        <p>TTD</p>
-        <br>
+        <p style="margin: 0 0 5px 0">
+            Tahun Akademik {{ $school_year }}
+        </p>
+        <p class="ttd">TTD</p>
         <p>
             Dr. Ir. Muhammad Burhannudinnur, M.Sc., IPU
         </p>

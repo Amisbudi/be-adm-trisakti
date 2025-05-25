@@ -2845,8 +2845,8 @@ class ReadController extends Controller
         $session = $this->ViewExamSessionCard($participantdata['data']->identify_number, $request->registration_number);
         //tahun ajaran
         // return $session;
-        $school_year = Mapping_Path_Year::select()
-            ->where('selection_path_id', '=', $participantdata['data']->selection_path_id)
+        $school_year = Mapping_Path_Year_Intake::select()
+            ->where('id', '=', $participantdata['data']->mapping_path_year_intake_id)
             ->where('active_status', '=', true)
             ->first();
 
@@ -9649,6 +9649,22 @@ class ReadController extends Controller
                 ->where('mpps.selection_path_id', '=', $req->selection_path_id)
                 ->where('mpps.active_status', '=', true)
                 ->get();
+        } else if ($role->oauth_role_id == 1034) {
+            $data = Study_Program::select(
+                'study_programs.classification_id as study_program_id',
+                'study_programs.study_program_branding_name as study_program_name',
+                'study_programs.faculty_id',
+                'study_programs.faculty_name',
+                'study_programs.category',
+                'study_programs.acronim',
+                'study_programs.sks',
+                'study_programs.quota',
+                'study_programs.acreditation'
+            )
+                ->join('mapping_path_program_study as mpps', 'study_programs.classification_id', '=', 'mpps.program_study_id')
+                ->where('mpps.selection_path_id', '=', $req->selection_path_id)
+                ->where('mpps.active_status', '=', true)
+                ->get();
         } else if ($role->oauth_role_id == 1027) {
             $data = Study_Program::select(
                 'study_programs.classification_id as study_program_id',
@@ -10095,7 +10111,7 @@ class ReadController extends Controller
     {
         $filter = DB::raw('1');
         if ($req->study_program_id) {
-            $study_program_id = ['master_package_biaya.program_study_id', '=', $req->study_program_id];
+            $study_program_id = ['master_package_biaya.study_program_id', '=', $req->study_program_id];
         } else {
             $study_program_id = [$filter, '=', '1'];
         }

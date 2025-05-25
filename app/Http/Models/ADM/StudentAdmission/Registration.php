@@ -37,6 +37,7 @@ class Registration extends Model {
     public static function GetRegistrationParticipant($registration_number, $study_program_id) {
         $data['data'] = Registration::select(
             'registrations.registration_number',
+            'registrations.mapping_path_year_intake_id',
             'p.id as participant_id',
             'p.identify_number',
             'p.fullname',
