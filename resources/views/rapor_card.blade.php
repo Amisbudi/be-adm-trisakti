@@ -7,7 +7,7 @@
     <title>Bukti Pendaftaran Calon Mahasiswa</title>
     <style>
         @page {
-            size: A4;
+            size: letter;
             margin: 10mm;
         }
         body {
@@ -22,7 +22,7 @@
         }
 
         .par-1{
-            margin-top: -80px;
+            margin-top: -90px;
             text-align: center; justify-content: center; line-height: 0.3;
         }
 
@@ -39,18 +39,23 @@
 
         th,
         td {
-            line-height: 15px;
+            line-height: 10px;
         }
 
         .header h1 {
-            font-size: 18px;
+            font-size: 16px;
             text-align: center;
             line-height: 0.4;
         }
 
         .content {
             margin-top: 10px;
-            font-size: 16px;
+            font-size: 10px;
+            line-height: 1;
+        }
+
+        p {
+            font-size: 12px;
             line-height: 1;
         }
 
@@ -61,8 +66,8 @@
         }
 
         .ttd {
-            margin-top: 40px;
-            margin-bottom: 40px;
+            margin-top: 35px;
+            margin-bottom: 35px;
         }
 
         .qr-code {
@@ -74,10 +79,10 @@
         }
 
         .profile {
-            width: 70px;
-            height: 70px;
+            width: 60px;
+            height: 60px;
             position: absolute;
-            top: 160px;
+            top: 130px;
             right: 0;
         }
 
@@ -118,8 +123,8 @@
         </div>
     </div>
     <div class="par-1">
-        <p><strong>BUKTI PENDAFTARAN CALON MAHASISWA</strong></p>
-        <P><strong style="text-transform: uppercase">{{ $participant->selection_path_name }} </strong></P>
+        <h4>BUKTI PENDAFTARAN CALON MAHASISWA</h4>
+        <h4 style="text-transform: uppercase">{{ $participant->selection_path_name }} </h4>
     </div>
     <div style="display: flex; justify-content: space-between; align-items: flex-start;">
         <div class="text" style="flex-grow: 1; margin-right: 20px;">
@@ -186,26 +191,35 @@
         <tbody style="border: 1px solid black">
             @if(isset($mapel))
             @foreach($mapel as $key => $val)
-            {{ $i = $key+1 }}
-            <tr style="border: 1px solid black">
-                <td class="text-lef" style="border: 1px solid black">{{ (count(explode(' ', $val['mata_pelajaran'])) > 2) ? $rapor[0]['alias'.$i] : $val['mata_pelajaran'] }}</td>
-                <td style="border: 1px solid black; text-align: center;">{{ isset($rapor[0]->mapel1) ? $rapor[0]['mapel'.$i] : '-' }}</td>
-                <td style="border: 1px solid black; text-align: center;">{{ isset($rapor[1]->mapel1) ? $rapor[1]['mapel'.$i] : '-' }}</td>
-                <td style="border: 1px solid black; text-align: center;">{{ isset($rapor[2]->mapel1) ? $rapor[2]['mapel'.$i] : '-' }}</td>
-                <td style="border: 1px solid black; text-align: center;">{{ isset($rapor[3]->mapel1) ? $rapor[3]['mapel'.$i] : '-' }}</td>
-                <td style="border: 1px solid black; text-align: center;">{{ isset($rapor[4]->mapel1) ? $rapor[4]['mapel'.$i] : '-' }}</td>
-                <td style="border: 1px solid black; text-align: center;">{{ isset($rapor[5]->mapel1) ? $rapor[5]['mapel'.$i] : '-' }}</td>
-                {{ 
-                    (count($rapor) > 5) ?
-                        $total = $rapor[0]['mapel'.$i] + $rapor[1]['mapel'.$i] + $rapor[2]['mapel'.$i] + $rapor[3]['mapel'.$i] + $rapor[4]['mapel'.$i] + $rapor[5]['mapel'.$i]
-                    : ((count($rapor) > 4) ?
-                        $total = $rapor[0]['mapel'.$i] + $rapor[1]['mapel'.$i] + $rapor[2]['mapel'.$i] + $rapor[3]['mapel'.$i] + $rapor[4]['mapel'.$i]
-                    :
-                        $total = $rapor[0]['mapel'.$i] + $rapor[1]['mapel'.$i] + $rapor[2]['mapel'.$i] + $rapor[3]['mapel'.$i] )
-                    
-
-                }}
-                <td style="border: 1px solid black; text-align: center;">{{ round($total/4) }}</td>
+            @php
+                $i = $key + 1;
+                $mapelName = (count(explode(' ', $val['mata_pelajaran'])) > 2) ? $rapor[0]['alias'.$i] : $val['mata_pelajaran'];
+                
+                // Initialize variables
+                $total = 0;
+                $count = 0;
+                
+                // Calculate total and count of available semesters
+                for ($semester = 0; $semester < 6; $semester++) {
+                    if (isset($rapor[$semester]['mapel'.$i]) && is_numeric($rapor[$semester]['mapel'.$i])) {
+                        $total += $rapor[$semester]['mapel'.$i];
+                        $count++;
+                    }
+                }
+                
+                // Calculate average only if we have values
+                $average = ($count > 0) ? round($total / $count) : '-';
+            @endphp
+            
+            <tr style="border: 1px solid black; line-height: 1.2;">
+                <td style="line-height: 1.2; border: 1px solid black; padding: 2px 5px; text-align: left;">{{ $mapelName }}</td>
+                <td style="line-height: 1.2; border: 1px solid black; padding: 2px 5px; text-align: center;">{{ $rapor[0]['mapel'.$i] ?? '-' }}</td>
+                <td style="line-height: 1.2; border: 1px solid black; padding: 2px 5px; text-align: center;">{{ $rapor[1]['mapel'.$i] ?? '-' }}</td>
+                <td style="line-height: 1.2; border: 1px solid black; padding: 2px 5px; text-align: center;">{{ $rapor[2]['mapel'.$i] ?? '-' }}</td>
+                <td style="line-height: 1.2; border: 1px solid black; padding: 2px 5px; text-align: center;">{{ $rapor[3]['mapel'.$i] ?? '-' }}</td>
+                <td style="line-height: 1.2; border: 1px solid black; padding: 2px 5px; text-align: center;">{{ $rapor[4]['mapel'.$i] ?? '-' }}</td>
+                <td style="line-height: 1.2; border: 1px solid black; padding: 2px 5px; text-align: center;">{{ $rapor[5]['mapel'.$i] ?? '-' }}</td>
+                <td style="line-height: 1.2; border: 1px solid black; padding: 2px 5px; text-align: center;">{{ $average }}</td>
             </tr>
             @endforeach
             @endif
@@ -224,12 +238,40 @@
             @endif
         </tbody>
     </table>
+    <p><strong>4. JADWAL</strong></p>
+    @php
+       $hariIni = new DateTime();
 
+        // Menambahkan 2 minggu (14 hari)
+        $duaMingguKedepan = clone $hariIni;
+        $duaMingguKedepan->add(new DateInterval('P14D')); 
+    @endphp
+    <table style="margin-left: 15px; border-collapse: collapse; width: 100%; table-layout: auto;">
+        <tbody>
+            <tr>
+                <td style="padding: 4px; width: 22%; text-align: left;">- Pengumuman Hasil Seleksi</td>
+                <td style="padding: 4px; width: 45%; text-align: left;">: Paling lambat diumumkan tanggal {{ $duaMingguKedepan->format('d F Y') }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <p><strong>5. INFORMASI LEBIH LANJUT</strong><br>
+        Silahkan menghubungi:</p>
+    
+        <p><strong>Promosi PMB Universitas Trisakti:</strong><br>
+        Lobby Gedung Sjarif Thajeb (M)<br>
+        Telepon: 021-5663232, 021-5694343, ext: 8100, 8888</p>
+    
+        <p><strong>BAA Universitas Trisakti:</strong><br>
+        Gedung Sjarif Thajeb (M) Lantai VII<br>
+        Jl. Kyai Tapa No.1 - Grogol<br>
+        No Telepon: 021.5663232, ext: 8116 dan 8124</p>
     <div class="signature">
-        <p style="margin: 0">Jakarta, {{ date('d F Y') }}</p>
-        <p style="margin: 0">
-            Penanggung Jawab PMB Universitas Trisakti Tahun Akademik
-            {{ $school_year }}
+        <p style="margin: 0 0 5px 0">Jakarta, {{ date('d F Y') }}</p>
+        <p style="margin: 0 0 5px 0">
+            Ketua Penyelenggara SPMB Universitas Trisakti
+        </p>
+        <p style="margin: 0 0 5px 0">
+            Tahun Akademik {{ $school_year }}
         </p>
         <p class="ttd">TTD</p>
         <p>
