@@ -10504,4 +10504,13 @@ class ReadController extends Controller
             ], 500);
         }
     }
+
+
+    public function ReportSuratDekan(Request $request){
+
+    }
+
+    public function ReportSuratRektor(Request $request){
+
+    }
 }
