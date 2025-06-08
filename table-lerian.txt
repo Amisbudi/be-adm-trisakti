@@ -26,3 +26,7 @@ ALTER TABLE public.pin_voucher ADD study_program_id INT NULL;
 ALTER TABLE public.cbt_package_question_users ADD registration_number varchar(25) NULL;
 ALTER TABLE public.cbt_question_users ADD registration_number varchar(25) NULL;
 ALTER TABLE public.cbt_records ADD registration_number varchar(25) NULL;
+
+
+ALTER TABLE public.mapping_user_role ADD study_program_id INT NULL;
+ALTER TABLE public.mapping_user_role ADD dekan varchar(255) NULL;
