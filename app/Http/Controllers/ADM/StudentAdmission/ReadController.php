@@ -10664,8 +10664,15 @@ class ReadController extends Controller
         // return response()->json($surat);
 
         // Render view blade dan generate PDF
-        $pdf = PDF::loadView('surat_dekan', compact('surat', 'lampiran'));
-        return $pdf->stream('surat_keputusan_dekan_dan_lampiran.pdf');
+        $filenames = 'dekan/' . $role->schoolyear . 'surat_keputusan_dekan_dan_lampiran.pdf';
+        $path = env('FTP_URL') . $filenames;
+        $pdf = PDF::loadView('surat_dekan', compact('surat', 'lampiran'))->setPaper('a4', 'potrait');
+        $content = $pdf->download()->getOriginalContent();
+        Storage::put($filenames, $content);
+
+        return response()->json(['urls' => $path], 200);
+        // $pdf = PDF::loadView('surat_dekan', compact('surat', 'lampiran'));
+        // return $pdf->stream('surat_keputusan_dekan_dan_lampiran.pdf');
     }
 
     public function ReportSuratRektor(Request $req) {
@@ -10777,8 +10784,15 @@ class ReadController extends Controller
         }
         // return response()->json($lampiran);
 
+        $filenames = 'rektor/' . $role->schoolyear . 'surat_keputusan_rektor.pdf';
+        $path = env('FTP_URL') . $filenames;
+        $pdf = PDF::loadView('surat_keputusan_rektor', compact('lampiran', 'intake'))->setPaper('a4', 'potrait');
+        $content = $pdf->download()->getOriginalContent();
+        Storage::put($filenames, $content);
+
+        return response()->json(['urls' => $path], 200);
         // Render view blade dan generate PDF
-        $pdf = PDF::loadView('surat_keputusan_rektor', compact('lampiran', 'intake'));
-        return $pdf->stream('surat_keputusan_rektor.pdf');
+        // $pdf = PDF::loadView('surat_keputusan_rektor', compact('lampiran', 'intake'));
+        // return $pdf->stream('surat_keputusan_rektor.pdf');
     }
 }
