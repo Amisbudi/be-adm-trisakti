@@ -121,6 +121,7 @@ use App\Http\Models\ADM\StudentAdmission\Master_kelas;
 use App\Http\Models\ADM\StudentAdmission\Master_Matpel;
 use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
 use App\Http\Models\ADM\StudentAdmission\Change_Program;
+use App\Http\Models\ADM\StudentAdmission\Diskon_Khusus;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Ujian;
 use App\Http\Models\ADM\StudentAdmission\Master_Package;
 use App\Http\Models\ADM\StudentAdmission\Master_Package_Angsuran;
@@ -10794,5 +10795,22 @@ class ReadController extends Controller
         // Render view blade dan generate PDF
         // $pdf = PDF::loadView('surat_keputusan_rektor', compact('lampiran', 'intake'));
         // return $pdf->stream('surat_keputusan_rektor.pdf');
+    }
+
+    public function GetDiskonKhusus(Request $req)
+    {
+
+        if ($req->participant_id) {
+            $reg = Registration::where('participant_id', $req->participant_id)->pluck('registration_number');
+            $data = Diskon_Khusus::whereIn('registration_number', $reg)->get();
+        } else {
+            $data = Diskon_Khusus::all();
+        }
+
+        if ($req->registration_number) {
+            $data = Diskon_Khusus::where('registration_number', $req->registration_number)->first();
+        }
+
+        return response()->json($data);
     }
 }

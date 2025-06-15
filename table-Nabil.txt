@@ -150,3 +150,15 @@ CREATE TABLE refund_request(
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE diskon_khusus (
+    id SERIAL PRIMARY KEY,
+    registration_number VARCHAR(225),
+    type VARCHAR(200) NOT NULL,
+    kode_voucher VARCHAR(500) NOT NULL,
+    document_url text NULL,
+    approved_by VARCHAR(500) NOT NULL,
+    approved_at TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

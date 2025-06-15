@@ -52,6 +52,7 @@ use App\Http\Models\ADM\StudentAdmission\Study_Program;
 use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
 use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
 use App\Http\Models\ADM\StudentAdmission\Change_Program;
+use App\Http\Models\ADM\StudentAdmission\Diskon_Khusus;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Path_Document;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Path_Study_Program;
 use App\Http\Models\ADM\StudentAdmission\Master_Package;
@@ -1653,6 +1654,28 @@ class DeleteController extends Controller
         'status' => 'Failed',
         'message' => 'Failed to delete the master package',
         'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function DeleteDiskonKhusus(Request $req)
+  {
+    try {
+      $id = Diskon_Khusus::select('id')
+        ->where('registration_number', '=', $req->registration_number)
+        ->first();    //return $id->id;
+      if ($id) {
+        $deletedata = Diskon_Khusus::where('id', '=', $id->id)->delete();
+        return response()->json([
+          'status' => 'Success',
+          'Message' => 'No. ' . $id->registration_number . ' Deleted'
+        ], 200);
+      }
+    } catch (Exception $e) {
+      DB::connection('pgsql')->rollBack();
+      return response()->json([
+        'status' => 'Failed',
+        'Message' => 'Can not delete data'
       ], 500);
     }
   }
