@@ -90,6 +90,7 @@ use App\Http\Models\ADM\StudentAdmission\Study_Program_Specialization;
 use App\Http\Models\ADM\StudentAdmission\CBT_Package_Questions;
 use App\Http\Models\ADM\StudentAdmission\CBT_Package_Question_Users;
 use App\Http\Models\ADM\StudentAdmission\Change_Program;
+use App\Http\Models\ADM\StudentAdmission\Diskon_Khusus;
 use App\Http\Models\ADM\StudentAdmission\Mapping_Prodi_Ujian;
 use App\Http\Models\ADM\StudentAdmission\Master_Package;
 use App\Http\Models\ADM\StudentAdmission\Master_Package_Angsuran;
@@ -4784,5 +4785,41 @@ class CreateController extends Controller
 			"client_id" => $client_id,
 			"data" => $hash
 		]);
+	}
+
+	public function CreateOrUpdateDiskonKhusus(Request $req) //update kelulusan
+	{
+		$diskon_khusus = Diskon_Khusus::select('*')
+			->where('registration_number', '=', $req->registration_number)
+			->first();
+
+		try {
+			$by = $req->header("X-I");
+			Refund_Request::updateOrCreate(
+				[
+					'registration_number' => $req->registration_number
+				],
+				[
+					'type' => (isset($req->type) != null) ? $req->type : $diskon_khusus->type ?? '',
+					'kode_voucher' => (isset($req->kode_voucher) != null) ? $req->kode_voucher : $diskon_khusus->kode_voucher ?? '',
+					'approved_by' => $by,
+					'approved_at' => ($diskon_khusus->approved_at == null) ? now() : $diskon_khusus->approved_at ?? '',
+					'document_url' => ($req->file('document_url') != null) ? env('FTP_URL') . $req->file('document_url')->store('DEV/ADM/Selection/participant/diskon_khusus') : $diskon_khusus->document_url ?? '',
+				]
+			);
+
+			DB::connection('pgsql')->commit();
+			return response([
+				'status' => 'Success',
+				'message' => 'Data Tersimpan'
+			], 200);
+		} catch (\Exception $e) {
+			DB::connection('pgsql')->rollBack();
+			return response([
+				'status' => 'Failed',
+				'message' => 'Mohon maaf, data gagal disimpan',
+				'error' => $e->getMessage()
+			], 500);
+		}
 	}
 }
