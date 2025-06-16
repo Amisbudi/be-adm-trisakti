@@ -15,6 +15,7 @@ class Diskon_Khusus extends Model {
     protected $fillable = [
         'registration_number',
         'type',
+        'status',
         'kode_voucher',
         'document_url',
         'approved_by',
