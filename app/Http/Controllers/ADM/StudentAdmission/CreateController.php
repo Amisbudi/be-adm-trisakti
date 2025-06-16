@@ -4795,15 +4795,16 @@ class CreateController extends Controller
 
 		try {
 			$by = $req->header("X-I");
-			Refund_Request::updateOrCreate(
+			Diskon_Khusus::updateOrCreate(
 				[
 					'registration_number' => $req->registration_number
 				],
 				[
 					'type' => (isset($req->type) != null) ? $req->type : $diskon_khusus->type ?? '',
+					'status' => (isset($req->status) != null) ? $req->status : $diskon_khusus->status ?? '',
 					'kode_voucher' => (isset($req->kode_voucher) != null) ? $req->kode_voucher : $diskon_khusus->kode_voucher ?? '',
 					'approved_by' => $by,
-					'approved_at' => ($diskon_khusus->approved_at == null) ? now() : $diskon_khusus->approved_at ?? '',
+					'approved_at' => (isset($diskon_khusus->approved_at)) ?  $diskon_khusus->approved_at : Carbon::now(),
 					'document_url' => ($req->file('document_url') != null) ? env('FTP_URL') . $req->file('document_url')->store('DEV/ADM/Selection/participant/diskon_khusus') : $diskon_khusus->document_url ?? '',
 				]
 			);

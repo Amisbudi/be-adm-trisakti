@@ -1147,6 +1147,12 @@ class ReadController extends Controller
             $participant_id = [$filter, '=', 1];
         }
 
+        if ($req->status) {
+            $status = ['rr.status', '=', 't'];
+        } else {
+            $status = [$filter, '=', 1];
+        }
+
         if ($req->registration_number) {
             $registration_number = ['registrations.registration_number', '=', $req->registration_number];
         } else {
@@ -10802,9 +10808,15 @@ class ReadController extends Controller
 
         if ($req->participant_id) {
             $reg = Registration::where('participant_id', $req->participant_id)->pluck('registration_number');
-            $data = Diskon_Khusus::whereIn('registration_number', $reg)->get();
+            $data = Diskon_Khusus::select('diskon_khusus.*', 'p.fullname', 'p.special_needs', 'p.color_blind')
+            ->join('registrations as r', 'diskon_khusus.registration_number', '=', 'r.registration_number')
+            ->leftJoin('participants as p', 'r.participant_id', '=', 'p.id')
+            ->whereIn('diskon_khusus.registration_number', $reg)->get();
         } else {
-            $data = Diskon_Khusus::all();
+            $data = Diskon_Khusus::select('diskon_khusus.*', 'p.fullname', 'p.special_needs', 'p.color_blind')
+            ->join('registrations as r', 'diskon_khusus.registration_number', '=', 'r.registration_number')
+            ->leftJoin('participants as p', 'r.participant_id', '=', 'p.id')
+            ->get();
         }
 
         if ($req->registration_number) {
