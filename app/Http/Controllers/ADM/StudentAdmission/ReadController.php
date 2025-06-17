@@ -4750,7 +4750,8 @@ class ReadController extends Controller
             'registrations.registration_number',
             'sp.name as selection_path_name',
             'sp.id as selection_path_id',
-            'mpp.price',
+            // 'mpp.price',
+            'tr.trx_amount as price',
             'ps.status as payment_status_name',
             'ps.id as payment_status',
             'registrations.payment_url',
@@ -4762,6 +4763,7 @@ class ReadController extends Controller
             'registrations.activation_pin',
             'registrations.mapping_path_year_id'
         )
+            ->leftJoin('transaction_request as tr', 'registrations.registration_number', '=', 'tr.registration_number')
             ->leftjoin('payment_methods as pm', 'pm.id', '=', 'registrations.payment_method_id')
             ->leftjoin('payment_status as ps', 'registrations.payment_status_id', '=', 'ps.id')
             ->leftjoin('selection_paths as sp', 'registrations.selection_path_id', '=', 'sp.id')
