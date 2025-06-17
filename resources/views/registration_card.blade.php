@@ -112,7 +112,7 @@
         </div>
 
         <div>
-            <table style="border: #000 1px solid; width: 100%; border-collapse: collapse;">
+            <table style="border: #000 1px solid; width: 1080px; border-collapse: collapse;">
                 <thead>
                     <tr style="border-bottom: 1px solid #000;">
                         <td style="width: 10%; text-align: center; border-right: 1px solid #000;">#</td>
