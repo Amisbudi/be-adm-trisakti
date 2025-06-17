@@ -2887,12 +2887,12 @@ class ReadController extends Controller
         $payload['url'] = $path;
 
         $tr = Transaction_Request::where('registration_number', '=', $request->registration_number)->first();
-        if (!$tr) {
-            $payload['payment_status_id'] = 1;
-            $payload['payment_date'] = Carbon::now();
-            $payload['payment_url'] = $path;
-            $payload['activation_pin'] = true;
-        }
+        // if (!$tr) {
+        //     $payload['payment_status_id'] = 1;
+        //     $payload['payment_date'] = Carbon::now();
+        //     $payload['payment_url'] = $path;
+        //     $payload['activation_pin'] = true;
+        // }
         Registration::where('registration_number', '=', $request->registration_number)->update($payload);
         $data = [
             'program_study' => $listprodi,
