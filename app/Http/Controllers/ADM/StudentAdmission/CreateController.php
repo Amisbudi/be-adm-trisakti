@@ -4656,9 +4656,10 @@ class CreateController extends Controller
 				"customer_email"    => $req->participant_email,
 				"customer_phone"    => $req->participant_phone_number,
 				"virtual_account"   => $va,
-				"datetime_expired"  => Carbon::now()->addWeek(24)->format('Y-m-d h:i:s'),
+				"datetime_expired"  => Carbon::now()->addWeek(1)->format('Y-m-d h:i:s'),
 				"description"       => $req->add_info1,
 			);
+
 			$hashdata = BniEnc::encrypt($request_body, $client_id, $secret_key);
 			$datajson = json_encode(array(
 				'client_id' => $client_id,
@@ -4679,7 +4680,7 @@ class CreateController extends Controller
 
 			$createVA = json_decode($request->getBody(), true);
 
-			if (isset($createVA['data'])) {
+			if (isset($createVA['data']) && $req->amount > 0) {
 				$parsedata = BniEnc::decrypt($createVA['data'], $client_id, $secret_key);
 
 				$dataToSend['va_number'] = $req->registration_number;
@@ -4707,7 +4708,6 @@ class CreateController extends Controller
 					'json_response' => $parsedata,
 				];
 
-
 				$param['created_by'] = $req->header('X-I');
 
 				//put param variable while insert or update data to transaction billings table
@@ -4729,7 +4729,7 @@ class CreateController extends Controller
 				return response()->json([
 					'status' => 'Success',
 					'message' => 'Berhasil membuat VA',
-					'result' => $data
+					'result' => $parsedata
 				], 200);
 			} else {
 				return response()->json([
@@ -4760,7 +4760,7 @@ class CreateController extends Controller
 		return response()->json([
 			'status' => 'Success',
 			'request_body' => $request_body,
-			// 'result' => $createVA
+			'result' => $createVA
 		], 200);
 	}
 
