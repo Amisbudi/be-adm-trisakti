@@ -4643,8 +4643,8 @@ class CreateController extends Controller
 
 
 			$trx_id = $this->GenerateFinalTrxId($req->registration_number);
-			$number = str_pad($req->registration_number, 12, '0', STR_PAD_LEFT);
-			$va   = $prefix . $client_id . $number;
+			$number = str_pad($req->registration_number, 11, '0', STR_PAD_LEFT);
+			$va   = $prefix . $client_id . "2" . $number;
 			// $trx_id = strtotime("now") . $client_id . $req->registration_number;
 			$request_body = array(
 				"type"              => 'createbilling',
