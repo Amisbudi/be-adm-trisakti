@@ -4729,13 +4729,13 @@ class CreateController extends Controller
 				return response()->json([
 					'status' => 'Success',
 					'message' => 'Berhasil membuat VA',
-					'result' => $parsedata
+					'result' => $data
 				], 200);
 			} else {
 				return response()->json([
 					'status' => 'Success',
 					'message' => 'Berhasil membuat VA',
-					// 'response' => $createVA
+					'response' => $createVA
 				], 200);
 			}
 		} catch (\Throwable $e) {
