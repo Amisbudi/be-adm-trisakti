@@ -850,16 +850,40 @@ class CreateController extends Controller
 
 	public function insertIntoParticipantEducation(Request $req)
 	{
-		try {
 			$by = $req->header("X-I");
 			if ($req->education_major_id) {
 				$education_major_id = $req->education_major_id;
 			} else {
-				$data = Education_Major::select(
-					'id'
-				)->get()->count();
-				$education_major_id = $data + 1;
+				$data = Education_Major::create([
+					'major' => $req->education_major,
+					'education_degree_id' => $req->education_degree_id,
+					'is_technic' => 0,
+					'created_by' => $by,
+					'updated_by' => $by,
+					// 'created_at' => $req->created_at,
+					// 'updated_at' => $req->updated_at,
+
+				]);
+				$education_major_id = $data->id;
+				$minats = Education_Major::whereIn('education_degree_id', [8, 9, 10, 11])->pluck('id');
+				$prodi = Mapping_Prodi_Minat::whereIn('minat_id', $minats)->get();
+
+				foreach ($prodi as $key => $item) {
+					Mapping_Prodi_Minat::create([
+						'fakultas' => $item->fakultas,
+						'fakultas_id' => $item->faculty_id,
+						'prodi_id' => $item->prodi_id,
+						'nama_prodi' => $item->nama_prodi,
+						'nama_minat' => $data->major,
+						'minat_id' => $data->id,
+						'quota' => 0,
+						'status' => true
+					]);
+				}
 			}
+
+		try {
+
 			$create = Participant_Education::create([
 				'participant_id' => $req->participant_id,
 				'education_degree_id' => $req->education_degree_id,
