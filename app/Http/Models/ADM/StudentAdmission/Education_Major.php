@@ -23,13 +23,13 @@ class Education_Major extends Model {
     public static function getEducationMajor($filter=''){
 
         if($filter != ''){
-            $data = Education_Major::select('id','major','is_technic')
+            $data = Education_Major::select('id','major','is_technic', 'education_degree_id')
             ->where('id','=',$filter)
             ->orderBy('id','asc')
             ->get();
 
         } else{
-            $data = Education_Major::select('id','major','is_technic')
+            $data = Education_Major::select('id','major','is_technic', 'education_degree_id')
             ->orderBy('id','asc')
             ->get();
         }
