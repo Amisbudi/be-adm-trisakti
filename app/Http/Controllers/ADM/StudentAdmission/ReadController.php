@@ -9273,6 +9273,9 @@ class ReadController extends Controller
                 case 33:
                     $value['document'] = New_Student_Document_Type::GetDocumentParticipant($value['participant_id'], 33);
                     break;
+                case $value['document_type_id'] > 0:
+                    $value['document'] = New_Student_Document_Type::GetDocumentParticipant($value['participant_id'], $value['document_type_id']);
+                    break;
             }
 
             array_push($result, $value);
