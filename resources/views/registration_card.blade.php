@@ -112,7 +112,7 @@
         </div>
 
         <div>
-            <table style="border: #000 1px solid; width: 1080px; border-collapse: collapse;">
+            <table style="border: #000 1px solid; width: 716px; border-collapse: collapse; table-layout:fixed; ">
                 <thead>
                     <tr style="border-bottom: 1px solid #000;">
                         <td style="width: 10%; text-align: center; border-right: 1px solid #000;">#</td>
@@ -125,10 +125,10 @@
                     @if(isset($sessions))
                     @foreach ($sessions as $key => $session )
                     <tr>
-                        <td  style="width: 10%; text-align: center;">{{ $key + 1 }}</td>
-                        <td style="padding: 0 5px 0 5px;">{{ $session['nama_ujian'] }}</td>
-                        <td  style="padding: 0 5px 0 5px; text-align: center;">{{ $session['date_start'] }} WIB</td>
-                        <td style="padding: 0 5px 0 5px;">{{ $session['location'] ?? $session['date_end']. 'WIB' }} </td>
+                        <td  style="width: 10px; text-align: center; word-break: break-all;">{{ $key + 1 }}</td>
+                        <td style="padding: 0 5px 0 5px; text-align: center; word-break: break-all;">{{ $session['nama_ujian'] }}</td>
+                        <td  style="padding: 0 5px 0 5px; text-align: center; word-break: break-all;">{{ $session['date_start'] }} WIB</td>
+                        <td style="padding: 0 5px 0 5px; text-align: center; word-break: break-all;">{{ $session['location'] ?? $session['date_end']. 'WIB' }} </td>
                     </tr>
                     @endforeach
                     @endif
