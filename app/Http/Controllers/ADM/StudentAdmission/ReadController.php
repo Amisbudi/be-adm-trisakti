@@ -1206,6 +1206,8 @@ class ReadController extends Controller
             ->where([$participant_id, $registration_number, $mapping_location_selection_id])
             ->get();
 
+            
+
         foreach ($data as $key => $value) {
             $query = Mapping_Registration_Program_Study::select(
                 'mapping_registration_program_study.id',
@@ -1237,6 +1239,32 @@ class ReadController extends Controller
                 ->get();
 
             $data[$key]['program_study'] = $query;
+            $prices = Registration::select(
+                'mpp.id',
+                'mpp.selection_path_id',
+                'mpp.price',
+                'mpp.is_medical'
+            )
+                ->join('mapping_registration_program_study', 'mapping_registration_program_study.registration_number', '=', 'registrations.registration_number')
+                ->join('study_programs as sp', 'mapping_registration_program_study.program_study_id', '=', 'sp.classification_id')
+                ->leftJoin('mapping_path_price AS mpp', function ($join) {
+                    $join->on('registrations.selection_path_id', '=', 'mpp.selection_path_id');
+                    // Optional: Add filtering conditions on 'mpp' table if needed
+                    $join->on('mapping_registration_program_study.program_study_id', '=', 'mpp.study_program_id');
+                })
+                ->where('registrations.registration_number', '=', $value['registration_number'])
+                ->get();
+            $price = 0;
+            foreach ($prices as $key => $val) {
+                if ($key == 0 && $val['is_medical'] != true) {
+                    $price = $price + $val['price'];
+                }
+                if ($val['is_medical'] == true) {
+                    $price = $price + $val['price'];
+                }
+            }
+
+            $data[$key]['price'] = $price;
         }
 
 
@@ -2905,9 +2933,11 @@ class ReadController extends Controller
             'school_year' => ($school_year == null || $school_year->year == null) ? (date("Y") + 1) . '/' . (date('Y') + 2) : $school_year->year,
             'qrcode' => $path,
         ];
-
+        
         try {
-            if ($participantdata['data']->exam_status_id == 1 || $participantdata['data']->exam_status_id == 6) { //rapor & utbk
+            if ($participantdata['data']->exam_status_id == 6) { // utbk
+                $pdf = PDF::loadView('utbk_card', $data)->setPaper('a4', 'potrait');
+            }else if ($participantdata['data']->exam_status_id == 1 ) { //utbk
                 $pdf = PDF::loadView('rapor_card', $data)->setPaper('a4', 'potrait');
             } else if ($participantdata['data']->exam_status_id == 2 || $participantdata['data']->exam_status_id == 3) { // usm
                 $pdf = PDF::loadView('registration_card', $data)->setPaper('a4', 'potrait');
