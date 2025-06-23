@@ -4756,11 +4756,16 @@ class CreateController extends Controller
 					'result' => $parsedata
 				], 200);
 			} else {
+				// return response()->json([
+				// 	'status' => 'Success',
+				// 	'message' => 'Berhasil membuat VA',
+				// 	'response' => $createVA
+				// ], 200);
 				return response()->json([
-					'status' => 'Success',
-					'message' => 'Berhasil membuat VA',
+					'status' => 'Failed',
+					'message' => 'Gagal membuat VA / Tidak Menemukan Tagihan!',
 					'response' => $createVA
-				], 200);
+				], 400);
 			}
 		} catch (\Throwable $e) {
 			return response()->json([
