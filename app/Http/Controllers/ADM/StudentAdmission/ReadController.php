@@ -4087,7 +4087,7 @@ class ReadController extends Controller
         try {
             $pdf = PDF::loadView('exam_pass', $data)
                 ->setPaper('a4', 'potrait');
-            return $pdf->stream();
+            // return $pdf->stream();
 
             $filenames = 'DEV/ADM/Participant/exam_pass/' . $data->registration_number . '.pdf';
             $content = $pdf->download()->getOriginalContent();
