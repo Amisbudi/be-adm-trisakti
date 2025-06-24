@@ -1206,7 +1206,7 @@ class ReadController extends Controller
             ->where([$participant_id, $registration_number, $mapping_location_selection_id])
             ->get();
 
-            
+
 
         foreach ($data as $key => $value) {
             $query = Mapping_Registration_Program_Study::select(
@@ -2933,11 +2933,11 @@ class ReadController extends Controller
             'school_year' => ($school_year == null || $school_year->year == null) ? (date("Y") + 1) . '/' . (date('Y') + 2) : $school_year->year,
             'qrcode' => $path,
         ];
-        
+
         try {
             if ($participantdata['data']->exam_status_id == 6) { // utbk
                 $pdf = PDF::loadView('utbk_card', $data)->setPaper('a4', 'potrait');
-            }else if ($participantdata['data']->exam_status_id == 1 ) { //utbk
+            } else if ($participantdata['data']->exam_status_id == 1) { //utbk
                 $pdf = PDF::loadView('rapor_card', $data)->setPaper('a4', 'potrait');
             } else if ($participantdata['data']->exam_status_id == 2 || $participantdata['data']->exam_status_id == 3) { // usm
                 $pdf = PDF::loadView('registration_card', $data)->setPaper('a4', 'potrait');
@@ -4029,6 +4029,12 @@ class ReadController extends Controller
             'registration_result.end_date_2',
             'registration_result.end_date_3',
             'registration_result.type',
+            'registration_result.rank',
+            'registration_result.sks',
+            'registration_result.spp',
+            'registration_result.bpp',
+            'registration_result.praktikum',
+            'registration_result.total_amount',
             'registration_result.oldstudentid',
             'registration_result.reference_number',
             'registration_result.password',
@@ -4068,6 +4074,23 @@ class ReadController extends Controller
             ->where('registration_result.registration_number', '=', $req->registration_number)
             ->first();
 
+        $packages = Master_Package::where('study_program_id', $data->program_study_id)->get();
+        $biaya = Mapping_Prodi_Biaya::where('prodi_fk',$data->program_study_id)->first();
+
+        $packageData = [];
+
+        foreach ($packages as $val) {
+            $packageData[] = [
+                'package' => $val,
+                'details' => Master_Package_Angsuran::where('package_id', $val->id)->get()
+            ];
+        }
+
+        // Ubah hasil menjadi array agar bisa ditambah properti tambahan
+        $data = $data->toArray();
+        $data['biaya'] = $biaya;
+        $data['packages'] = $packageData;
+
         // return $data;
 
         //convert string json to object
@@ -4085,7 +4108,7 @@ class ReadController extends Controller
         }
 
         try {
-            $pdf = PDF::loadView('exam_pass', $data)
+            $pdf = PDF::loadView('offer_letter', $data)
                 ->setPaper('a4', 'potrait');
             // return $pdf->stream();
 
@@ -10559,8 +10582,8 @@ class ReadController extends Controller
         $by = $req->header("X-I");
         //get data
         $role = Framework_Mapping_User_Role::where('user_id', '=', $by)
-        ->first();
-        
+            ->first();
+
         $filter = DB::raw('1');
         if ($req->selection_path) {
             $selection_path = ['sp.id', '=', $req->selection_path];
@@ -10678,7 +10701,6 @@ class ReadController extends Controller
             // Tambahkan data ke dalam grup yang sesuai
             $detailed[$status][] = $item;
             $grouped[$status][$program]++;
-            
         }
 
         $selection_intake = $data->first();
@@ -10699,7 +10721,7 @@ class ReadController extends Controller
         ];
         // Data untuk lampiran mahasiswa
         $lampiran = [];
-        foreach ( $detailed['Lulus'] as $key => $lulus ){
+        foreach ($detailed['Lulus'] as $key => $lulus) {
             $lampiran[$key] = $lulus;
             $lampiran[$key]['sma'] = Participant_Education::where(['participant_id' => $lulus->participant_id, 'education_degree_id' => 1])->first();
         }
@@ -10717,12 +10739,13 @@ class ReadController extends Controller
         // return $pdf->stream('surat_keputusan_dekan_dan_lampiran.pdf');
     }
 
-    public function ReportSuratRektor(Request $req) {
+    public function ReportSuratRektor(Request $req)
+    {
         $by = $req->header("X-I");
         //get data
         $role = Framework_Mapping_User_Role::where('user_id', '=', $by)
-        ->first();
-        
+            ->first();
+
         $filter = DB::raw('1');
         if ($req->selection_path) {
             $selection_path = ['sp.id', '=', $req->selection_path];
@@ -10816,11 +10839,11 @@ class ReadController extends Controller
             ->where([$selection_path, $mapping_path_year_id, $faculty_number, $faculty_id])
             ->paginate(20)
             ->setPath(env('URL_ACCESS') . '/a2f9f8b8b19f9cefaf03477df54389ed');
-        
+
         $intake = $data->first();
 
         $lampiran = [];
-        foreach ( $data as $key => $lulus ){
+        foreach ($data as $key => $lulus) {
             $lampiran[$key] = $lulus;
             $lampiran[$key]['sma'] = Participant_Education::where(['participant_id' => $lulus->participant_id, 'education_degree_id' => 1])->first();
         }
@@ -10844,14 +10867,14 @@ class ReadController extends Controller
         if ($req->participant_id) {
             $reg = Registration::where('participant_id', $req->participant_id)->pluck('registration_number');
             $data = Diskon_Khusus::select('diskon_khusus.*', 'p.fullname', 'p.special_needs', 'p.color_blind')
-            ->join('registrations as r', 'diskon_khusus.registration_number', '=', 'r.registration_number')
-            ->leftJoin('participants as p', 'r.participant_id', '=', 'p.id')
-            ->whereIn('diskon_khusus.registration_number', $reg)->get();
+                ->join('registrations as r', 'diskon_khusus.registration_number', '=', 'r.registration_number')
+                ->leftJoin('participants as p', 'r.participant_id', '=', 'p.id')
+                ->whereIn('diskon_khusus.registration_number', $reg)->get();
         } else {
             $data = Diskon_Khusus::select('diskon_khusus.*', 'p.fullname', 'p.special_needs', 'p.color_blind')
-            ->join('registrations as r', 'diskon_khusus.registration_number', '=', 'r.registration_number')
-            ->leftJoin('participants as p', 'r.participant_id', '=', 'p.id')
-            ->get();
+                ->join('registrations as r', 'diskon_khusus.registration_number', '=', 'r.registration_number')
+                ->leftJoin('participants as p', 'r.participant_id', '=', 'p.id')
+                ->get();
         }
 
         if ($req->registration_number) {

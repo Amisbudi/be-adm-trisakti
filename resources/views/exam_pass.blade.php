@@ -85,8 +85,8 @@
             <th>Jadwal Pembayaran</th>
             <th>Nomor Tagihan</th>
         </tr>
-        {{-- @if($transaction_billing != null) --}}
-        {{-- @foreach ($transaction_billing['bills_detail'] as $item)
+        @if($transaction_billing != null)
+        @foreach ($transaction_billing['bills_detail'] as $item)
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td><b>{{ $item['bills_name'] }}</b></td>
@@ -94,8 +94,8 @@
                 <td style='text-align: center;'>{{  \Carbon\Carbon::parse($start_date_payment)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('d M Y') . ' - ' . \Carbon\Carbon::parse($end_date_payment)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('d M Y') }}</td>
                 <td style='text-align: center;'>{{ $virtual_account }}</td>
             </tr>
-        @endforeach --}}
-        {{-- @endif --}}
+        @endforeach
+        @endif
         <tr>
             <td colspan='2' style='text-align: center;'><b>TOTAL BIAYA</b></td>
             <td><b>Rp. {{ number_format($total_cost, '0', '.', '.') }}</b></td>
