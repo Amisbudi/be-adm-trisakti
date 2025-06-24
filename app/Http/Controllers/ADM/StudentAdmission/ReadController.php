@@ -1208,64 +1208,65 @@ class ReadController extends Controller
 
 
 
-        // foreach ($data as $key => $value) {
-        //     $query = Mapping_Registration_Program_Study::select(
-        //         'mapping_registration_program_study.id',
-        //         'mapping_registration_program_study.priority',
-        //         't1.study_program_branding_name as study_program_name',
-        //         't1.classification_id as study_program_id',
-        //         't1.faculty_id',
-        //         't1.faculty_name',
-        //         'mps.id as mapping_path_program_study_id',
-        //         'education_fund',
-        //         'sps.classification_id',
-        //         'sps.specialization_name',
-        //         'sps.specialization_code',
-        //         'sps.active_status as specialization_active_status',
-        //         'sps.class_type',
-        //         'mapping_registration_program_study.approval_faculty',
-        //         'mapping_registration_program_study.approval_faculty_at',
-        //         'mapping_registration_program_study.approval_faculty_by',
-        //         'mapping_registration_program_study.rank'
-        //     )
-        //         ->leftjoin('mapping_path_program_study as mps', 'mapping_registration_program_study.program_study_id', '=', 'mps.program_study_id')
-        //         ->leftjoin('study_programs as t1', 'mapping_registration_program_study.program_study_id', '=', 't1.classification_id')
-        //         ->leftjoin('study_program_specializations as sps', 'mapping_registration_program_study.study_program_specialization_id', '=', 'sps.id')
+        foreach ($data as $key => $value) {
+            $query = Mapping_Registration_Program_Study::select(
+                'mapping_registration_program_study.id',
+                'mapping_registration_program_study.priority',
+                't1.study_program_branding_name as study_program_name',
+                't1.classification_id as study_program_id',
+                't1.faculty_id',
+                't1.faculty_name',
+                'mps.id as mapping_path_program_study_id',
+                'education_fund',
+                'sps.classification_id',
+                'sps.specialization_name',
+                'sps.specialization_code',
+                'sps.active_status as specialization_active_status',
+                'sps.class_type',
+                'mapping_registration_program_study.approval_faculty',
+                'mapping_registration_program_study.approval_faculty_at',
+                'mapping_registration_program_study.approval_faculty_by',
+                'mapping_registration_program_study.rank'
+            )
+                ->leftjoin('mapping_path_program_study as mps', 'mapping_registration_program_study.program_study_id', '=', 'mps.program_study_id')
+                ->leftjoin('study_programs as t1', 'mapping_registration_program_study.program_study_id', '=', 't1.classification_id')
+                ->leftjoin('study_program_specializations as sps', 'mapping_registration_program_study.study_program_specialization_id', '=', 'sps.id')
 
-        //         ->where('mapping_registration_program_study.registration_number', '=', $value['registration_number'])
-        //         ->where('mps.selection_path_id', '=', $value['selection_path_id'])
-        //         ->where('mps.active_status', '=', true)
-        //         ->orderBy('mapping_registration_program_study.priority')
-        //         ->get();
+                ->where('mapping_registration_program_study.registration_number', '=', $value['registration_number'])
+                ->where('mps.selection_path_id', '=', $value['selection_path_id'])
+                ->where('mps.active_status', '=', true)
+                ->orderBy('mapping_registration_program_study.priority')
+                ->get();
 
-        //     $data[$key]['program_study'] = $query;
-        //     $prices = Registration::select(
-        //         'mpp.id',
-        //         'mpp.selection_path_id',
-        //         'mpp.price',
-        //         'mpp.is_medical'
-        //     )
-        //         ->join('mapping_registration_program_study', 'mapping_registration_program_study.registration_number', '=', 'registrations.registration_number')
-        //         ->join('study_programs as sp', 'mapping_registration_program_study.program_study_id', '=', 'sp.classification_id')
-        //         ->leftJoin('mapping_path_price AS mpp', function ($join) {
-        //             $join->on('registrations.selection_path_id', '=', 'mpp.selection_path_id');
-        //             // Optional: Add filtering conditions on 'mpp' table if needed
-        //             $join->on('mapping_registration_program_study.program_study_id', '=', 'mpp.study_program_id');
-        //         })
-        //         ->where('registrations.registration_number', '=', $value['registration_number'])
-        //         ->get();
-        //     $price = 0;
-        //     foreach ($prices as $key => $val) {
-        //         if ($key == 0 && $val['is_medical'] != true) {
-        //             $price = $price + $val['price'];
-        //         }
-        //         if ($val['is_medical'] == true) {
-        //             $price = $price + $val['price'];
-        //         }
-        //     }
+            $data[$key]['program_study'] = $query;
+            // $prices = Registration::select(
+            //     'mpp.id',
+            //     'mpp.selection_path_id',
+            //     'mpp.price',
+            //     'mpp.is_medical'
+            // )
+            //     ->join('mapping_registration_program_study', 'mapping_registration_program_study.registration_number', '=', 'registrations.registration_number')
+            //     ->join('study_programs as sp', 'mapping_registration_program_study.program_study_id', '=', 'sp.classification_id')
+            //     ->leftJoin('mapping_path_price AS mpp', function ($join) {
+            //         $join->on('registrations.selection_path_id', '=', 'mpp.selection_path_id');
+            //         // Optional: Add filtering conditions on 'mpp' table if needed
+            //         $join->on('mapping_registration_program_study.program_study_id', '=', 'mpp.study_program_id');
+            //     })
+            //     ->where('registrations.registration_number', '=', $value['registration_number'])
+            //     ->get();
+            // $price = 0;
+            // foreach ($prices as $key => $val) {
+            //     if ($key == 0 && $val['is_medical'] != true) {
+            //         $price = $price + $val['price'];
+            //     }
+            //     if ($val['is_medical'] == true) {
+            //         $price = $price + $val['price'];
+            //     }
+            // }
 
-        //     $data[$key]['price'] = $price;
-        // }
+            // $data[$key]['price'] = $price;
+        }
+
 
         return DataTables::of($data)
             ->addIndexColumn()
