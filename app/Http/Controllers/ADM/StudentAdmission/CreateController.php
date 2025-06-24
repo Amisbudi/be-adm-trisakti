@@ -4362,10 +4362,7 @@ class CreateController extends Controller
 				'description' => $req->description,
 			]);
 
-			New_Student_Document_Type::updateOrCreate(
-				[
-					'id' => $type->id,
-				],
+			New_Student_Document_Type::create(
 				[
 					'document_type_id' => $type->id,
 					'name' => $req->name,

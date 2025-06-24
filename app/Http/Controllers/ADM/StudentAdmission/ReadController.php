@@ -4112,14 +4112,14 @@ class ReadController extends Controller
                 ->setPaper('a4', 'potrait');
             // return $pdf->stream();
 
-            $filenames = 'DEV/ADM/Participant/exam_pass/' . $data->registration_number . '.pdf';
+            $filenames = 'DEV/ADM/Participant/exam_pass/' . $data['registration_number'] . '.pdf';
             $content = $pdf->download()->getOriginalContent();
             Storage::put($filenames, $content);
 
             $path = env('FTP_URL') . $filenames;
 
             //updated generated at and file url
-            Registration_Result::find($data->id)->update([
+            Registration_Result::find($data['id'])->update([
                 'generated_at' => Carbon::now(),
                 'file_url' => $path,
                 'updated_by' => $req->header("X-I")
