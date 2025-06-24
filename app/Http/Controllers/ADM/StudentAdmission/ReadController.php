@@ -1982,7 +1982,7 @@ class ReadController extends Controller
         $result = [];
 
         foreach ($data as $key => $value) {
-            $result[$key]['total'] = CBT_Package_Question_Users::where(['classes' => $value->class_type, 'user_id' => $req->user_id])->whereDate('date_exam', '>=', Carbon::parse($value->exam_date)->format('Y-m-d'))->count();
+            $result[$key]['total'] = CBT_Package_Question_Users::where(['classes' => $value->class_type, 'registration_number' => $req->user_id])->whereDate('date_exam', '>=', Carbon::parse($value->exam_date)->format('Y-m-d'))->count();
             $result[$key]['class_type'] = $value->class_type;
             $result[$key]['exam_date'] = $value->exam_date;
         }
