@@ -167,17 +167,18 @@
             </thead>
             <tbody>
                 @foreach ($lampiran as $row)
+                    <tr>
+                        <td style="text-align: center;">{{ $no }}</td>
+                        <td style="text-align: center;">{{ $row['registration_number'] }}</td>
+                        <td>{{ $row['fullname'] }}</td>
+                        <td>{{ $row['sma']['schools'] ?? '-' }}</td>
+                        <td>{{ $row['study_program_name'] }}</td>
+                        <td style="text-align: center;">{{ $row['rank'] }}</td>
+                    </tr>
+
                     @php
                         $no++;
                     @endphp
-                    <tr>
-                        <td>{{ $no }}</td>
-                        <td>{{ $row['registration_number'] }}</td>
-                        <td>{{ $row['fullname'] }}</td>
-                        <td>{{ $row['sma']['school'] ?? '-' }}</td>
-                        <td>{{ $row['study_program_name'] }}</td>
-                        <td>{{ $row['rank'] }}</td>
-                    </tr>
                 @endforeach
             </tbody>
         </table>

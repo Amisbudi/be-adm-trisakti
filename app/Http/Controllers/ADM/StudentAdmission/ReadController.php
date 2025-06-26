@@ -2639,7 +2639,11 @@ class ReadController extends Controller
 
         if ($req->status) {
             $status = ['registration_result.pass_status', '=', 't'];
-            $payment = ['registration_result.payment_status', '=', 'Lunas'];
+            if($req->payment){
+                $payment = [$filter, '=', '1'];
+            }else{
+                $payment = ['registration_result.payment_status', '=', 'Lunas'];
+            }
         } else {
             $status = [$filter, '=', '1'];
             $payment = [$filter, '=', '1'];
@@ -4051,6 +4055,7 @@ class ReadController extends Controller
             'tb.virtual_account',
             'tb.start_date_payment',
             'tb.end_date_payment',
+            'p.id as participant_id',
             'p.fullname as name',
             'p.color_blind',
             'p.special_needs',
@@ -4075,7 +4080,8 @@ class ReadController extends Controller
             ->first();
 
         $packages = Master_Package::where('study_program_id', $data->program_study_id)->get();
-        $biaya = Mapping_Prodi_Biaya::where('prodi_fk',$data->program_study_id)->first();
+        $biaya = Mapping_Prodi_Biaya::where(['prodi_fk' => $data->program_study_id, 'nama_kelas' => $data->class_type])->first();
+        $family = Participant_Family::where('participant_id', $data->participant_id)->first();
 
         $packageData = [];
 
@@ -4089,6 +4095,7 @@ class ReadController extends Controller
         // Ubah hasil menjadi array agar bisa ditambah properti tambahan
         $data = $data->toArray();
         $data['biaya'] = $biaya;
+        $data['family'] = $family;
         $data['packages'] = $packageData;
 
         // return $data;
@@ -10709,33 +10716,55 @@ class ReadController extends Controller
         $surat = [
             'nomor' => $selection_intake->faculty_number,
             'lampiran' => '1 berkas',
-            'periode' => date('F Y'),
+            'periode' => Carbon::parse($selection_intake->publication_date)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('F Y'),
             'jumlah_diterima' => count($detailed['Lulus']),
             'rincian_diterima' => $grouped['Lulus'],
-            'jumlah_tidak_diterima' => count($detailed['Tidak Lulus']),
-            'rincian_tidak_diterima' => $grouped['Tidak Lulus'],
-            'dekan' => $role->dekan,
-            'schoolyear' => $role->schoolyear,
+            'jumlah_tidak_diterima' => (isset($detailed['Tidak Lulus'])) ? count($detailed['Tidak Lulus']) : 0,
+            'rincian_tidak_diterima' => (isset($grouped['Tidak Lulus'])) ? $grouped['Tidak Lulus'] : [],
+            'dekan' => $role->dekan ?? '-',
+            'schoolyear' => $selection_intake->schoolyear ?? '-',
             'jalur' => $selection_intake->selection_path_name,
-            'tanggal' => date('d F Y')
+            'tanggal' => Carbon::parse($selection_intake->publication_date)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('d F Y'),
         ];
         // Data untuk lampiran mahasiswa
         $lampiran = [];
         foreach ($detailed['Lulus'] as $key => $lulus) {
             $lampiran[$key] = $lulus;
-            $lampiran[$key]['sma'] = Participant_Education::where(['participant_id' => $lulus->participant_id, 'education_degree_id' => 1])->first();
+            $subquerycityprovince = "(
+			select city_id, city_detail, province_id, provice_detail from dblink('admission_masterdata', 'select cr.id as city_id, cr.detail_name as city_detail, p.id as province_id, p.detail_name as provice_detail from city_regions as cr inner join provinces as p on cr.province_id = p.id')
+			as f (city_id int, city_detail varchar, province_id int, provice_detail varchar)
+		) as f";
+            $lampiran[$key]['sma'] = Participant_Education::select(
+            'participant_educations.participant_id',
+            'participant_educations.student_foreign',
+            DB::raw("CASE WHEN d.major is null then participant_educations.education_major else d.major end as education_major"),
+            DB::raw("CASE WHEN c.name is null then participant_educations.school else c.name end as schools"),
+            DB::raw("CASE WHEN c.name is null then '' else c.npsn end as npsn"),
+            'f.city_detail as school_city',
+            'f.provice_detail as school_provice',
+            'participant_educations.graduate_year'
+        )
+            ->leftJoin('education_degrees as b', 'participant_educations.education_degree_id', '=', 'b.id')
+            ->leftJoin('schools as c', 'participant_educations.school_id', '=', 'c.id')
+            ->leftJoin('education_majors as d', 'participant_educations.education_major_id', '=', 'd.id')
+            ->join(DB::raw("(select max(graduate_year) as graduate_year, participant_id from participant_educations GROUP BY participant_id) as e"), function ($join) {
+                $join->on('participant_educations.participant_id', '=', 'e.participant_id')
+                    ->on('e.graduate_year', '=', 'participant_educations.graduate_year');
+            })
+            ->leftJoin(DB::raw($subquerycityprovince), function ($join) {
+                $join->on(DB::raw('c.city_region_id::int'), '=', 'f.city_id');
+            })
+            ->where(['participant_educations.participant_id' => $lulus->participant_id, 'participant_educations.education_degree_id' => 1])
+            ->first();
         }
         // return response()->json($surat);
 
         // Render view blade dan generate PDF
-        $filenames = 'dekan/' . $role->schoolyear . 'surat_keputusan_dekan_dan_lampiran.pdf';
+        $filenames = 'dekan/' . $selection_intake->schoolyear . 'surat_keputusan_dekan_dan_lampiran.pdf';
         $path = env('FTP_URL') . $filenames;
         $pdf = PDF::loadView('surat_dekan', compact('surat', 'lampiran'))->setPaper('a4', 'potrait');
         $content = $pdf->download()->getOriginalContent();
         Storage::put($filenames, $content);
-
-        return response()->json(['urls' => $path], 200);
-        // $pdf = PDF::loadView('surat_dekan', compact('surat', 'lampiran'));
         // return $pdf->stream('surat_keputusan_dekan_dan_lampiran.pdf');
     }
 
