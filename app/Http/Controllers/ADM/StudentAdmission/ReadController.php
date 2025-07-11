@@ -10437,6 +10437,13 @@ class ReadController extends Controller
 
     public function GetChangePrograms(Request $req)
     {
+        $by = $req->header("X-I");
+        //get data
+        $role = Framework_Mapping_User_Role::select('admin_faculty_id', 'id', 'oauth_role_id')
+            // ->where('oauth_role_id', '=', 1025)
+        ->where('user_id', '=', $by)
+        ->first();
+        
         if ($req->participant_id) {
             $reg = Registration_Result::where('participant_id', $req->participant_id)->pluck('registration_number');
             $data = Change_Program::select(
@@ -10457,6 +10464,33 @@ class ReadController extends Controller
                 ->join('registrations as r', 'r.registration_number', '=', 'change_programs.registration_number')
                 ->leftjoin('participants as p', 'r.participant_id', '=', 'p.id')
                 ->whereIn('change_programs.registration_number', $reg)
+                ->get();
+        }else if ($role->oauth_role_id == 1025) {
+            //get study programs by faculty id
+            $study_program_ids = Study_Program::join('mapping_path_program_study as mpps', 'study_programs.classification_id', '=', 'mpps.program_study_id')
+                ->where('study_programs.faculty_id', '=', $role->admin_faculty_id)
+                ->where('mpps.active_status', '=', true)
+                ->groupBy('study_programs.classification_id')
+                ->pluck('study_programs.classification_id');
+
+            $data = Change_Program::select(
+                'change_programs.*',
+                'p.id as participant_id',
+                'p.identify_number',
+                'p.fullname',
+                'p.username as email',
+                'p.color_blind',
+                'p.special_needs',
+                'xsp.study_program_branding_name as program_study_ex',
+                'xsp.faculty_name as faculty_ex',
+                'sp.study_program_branding_name as program_study',
+                'sp.faculty_name as faculty',
+            )
+                ->join('study_programs as xsp', 'change_programs.study_programs_id_ex', '=', 'xsp.classification_id')
+                ->join('study_programs as sp', 'change_programs.study_programs_id', '=', 'sp.classification_id')
+                ->join('registrations as r', 'r.registration_number', '=', 'change_programs.registration_number')
+                ->leftjoin('participants as p', 'r.participant_id', '=', 'p.id')
+                ->whereIn('study_programs_id_ex', $study_program_ids)
                 ->get();
         } else {
             $data = Change_Program::select(
@@ -10892,6 +10926,12 @@ class ReadController extends Controller
 
     public function GetDiskonKhusus(Request $req)
     {
+        $by = $req->header("X-I");
+        //get data
+        $role = Framework_Mapping_User_Role::select('admin_faculty_id', 'id', 'oauth_role_id')
+            // ->where('oauth_role_id', '=', 1025)
+        ->where('user_id', '=', $by)
+        ->first();
 
         if ($req->participant_id) {
             $reg = Registration::where('participant_id', $req->participant_id)->pluck('registration_number');
@@ -10899,6 +10939,19 @@ class ReadController extends Controller
                 ->join('registrations as r', 'diskon_khusus.registration_number', '=', 'r.registration_number')
                 ->leftJoin('participants as p', 'r.participant_id', '=', 'p.id')
                 ->whereIn('diskon_khusus.registration_number', $reg)->get();
+        }else if ($role->oauth_role_id == 1025) {
+            //get study programs by faculty id
+            $study_program_ids = Study_Program::join('mapping_path_program_study as mpps', 'study_programs.classification_id', '=', 'mpps.program_study_id')
+                ->where('study_programs.faculty_id', '=', $role->admin_faculty_id)
+                ->where('mpps.active_status', '=', true)
+                ->groupBy('study_programs.classification_id')
+                ->pluck('study_programs.classification_id');
+
+            $data = Diskon_Khusus::select('diskon_khusus.*', 'p.fullname', 'p.special_needs', 'p.color_blind')
+                ->join('registration_result as r', 'diskon_khusus.registration_number', '=', 'r.registration_number')
+                ->leftJoin('participants as p', 'r.participant_id', '=', 'p.id')
+                ->whereIn('r.program_study_id', $study_program_ids)
+                ->get();
         } else {
             $data = Diskon_Khusus::select('diskon_khusus.*', 'p.fullname', 'p.special_needs', 'p.color_blind')
                 ->join('registrations as r', 'diskon_khusus.registration_number', '=', 'r.registration_number')
