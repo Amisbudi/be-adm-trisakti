@@ -1779,14 +1779,16 @@ class CreateController extends Controller
 					'result' => $parsedata
 				], 200);
 			} else {
+				// return response()->json([
+				// 	'status' => 'Success',
+				// 	'message' => 'Berhasil membuat VA',
+				// 	'response' => $createVA
+				// ], 200);
 				return response()->json([
-					'status' => 'Success',
-					'message' => 'Berhasil membuat VA',
-					'result' => $createVA,
-					'payload' => $request,
-					// 'hashdata' => $hashdata,
-					// 'datareal' => $hashdata = BniEnc::encrypt($request_body, $client_id, $secret_key) 
-				], 200);
+					'status' => 'Failed',
+					'message' => 'Gagal membuat VA / Tidak Menemukan Tagihan!',
+					'response' => $createVA
+				], 400);
 			}
 
 			// $ipfy = json_decode($http->request('GET', 'https://api64.ipify.org?format=json', [

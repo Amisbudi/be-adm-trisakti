@@ -85,6 +85,11 @@
 
         <div class="section">
             <p>Berdasarkan peringkat tersebut, kami tetapkan biaya yang harus dibayar adalah sebagai beriku</p>
+            @php
+                $totalA = 0;
+                $totalB = 0;
+                $grandTotal = 0;
+            @endphp
             <table>
                 <tr>
                     <th colspan="2"><strong>A</strong></th>
