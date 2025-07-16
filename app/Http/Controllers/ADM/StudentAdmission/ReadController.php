@@ -139,6 +139,45 @@ use Illuminate\Support\Facades\Schema;
 
 class ReadController extends Controller
 {
+    private static function checkPaymentStatus($registration_number)
+    {
+        $price = 0;
+        $prices = Registration::select(
+            'mpp.id',
+            'mpp.selection_path_id',
+            'mpp.price',
+            'mpp.is_medical'
+        )
+            ->join('mapping_registration_program_study', 'mapping_registration_program_study.registration_number', '=', 'registrations.registration_number')
+            ->join('study_programs as sp', 'mapping_registration_program_study.program_study_id', '=', 'sp.classification_id')
+            ->leftJoin('mapping_path_price AS mpp', function ($join) {
+                $join->on('registrations.selection_path_id', '=', 'mpp.selection_path_id');
+                // Optional: Add filtering conditions on 'mpp' table if needed
+                $join->on('mapping_registration_program_study.program_study_id', '=', 'mpp.study_program_id');
+            })
+            ->where('registrations.registration_number', '=', $registration_number)
+            ->get();
+
+        foreach ($prices as $key => $val) {
+            if ($key == 0 && $val['is_medical'] != true) {
+                $price = $price + $val['price'];
+            }
+            if ($val['is_medical'] == true) {
+                $price = $price + $val['price'];
+            }
+        }
+
+        if ($price == 0) {
+            Registration::where('registration_number', $registration_number)->update([
+                'payment_status_id' => 1,
+                'payment_approval_date' => Carbon::now(),
+                'activation_pin' => true,
+                'payment_date' => Carbon::now(),
+                'payment_url' => "Free",
+            ]);
+        }
+    }
+
     public function LoginasParticipant(Request $request)
     {
         $by = $request->header("X-I");
@@ -1204,11 +1243,13 @@ class ReadController extends Controller
                 'rr.specialization_id'
             )
             ->where([$participant_id, $registration_number, $mapping_location_selection_id])
+            ->orderBy('registrations.registration_number', 'asc')
             ->get();
 
 
 
         foreach ($data as $key => $value) {
+            $price = 0;
             $query = Mapping_Registration_Program_Study::select(
                 'mapping_registration_program_study.id',
                 'mapping_registration_program_study.priority',
@@ -1239,32 +1280,32 @@ class ReadController extends Controller
                 ->get();
 
             $data[$key]['program_study'] = $query;
-            // $prices = Registration::select(
-            //     'mpp.id',
-            //     'mpp.selection_path_id',
-            //     'mpp.price',
-            //     'mpp.is_medical'
-            // )
-            //     ->join('mapping_registration_program_study', 'mapping_registration_program_study.registration_number', '=', 'registrations.registration_number')
-            //     ->join('study_programs as sp', 'mapping_registration_program_study.program_study_id', '=', 'sp.classification_id')
-            //     ->leftJoin('mapping_path_price AS mpp', function ($join) {
-            //         $join->on('registrations.selection_path_id', '=', 'mpp.selection_path_id');
-            //         // Optional: Add filtering conditions on 'mpp' table if needed
-            //         $join->on('mapping_registration_program_study.program_study_id', '=', 'mpp.study_program_id');
-            //     })
-            //     ->where('registrations.registration_number', '=', $value['registration_number'])
-            //     ->get();
-            // $price = 0;
-            // foreach ($prices as $key => $val) {
-            //     if ($key == 0 && $val['is_medical'] != true) {
-            //         $price = $price + $val['price'];
-            //     }
-            //     if ($val['is_medical'] == true) {
-            //         $price = $price + $val['price'];
-            //     }
-            // }
+            $prices = Registration::select(
+                'mpp.id',
+                'mpp.selection_path_id',
+                'mpp.price',
+                'mpp.is_medical'
+            )
+                ->join('mapping_registration_program_study', 'mapping_registration_program_study.registration_number', '=', 'registrations.registration_number')
+                ->join('study_programs as sp', 'mapping_registration_program_study.program_study_id', '=', 'sp.classification_id')
+                ->leftJoin('mapping_path_price AS mpp', function ($join) {
+                    $join->on('registrations.selection_path_id', '=', 'mpp.selection_path_id');
+                    // Optional: Add filtering conditions on 'mpp' table if needed
+                    $join->on('mapping_registration_program_study.program_study_id', '=', 'mpp.study_program_id');
+                })
+                ->where('registrations.registration_number', '=', $value['registration_number'])
+                ->get();
 
-            // $data[$key]['price'] = $price;
+            foreach ($prices as $key => $val) {
+                if ($key == 0 && $val['is_medical'] != true) {
+                    $price = $price + $val['price'];
+                }
+                if ($val['is_medical'] == true) {
+                    $price = $price + $val['price'];
+                }
+            }
+
+            $data[$key]['price'] = $price;
         }
 
 
@@ -2639,9 +2680,9 @@ class ReadController extends Controller
 
         if ($req->status) {
             $status = ['registration_result.pass_status', '=', 't'];
-            if($req->payment){
+            if ($req->payment) {
                 $payment = [$filter, '=', '1'];
-            }else{
+            } else {
                 $payment = ['registration_result.payment_status', '=', 'Lunas'];
             }
         } else {
@@ -2856,6 +2897,7 @@ class ReadController extends Controller
 
     public function RegistrationCard(Request $request)
     {
+        $this->checkPaymentStatus($request->registration_number);
         //get participant list program study choose
         $listprodi = Mapping_Registration_Program_Study::select(
             'mapping_registration_program_study.id',
@@ -4860,6 +4902,14 @@ class ReadController extends Controller
     public function ListSelectionResultDetailPagination(Request $req)
     {
         $filter = DB::raw('1');
+        $by = $req->header("X-I");
+
+        $role = Framework_Mapping_User_Role::select('admin_faculty_id', 'id', 'oauth_role_id')
+            // ->where('oauth_role_id', '=', 1025)
+            ->where('user_id', '=', $by)
+            ->first();
+
+        $data = [];
 
         if ($req->selection_path) {
             $selection_path = ['sp.id', '=', $req->selection_path];
@@ -4894,73 +4944,145 @@ class ReadController extends Controller
         $pass_status =  DB::raw('case when registration_result.pass_status = ' . "'f'" . ' then ' . "'Tidak Lulus'" . ' when registration_result.pass_status = ' . "'t'" . ' then ' . "'Lulus'" . ' else ' . "'Belum Ditentukan'" . ' end as pass_status_name');
 
 
-        $data = Registration::select(
-            'registrations.participant_id',
-            'p.fullname',
-            'p.username as email',
-            'p.mobile_phone_number',
-            'p.color_blind',
-            'p.special_needs',
-            'sp.id as selection_path_id',
-            'sp.name as selection_path_name',
-            'registrations.registration_number',
-            'registration_result.total_score',
-            $pass_status,
-            'registration_result.pass_status',
-            'registration_result.publication_status',
-            'registration_result.publication_date',
-            'registration_result.schoolarship_id',
-            'registration_result.spp',
-            'registration_result.bpp',
-            'registration_result.lainnya',
-            'registration_result.ujian',
-            'registration_result.praktikum',
-            'registration_result.bppdiscount',
-            'registration_result.sppdiscount',
-            'registration_result.discount',
-            'registration_result.semester',
-            'registration_result.sks',
-            'registration_result.notes',
-            'registration_result.start_date_1',
-            'registration_result.start_date_2',
-            'registration_result.start_date_3',
-            'registration_result.end_date_1',
-            'registration_result.end_date_2',
-            'registration_result.end_date_3',
-            'registration_result.schoolyear',
-            'registration_result.type',
-            'registration_result.oldstudentid',
-            'registration_result.reference_number',
-            'registration_result.faculty_number',
-            'registration_result.password',
-            'registration_result.transfer_status',
-            'registration_result.transfer_program_study_id',
-            'registration_result.council_date',
-            'approval_university',
-            'approval_university_by',
-            'registration_result.approval_university_at',
-            'registration_result.generated_at',
-            'registration_result.file_url',
-            'registration_result.specialization_id',
-            'registration_result.package_id',
-            'registration_result.payment_method_id',
-            'registration_result.payment_status',
-            'tps.study_program_branding_name as transfer_program_study_name',
-            'tps.faculty_name as transfer_faculty_name',
-            'registration_result.program_study_id as study_program_id',
-            'ps.study_program_branding_name as study_program_name',
-            'ps.faculty_name as faculty_name',
-            'registrations.mapping_path_year_id'
-        )
-            ->leftjoin('registration_result', 'registration_result.registration_number', '=', 'registrations.registration_number')
-            ->leftjoin('selection_paths as sp', 'registrations.selection_path_id', '=', 'sp.id')
-            ->leftjoin('participants as p', 'registrations.participant_id', '=', 'p.id')
-            ->leftjoin('study_programs as ps', 'registration_result.program_study_id', '=', 'ps.classification_id')
-            ->leftjoin('study_programs as tps', 'registration_result.transfer_program_study_id', '=', 'tps.classification_id')
-            ->where([$selection_path, $registration_number, $participant_id, $mapping_path_year_id, $status])
-            ->paginate(20)
-            ->setPath(env('URL_ACCESS') . '/a2f9f8b8b19f9cefaf03477df54389ed');
-
+        //validate data
+        if ($role->oauth_role_id == 1025) {
+            //get study programs by faculty id
+            $data = Registration::select(
+                'registrations.participant_id',
+                'p.fullname',
+                'p.username as email',
+                'p.mobile_phone_number',
+                'p.color_blind',
+                'p.special_needs',
+                'sp.id as selection_path_id',
+                'sp.name as selection_path_name',
+                'registrations.registration_number',
+                'registration_result.total_score',
+                $pass_status,
+                'registration_result.pass_status',
+                'registration_result.publication_status',
+                'registration_result.publication_date',
+                'registration_result.schoolarship_id',
+                'registration_result.spp',
+                'registration_result.bpp',
+                'registration_result.lainnya',
+                'registration_result.ujian',
+                'registration_result.praktikum',
+                'registration_result.bppdiscount',
+                'registration_result.sppdiscount',
+                'registration_result.discount',
+                'registration_result.semester',
+                'registration_result.sks',
+                'registration_result.notes',
+                'registration_result.start_date_1',
+                'registration_result.start_date_2',
+                'registration_result.start_date_3',
+                'registration_result.end_date_1',
+                'registration_result.end_date_2',
+                'registration_result.end_date_3',
+                'registration_result.schoolyear',
+                'registration_result.type',
+                'registration_result.oldstudentid',
+                'registration_result.reference_number',
+                'registration_result.faculty_number',
+                'registration_result.password',
+                'registration_result.transfer_status',
+                'registration_result.transfer_program_study_id',
+                'registration_result.council_date',
+                'approval_university',
+                'approval_university_by',
+                'registration_result.approval_university_at',
+                'registration_result.generated_at',
+                'registration_result.file_url',
+                'registration_result.specialization_id',
+                'registration_result.package_id',
+                'registration_result.payment_method_id',
+                'registration_result.payment_status',
+                'tps.study_program_branding_name as transfer_program_study_name',
+                'tps.faculty_name as transfer_faculty_name',
+                'tps.faculty_id as faculty_id',
+                'registration_result.program_study_id as study_program_id',
+                'ps.study_program_branding_name as study_program_name',
+                'ps.faculty_name as faculty_name',
+                'registrations.mapping_path_year_id'
+            )
+                ->leftjoin('registration_result', 'registration_result.registration_number', '=', 'registrations.registration_number')
+                ->leftjoin('selection_paths as sp', 'registrations.selection_path_id', '=', 'sp.id')
+                ->leftjoin('participants as p', 'registrations.participant_id', '=', 'p.id')
+                ->leftjoin('study_programs as ps', 'registration_result.program_study_id', '=', 'ps.classification_id')
+                ->leftjoin('study_programs as tps', 'registration_result.transfer_program_study_id', '=', 'tps.classification_id')
+                ->where('ps.faculty_id', '=', $role->admin_faculty_id)
+                ->where([$selection_path, $registration_number, $participant_id, $mapping_path_year_id, $status])
+                ->paginate(20)
+                ->setPath(env('URL_ACCESS') . '/a2f9f8b8b19f9cefaf03477df54389ed');
+        } else {
+            $data = Registration::select(
+                'registrations.participant_id',
+                'p.fullname',
+                'p.username as email',
+                'p.mobile_phone_number',
+                'p.color_blind',
+                'p.special_needs',
+                'sp.id as selection_path_id',
+                'sp.name as selection_path_name',
+                'registrations.registration_number',
+                'registration_result.total_score',
+                $pass_status,
+                'registration_result.pass_status',
+                'registration_result.publication_status',
+                'registration_result.publication_date',
+                'registration_result.schoolarship_id',
+                'registration_result.spp',
+                'registration_result.bpp',
+                'registration_result.lainnya',
+                'registration_result.ujian',
+                'registration_result.praktikum',
+                'registration_result.bppdiscount',
+                'registration_result.sppdiscount',
+                'registration_result.discount',
+                'registration_result.semester',
+                'registration_result.sks',
+                'registration_result.notes',
+                'registration_result.start_date_1',
+                'registration_result.start_date_2',
+                'registration_result.start_date_3',
+                'registration_result.end_date_1',
+                'registration_result.end_date_2',
+                'registration_result.end_date_3',
+                'registration_result.schoolyear',
+                'registration_result.type',
+                'registration_result.oldstudentid',
+                'registration_result.reference_number',
+                'registration_result.faculty_number',
+                'registration_result.password',
+                'registration_result.transfer_status',
+                'registration_result.transfer_program_study_id',
+                'registration_result.council_date',
+                'approval_university',
+                'approval_university_by',
+                'registration_result.approval_university_at',
+                'registration_result.generated_at',
+                'registration_result.file_url',
+                'registration_result.specialization_id',
+                'registration_result.package_id',
+                'registration_result.payment_method_id',
+                'registration_result.payment_status',
+                'tps.study_program_branding_name as transfer_program_study_name',
+                'tps.faculty_name as transfer_faculty_name',
+                'registration_result.program_study_id as study_program_id',
+                'ps.study_program_branding_name as study_program_name',
+                'ps.faculty_name as faculty_name',
+                'registrations.mapping_path_year_id'
+            )
+                ->leftjoin('registration_result', 'registration_result.registration_number', '=', 'registrations.registration_number')
+                ->leftjoin('selection_paths as sp', 'registrations.selection_path_id', '=', 'sp.id')
+                ->leftjoin('participants as p', 'registrations.participant_id', '=', 'p.id')
+                ->leftjoin('study_programs as ps', 'registration_result.program_study_id', '=', 'ps.classification_id')
+                ->leftjoin('study_programs as tps', 'registration_result.transfer_program_study_id', '=', 'tps.classification_id')
+                ->where([$selection_path, $registration_number, $participant_id, $mapping_path_year_id, $status])
+                ->paginate(20)
+                ->setPath(env('URL_ACCESS') . '/a2f9f8b8b19f9cefaf03477df54389ed');
+        }
         return $data;
     }
 
@@ -9259,23 +9381,23 @@ class ReadController extends Controller
         }
 
         $sub_document = "(
-            select
-                a.selection_path_id,
-                a.study_program_id,
-                b.name as selection_path,
-                a.new_student_document_type_id,
-                c.name as new_student_document_type,
-                c.document_type_id
-            from
-                mapping_new_student_document_path as a
-            join selection_paths as b on
-                a.selection_path_id = b.id
-            join new_student_document_type as c on
-                a.new_student_document_type_id = c.id
-            order by
-                a.selection_path_id asc,
-                a.new_student_document_type_id asc
-        ) as sd";
+    select
+        a.selection_path_id,
+        a.study_program_id,
+        b.name as selection_path,
+        a.new_student_document_type_id,
+        c.name as new_student_document_type,
+        c.document_type_id
+    from
+        mapping_new_student_document_path as a
+    join selection_paths as b on
+        a.selection_path_id = b.id
+    join new_student_document_type as c on
+        a.new_student_document_type_id = c.id
+    order by
+        a.selection_path_id asc,
+        a.new_student_document_type_id asc
+) as sd";
 
         $data = New_Student::select(
             'new_student.id',
@@ -9285,11 +9407,24 @@ class ReadController extends Controller
             'sd.selection_path',
             'sd.new_student_document_type_id',
             'sd.new_student_document_type',
-            'sd.document_type_id'
+            'sd.document_type_id',
         )
             ->join('registrations as r', 'new_student.registration_number', '=', 'r.registration_number')
-            ->join(DB::raw($sub_document), 'r.selection_path_id', '=', 'sd.selection_path_id')
+            ->join(DB::raw($sub_document), function ($join) {
+                $join->on('r.selection_path_id', '=', 'sd.selection_path_id')
+                    ->on('sd.study_program_id', '=', 'new_student.program_study_id');
+            })
             ->where([$id, $document_type_id, $selection_path_id, $study_program_id])
+            ->groupBy(
+                'new_student.id',
+                'new_student.participant_id',
+                'new_student.registration_number',
+                'sd.selection_path_id',
+                'sd.selection_path',
+                'sd.new_student_document_type_id',
+                'sd.new_student_document_type',
+                'sd.document_type_id'
+            )
             ->orderBy('sd.new_student_document_type_id', 'ASC')
             ->get();
 
@@ -10441,9 +10576,9 @@ class ReadController extends Controller
         //get data
         $role = Framework_Mapping_User_Role::select('admin_faculty_id', 'id', 'oauth_role_id')
             // ->where('oauth_role_id', '=', 1025)
-        ->where('user_id', '=', $by)
-        ->first();
-        
+            ->where('user_id', '=', $by)
+            ->first();
+
         if ($req->participant_id) {
             $reg = Registration_Result::where('participant_id', $req->participant_id)->pluck('registration_number');
             $data = Change_Program::select(
@@ -10465,7 +10600,7 @@ class ReadController extends Controller
                 ->leftjoin('participants as p', 'r.participant_id', '=', 'p.id')
                 ->whereIn('change_programs.registration_number', $reg)
                 ->get();
-        }else if ($role->oauth_role_id == 1025) {
+        } else if ($role->oauth_role_id == 1025) {
             //get study programs by faculty id
             $study_program_ids = Study_Program::join('mapping_path_program_study as mpps', 'study_programs.classification_id', '=', 'mpps.program_study_id')
                 ->where('study_programs.faculty_id', '=', $role->admin_faculty_id)
@@ -10769,27 +10904,27 @@ class ReadController extends Controller
 			as f (city_id int, city_detail varchar, province_id int, provice_detail varchar)
 		) as f";
             $lampiran[$key]['sma'] = Participant_Education::select(
-            'participant_educations.participant_id',
-            'participant_educations.student_foreign',
-            DB::raw("CASE WHEN d.major is null then participant_educations.education_major else d.major end as education_major"),
-            DB::raw("CASE WHEN c.name is null then participant_educations.school else c.name end as schools"),
-            DB::raw("CASE WHEN c.name is null then '' else c.npsn end as npsn"),
-            'f.city_detail as school_city',
-            'f.provice_detail as school_provice',
-            'participant_educations.graduate_year'
-        )
-            ->leftJoin('education_degrees as b', 'participant_educations.education_degree_id', '=', 'b.id')
-            ->leftJoin('schools as c', 'participant_educations.school_id', '=', 'c.id')
-            ->leftJoin('education_majors as d', 'participant_educations.education_major_id', '=', 'd.id')
-            ->join(DB::raw("(select max(graduate_year) as graduate_year, participant_id from participant_educations GROUP BY participant_id) as e"), function ($join) {
-                $join->on('participant_educations.participant_id', '=', 'e.participant_id')
-                    ->on('e.graduate_year', '=', 'participant_educations.graduate_year');
-            })
-            ->leftJoin(DB::raw($subquerycityprovince), function ($join) {
-                $join->on(DB::raw('c.city_region_id::int'), '=', 'f.city_id');
-            })
-            ->where(['participant_educations.participant_id' => $lulus->participant_id, 'participant_educations.education_degree_id' => 1])
-            ->first();
+                'participant_educations.participant_id',
+                'participant_educations.student_foreign',
+                DB::raw("CASE WHEN d.major is null then participant_educations.education_major else d.major end as education_major"),
+                DB::raw("CASE WHEN c.name is null then participant_educations.school else c.name end as schools"),
+                DB::raw("CASE WHEN c.name is null then '' else c.npsn end as npsn"),
+                'f.city_detail as school_city',
+                'f.provice_detail as school_provice',
+                'participant_educations.graduate_year'
+            )
+                ->leftJoin('education_degrees as b', 'participant_educations.education_degree_id', '=', 'b.id')
+                ->leftJoin('schools as c', 'participant_educations.school_id', '=', 'c.id')
+                ->leftJoin('education_majors as d', 'participant_educations.education_major_id', '=', 'd.id')
+                ->join(DB::raw("(select max(graduate_year) as graduate_year, participant_id from participant_educations GROUP BY participant_id) as e"), function ($join) {
+                    $join->on('participant_educations.participant_id', '=', 'e.participant_id')
+                        ->on('e.graduate_year', '=', 'participant_educations.graduate_year');
+                })
+                ->leftJoin(DB::raw($subquerycityprovince), function ($join) {
+                    $join->on(DB::raw('c.city_region_id::int'), '=', 'f.city_id');
+                })
+                ->where(['participant_educations.participant_id' => $lulus->participant_id, 'participant_educations.education_degree_id' => 1])
+                ->first();
         }
         // return response()->json($surat);
 
@@ -10930,8 +11065,8 @@ class ReadController extends Controller
         //get data
         $role = Framework_Mapping_User_Role::select('admin_faculty_id', 'id', 'oauth_role_id')
             // ->where('oauth_role_id', '=', 1025)
-        ->where('user_id', '=', $by)
-        ->first();
+            ->where('user_id', '=', $by)
+            ->first();
 
         if ($req->participant_id) {
             $reg = Registration::where('participant_id', $req->participant_id)->pluck('registration_number');
@@ -10939,7 +11074,7 @@ class ReadController extends Controller
                 ->join('registrations as r', 'diskon_khusus.registration_number', '=', 'r.registration_number')
                 ->leftJoin('participants as p', 'r.participant_id', '=', 'p.id')
                 ->whereIn('diskon_khusus.registration_number', $reg)->get();
-        }else if ($role->oauth_role_id == 1025) {
+        } else if ($role->oauth_role_id == 1025) {
             //get study programs by faculty id
             $study_program_ids = Study_Program::join('mapping_path_program_study as mpps', 'study_programs.classification_id', '=', 'mpps.program_study_id')
                 ->where('study_programs.faculty_id', '=', $role->admin_faculty_id)
