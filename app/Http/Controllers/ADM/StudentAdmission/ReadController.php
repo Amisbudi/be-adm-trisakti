@@ -1296,8 +1296,8 @@ class ReadController extends Controller
                 ->where('registrations.registration_number', '=', $value['registration_number'])
                 ->get();
 
-            foreach ($prices as $key => $val) {
-                if ($key == 0 && $val['is_medical'] != true) {
+            foreach ($prices as $idx => $val) {
+                if ($idx == 0 && $val['is_medical'] != true) {
                     $price = $price + $val['price'];
                 }
                 if ($val['is_medical'] == true) {
