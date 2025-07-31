@@ -10575,7 +10575,7 @@ class ReadController extends Controller
 
             $reg = Registration_Result::whereIn('program_study_id', $study_program_ids)->pluck('registration_number');
             $data = Refund_Request::whereIn('registration_number', $reg)->get();
-        }else {
+        } else {
             $data = Refund_Request::all();
         }
 
@@ -10801,155 +10801,160 @@ class ReadController extends Controller
             $faculty_id = [$filter, '=', '1'];
         }
 
-        $pass_status =  DB::raw('case when registration_result.pass_status = ' . "'f'" . ' then ' . "'Tidak Lulus'" . ' when registration_result.pass_status = ' . "'t'" . ' then ' . "'Lulus'" . ' else ' . "'Belum Ditentukan'" . ' end as pass_status_name');
+        try {
 
-        $faculty_number = ['registration_result.faculty_number', '!=', ''];
+            $pass_status =  DB::raw('case when registration_result.pass_status = ' . "'f'" . ' then ' . "'Tidak Lulus'" . ' when registration_result.pass_status = ' . "'t'" . ' then ' . "'Lulus'" . ' else ' . "'Belum Ditentukan'" . ' end as pass_status_name');
+
+            $faculty_number = ['registration_result.faculty_number', '!=', ''];
 
 
-        $data = Registration::select(
-            'registrations.participant_id',
-            'p.fullname',
-            'p.username as email',
-            'p.mobile_phone_number',
-            'p.color_blind',
-            'p.special_needs',
-            'sp.id as selection_path_id',
-            'sp.name as selection_path_name',
-            'registrations.registration_number',
-            'registration_result.total_score',
-            $pass_status,
-            'registration_result.pass_status',
-            'registration_result.publication_status',
-            'registration_result.publication_date',
-            'registration_result.schoolarship_id',
-            'registration_result.spp',
-            'registration_result.bpp',
-            'registration_result.lainnya',
-            'registration_result.ujian',
-            'registration_result.praktikum',
-            'registration_result.bppdiscount',
-            'registration_result.sppdiscount',
-            'registration_result.discount',
-            'registration_result.semester',
-            'registration_result.sks',
-            'registration_result.notes',
-            'registration_result.start_date_1',
-            'registration_result.start_date_2',
-            'registration_result.start_date_3',
-            'registration_result.end_date_1',
-            'registration_result.end_date_2',
-            'registration_result.end_date_3',
-            'registration_result.schoolyear',
-            'registration_result.type',
-            'registration_result.oldstudentid',
-            'registration_result.reference_number',
-            'registration_result.faculty_number',
-            'registration_result.password',
-            'registration_result.transfer_status',
-            'registration_result.transfer_program_study_id',
-            'registration_result.council_date',
-            'approval_university',
-            'approval_university_by',
-            'registration_result.approval_university_at',
-            'registration_result.generated_at',
-            'registration_result.file_url',
-            'registration_result.specialization_id',
-            'registration_result.package_id',
-            'registration_result.payment_method_id',
-            'registration_result.payment_status',
-            'registration_result.rank',
-            'tps.study_program_branding_name as transfer_program_study_name',
-            'tps.faculty_name as transfer_faculty_name',
-            'registration_result.program_study_id as study_program_id',
-            'ps.study_program_branding_name as study_program_name',
-            'ps.faculty_id as faculty_id',
-            'ps.faculty_name as faculty_name',
-            'registrations.mapping_path_year_id'
-        )
-            ->leftjoin('registration_result', 'registration_result.registration_number', '=', 'registrations.registration_number')
-            ->leftjoin('selection_paths as sp', 'registrations.selection_path_id', '=', 'sp.id')
-            ->leftjoin('participants as p', 'registrations.participant_id', '=', 'p.id')
-            ->leftjoin('study_programs as ps', 'registration_result.program_study_id', '=', 'ps.classification_id')
-            ->leftjoin('study_programs as tps', 'registration_result.transfer_program_study_id', '=', 'tps.classification_id')
-            ->where([$selection_path, $mapping_path_year_id, $faculty_number, $faculty_id])
-            ->paginate(20)
-            ->setPath(env('URL_ACCESS') . '/a2f9f8b8b19f9cefaf03477df54389ed');
-
-        $grouped = [];
-        $detailed = [];
-
-        // Looping data dan kelompokkan
-        foreach ($data as $item) {
-            $status = $item['pass_status_name'] ?? 'Belum Ditentukan';
-            $program = $item['study_program_name'] ?? 'Belum Ditetapkan';
-
-            if (!isset($grouped[$status][$program])) {
-                $grouped[$status][$program] = 0;
-            }
-            if (!isset($detailed[$status])) {
-                $detailed[$status] = [];
-            }
-
-            // Tambahkan data ke dalam grup yang sesuai
-            $detailed[$status][] = $item;
-            $grouped[$status][$program]++;
-        }
-
-        $selection_intake = $data->first();
-
-        // Data untuk Surat Keputusan
-        $surat = [
-            'nomor' => $selection_intake->faculty_number,
-            'lampiran' => '1 berkas',
-            'periode' => Carbon::parse($selection_intake->publication_date)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('F Y'),
-            'jumlah_diterima' => count($detailed['Lulus']),
-            'rincian_diterima' => $grouped['Lulus'],
-            'jumlah_tidak_diterima' => (isset($detailed['Tidak Lulus'])) ? count($detailed['Tidak Lulus']) : 0,
-            'rincian_tidak_diterima' => (isset($grouped['Tidak Lulus'])) ? $grouped['Tidak Lulus'] : [],
-            'dekan' => $role->dekan ?? '-',
-            'schoolyear' => $selection_intake->schoolyear ?? '-',
-            'jalur' => $selection_intake->selection_path_name,
-            'tanggal' => Carbon::parse($selection_intake->publication_date)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('d F Y'),
-        ];
-        // Data untuk lampiran mahasiswa
-        $lampiran = [];
-        foreach ($detailed['Lulus'] as $key => $lulus) {
-            $lampiran[$key] = $lulus;
-            $subquerycityprovince = "(
-			select city_id, city_detail, province_id, provice_detail from dblink('admission_masterdata', 'select cr.id as city_id, cr.detail_name as city_detail, p.id as province_id, p.detail_name as provice_detail from city_regions as cr inner join provinces as p on cr.province_id = p.id')
-			as f (city_id int, city_detail varchar, province_id int, provice_detail varchar)
-		) as f";
-            $lampiran[$key]['sma'] = Participant_Education::select(
-                'participant_educations.participant_id',
-                'participant_educations.student_foreign',
-                DB::raw("CASE WHEN d.major is null then participant_educations.education_major else d.major end as education_major"),
-                DB::raw("CASE WHEN c.name is null then participant_educations.school else c.name end as schools"),
-                DB::raw("CASE WHEN c.name is null then '' else c.npsn end as npsn"),
-                'f.city_detail as school_city',
-                'f.provice_detail as school_provice',
-                'participant_educations.graduate_year'
+            $data = Registration::select(
+                'registrations.participant_id',
+                'p.fullname',
+                'p.username as email',
+                'p.mobile_phone_number',
+                'p.color_blind',
+                'p.special_needs',
+                'sp.id as selection_path_id',
+                'sp.name as selection_path_name',
+                'registrations.registration_number',
+                'registration_result.total_score',
+                $pass_status,
+                'registration_result.pass_status',
+                'registration_result.publication_status',
+                'registration_result.publication_date',
+                'registration_result.schoolarship_id',
+                'registration_result.spp',
+                'registration_result.bpp',
+                'registration_result.lainnya',
+                'registration_result.ujian',
+                'registration_result.praktikum',
+                'registration_result.bppdiscount',
+                'registration_result.sppdiscount',
+                'registration_result.discount',
+                'registration_result.semester',
+                'registration_result.sks',
+                'registration_result.notes',
+                'registration_result.start_date_1',
+                'registration_result.start_date_2',
+                'registration_result.start_date_3',
+                'registration_result.end_date_1',
+                'registration_result.end_date_2',
+                'registration_result.end_date_3',
+                'registration_result.schoolyear',
+                'registration_result.type',
+                'registration_result.oldstudentid',
+                'registration_result.reference_number',
+                'registration_result.faculty_number',
+                'registration_result.password',
+                'registration_result.transfer_status',
+                'registration_result.transfer_program_study_id',
+                'registration_result.council_date',
+                'approval_university',
+                'approval_university_by',
+                'registration_result.approval_university_at',
+                'registration_result.generated_at',
+                'registration_result.file_url',
+                'registration_result.specialization_id',
+                'registration_result.package_id',
+                'registration_result.payment_method_id',
+                'registration_result.payment_status',
+                'registration_result.rank',
+                'tps.study_program_branding_name as transfer_program_study_name',
+                'tps.faculty_name as transfer_faculty_name',
+                'registration_result.program_study_id as study_program_id',
+                'ps.study_program_branding_name as study_program_name',
+                'ps.faculty_id as faculty_id',
+                'ps.faculty_name as faculty_name',
+                'registrations.mapping_path_year_id'
             )
-                ->leftJoin('education_degrees as b', 'participant_educations.education_degree_id', '=', 'b.id')
-                ->leftJoin('schools as c', 'participant_educations.school_id', '=', 'c.id')
-                ->leftJoin('education_majors as d', 'participant_educations.education_major_id', '=', 'd.id')
-                ->join(DB::raw("(select max(graduate_year) as graduate_year, participant_id from participant_educations GROUP BY participant_id) as e"), function ($join) {
-                    $join->on('participant_educations.participant_id', '=', 'e.participant_id')
-                        ->on('e.graduate_year', '=', 'participant_educations.graduate_year');
-                })
-                ->leftJoin(DB::raw($subquerycityprovince), function ($join) {
-                    $join->on(DB::raw('c.city_region_id::int'), '=', 'f.city_id');
-                })
-                ->where(['participant_educations.participant_id' => $lulus->participant_id, 'participant_educations.education_degree_id' => 1])
-                ->first();
-        }
-        // return response()->json($surat);
+                ->leftjoin('registration_result', 'registration_result.registration_number', '=', 'registrations.registration_number')
+                ->leftjoin('selection_paths as sp', 'registrations.selection_path_id', '=', 'sp.id')
+                ->leftjoin('participants as p', 'registrations.participant_id', '=', 'p.id')
+                ->leftjoin('study_programs as ps', 'registration_result.program_study_id', '=', 'ps.classification_id')
+                ->leftjoin('study_programs as tps', 'registration_result.transfer_program_study_id', '=', 'tps.classification_id')
+                ->where([$selection_path, $mapping_path_year_id, $faculty_number, $faculty_id])
+                ->paginate(20)
+                ->setPath(env('URL_ACCESS') . '/a2f9f8b8b19f9cefaf03477df54389ed');
 
-        // Render view blade dan generate PDF
-        $filenames = 'dekan/' . $selection_intake->schoolyear . 'surat_keputusan_dekan_dan_lampiran.pdf';
-        $path = env('FTP_URL') . $filenames;
-        $pdf = PDF::loadView('surat_dekan', compact('surat', 'lampiran'))->setPaper('a4', 'potrait');
-        $content = $pdf->download()->getOriginalContent();
-        Storage::put($filenames, $content);
+            $grouped = [];
+            $detailed = [];
+
+            // Looping data dan kelompokkan
+            foreach ($data as $item) {
+                $status = $item['pass_status_name'] ?? 'Belum Ditentukan';
+                $program = $item['study_program_name'] ?? 'Belum Ditetapkan';
+
+                if (!isset($grouped[$status][$program])) {
+                    $grouped[$status][$program] = 0;
+                }
+                if (!isset($detailed[$status])) {
+                    $detailed[$status] = [];
+                }
+
+                // Tambahkan data ke dalam grup yang sesuai
+                $detailed[$status][] = $item;
+                $grouped[$status][$program]++;
+            }
+
+            $selection_intake = $data->first();
+
+            // Data untuk Surat Keputusan
+            $surat = [
+                'nomor' => $selection_intake->faculty_number,
+                'lampiran' => '1 berkas',
+                'periode' => Carbon::parse($selection_intake->publication_date)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('F Y'),
+                'jumlah_diterima' => count($detailed['Lulus']),
+                'rincian_diterima' => $grouped['Lulus'],
+                'jumlah_tidak_diterima' => (isset($detailed['Tidak Lulus'])) ? count($detailed['Tidak Lulus']) : 0,
+                'rincian_tidak_diterima' => (isset($grouped['Tidak Lulus'])) ? $grouped['Tidak Lulus'] : [],
+                'dekan' => $role->dekan ?? '-',
+                'schoolyear' => $selection_intake->schoolyear ?? '-',
+                'jalur' => $selection_intake->selection_path_name,
+                'tanggal' => Carbon::parse($selection_intake->publication_date)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('d F Y'),
+            ];
+            // Data untuk lampiran mahasiswa
+            $lampiran = [];
+            foreach ($detailed['Lulus'] as $key => $lulus) {
+                $lampiran[$key] = $lulus;
+                $subquerycityprovince = "(
+                    select city_id, city_detail, province_id, provice_detail from dblink('admission_masterdata', 'select cr.id as city_id, cr.detail_name as city_detail, p.id as province_id, p.detail_name as provice_detail from city_regions as cr inner join provinces as p on cr.province_id = p.id')
+                    as f (city_id int, city_detail varchar, province_id int, provice_detail varchar)
+                ) as f";
+                $lampiran[$key]['sma'] = Participant_Education::select(
+                    'participant_educations.participant_id',
+                    'participant_educations.student_foreign',
+                    DB::raw("CASE WHEN d.major is null then participant_educations.education_major else d.major end as education_major"),
+                    DB::raw("CASE WHEN c.name is null then participant_educations.school else c.name end as schools"),
+                    DB::raw("CASE WHEN c.name is null then '' else c.npsn end as npsn"),
+                    'f.city_detail as school_city',
+                    'f.provice_detail as school_provice',
+                    'participant_educations.graduate_year'
+                )
+                    ->leftJoin('education_degrees as b', 'participant_educations.education_degree_id', '=', 'b.id')
+                    ->leftJoin('schools as c', 'participant_educations.school_id', '=', 'c.id')
+                    ->leftJoin('education_majors as d', 'participant_educations.education_major_id', '=', 'd.id')
+                    ->join(DB::raw("(select max(graduate_year) as graduate_year, participant_id from participant_educations GROUP BY participant_id) as e"), function ($join) {
+                        $join->on('participant_educations.participant_id', '=', 'e.participant_id')
+                            ->on('e.graduate_year', '=', 'participant_educations.graduate_year');
+                    })
+                    ->leftJoin(DB::raw($subquerycityprovince), function ($join) {
+                        $join->on(DB::raw('c.city_region_id::int'), '=', 'f.city_id');
+                    })
+                    ->where(['participant_educations.participant_id' => $lulus->participant_id, 'participant_educations.education_degree_id' => 1])
+                    ->first();
+            }
+            // return response()->json($surat);
+
+            // Render view blade dan generate PDF
+            $filenames = 'dekan/' . $selection_intake->schoolyear . 'surat_keputusan_dekan_dan_lampiran.pdf';
+            $path = env('FTP_URL') . $filenames;
+            $pdf = PDF::loadView('surat_dekan', compact('surat', 'lampiran'))->setPaper('a4', 'potrait');
+            $content = $pdf->download()->getOriginalContent();
+            Storage::put($filenames, $content);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
         // return $pdf->stream('surat_keputusan_dekan_dan_lampiran.pdf');
     }
 
@@ -10981,9 +10986,9 @@ class ReadController extends Controller
             $faculty_id = [$filter, '=', '1'];
         }
 
-        if($role->admin_faculty_id){
+        if ($role->admin_faculty_id) {
             $faculty_id = ['ps.faculty_id', '=', $role->admin_faculty_id];
-        }else{
+        } else {
             $faculty_id = [$filter, '=', '1'];
         }
 
