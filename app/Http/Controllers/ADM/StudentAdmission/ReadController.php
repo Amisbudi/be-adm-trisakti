@@ -10555,11 +10555,27 @@ class ReadController extends Controller
 
     public function GetRefundRequest(Request $req)
     {
+        $by = $req->header("X-I");
+        //get data
+        $role = Framework_Mapping_User_Role::select('admin_faculty_id', 'id', 'oauth_role_id')
+            // ->where('oauth_role_id', '=', 1025)
+            ->where('user_id', '=', $by)
+            ->first();
 
         if ($req->participant_id) {
             $reg = Registration_Result::where('participant_id', $req->participant_id)->pluck('registration_number');
             $data = Refund_Request::whereIn('registration_number', $reg)->get();
-        } else {
+        } else if ($role->oauth_role_id == 1025) {
+            //get study programs by faculty id
+            $study_program_ids = Study_Program::join('mapping_path_program_study as mpps', 'study_programs.classification_id', '=', 'mpps.program_study_id')
+                ->where('study_programs.faculty_id', '=', $role->admin_faculty_id)
+                ->where('mpps.active_status', '=', true)
+                ->groupBy('study_programs.classification_id')
+                ->pluck('study_programs.classification_id');
+
+            $reg = Registration_Result::whereIn('program_study_id', $study_program_ids)->pluck('registration_number');
+            $data = Refund_Request::whereIn('registration_number', $reg)->get();
+        }else {
             $data = Refund_Request::all();
         }
 
@@ -10941,7 +10957,9 @@ class ReadController extends Controller
     {
         $by = $req->header("X-I");
         //get data
-        $role = Framework_Mapping_User_Role::where('user_id', '=', $by)
+        $role = Framework_Mapping_User_Role::select('admin_faculty_id', 'id', 'oauth_role_id')
+            // ->where('oauth_role_id', '=', 1025)
+            ->where('user_id', '=', $by)
             ->first();
 
         $filter = DB::raw('1');
@@ -10960,6 +10978,12 @@ class ReadController extends Controller
         if ($req->faculty_id) {
             $faculty_id = ['ps.faculty_id', '=', $req->faculty_id];
         } else {
+            $faculty_id = [$filter, '=', '1'];
+        }
+
+        if($role->admin_faculty_id){
+            $faculty_id = ['ps.faculty_id', '=', $role->admin_faculty_id];
+        }else{
             $faculty_id = [$filter, '=', '1'];
         }
 
