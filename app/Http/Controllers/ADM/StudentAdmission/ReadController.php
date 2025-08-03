@@ -10801,6 +10801,12 @@ class ReadController extends Controller
             $faculty_id = [$filter, '=', '1'];
         }
 
+        if ($role->admin_faculty_id) {
+            $faculty_id = ['ps.faculty_id', '=', $role->admin_faculty_id];
+        } else {
+            $faculty_id = [$filter, '=', '1'];
+        }
+
         try {
 
             $pass_status =  DB::raw('case when registration_result.pass_status = ' . "'f'" . ' then ' . "'Tidak Lulus'" . ' when registration_result.pass_status = ' . "'t'" . ' then ' . "'Lulus'" . ' else ' . "'Belum Ditentukan'" . ' end as pass_status_name');
@@ -10944,18 +10950,22 @@ class ReadController extends Controller
                     ->where(['participant_educations.participant_id' => $lulus->participant_id, 'participant_educations.education_degree_id' => 1])
                     ->first();
             }
-            // return response()->json($surat);
 
             // Render view blade dan generate PDF
             $filenames = 'dekan/' . $selection_intake->schoolyear . 'surat_keputusan_dekan_dan_lampiran.pdf';
             $path = env('FTP_URL') . $filenames;
             $pdf = PDF::loadView('surat_dekan', compact('surat', 'lampiran'))->setPaper('a4', 'potrait');
-            $content = $pdf->download()->getOriginalContent();
+            $content = $pdf->stream()->getOriginalContent();
             Storage::put($filenames, $content);
+            return response()->json(['urls' => $path], 200);
+
+        // Render view blade dan generate PDF
+            // return view('surat_dekan', compact('surat', 'lampiran'));
+            // $pdf = PDF::loadView('surat_dekan', compact('surat', 'lampiran'));
+            // return $pdf->stream('surat_keputusan_dekanr.pdf');
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
         }
-        // return $pdf->stream('surat_keputusan_dekan_dan_lampiran.pdf');
     }
 
     public function ReportSuratRektor(Request $req)
