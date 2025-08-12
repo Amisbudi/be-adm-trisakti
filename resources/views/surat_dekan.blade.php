@@ -51,7 +51,7 @@
 
 <body>
 
-    <h2>SURAT KEPUTUSAN DEKAN<br>FAKULTAS {{ $surat['faculty_name'] }}</h2>
+    <h2 style="text-transform: uppercase">SURAT KEPUTUSAN DEKAN<br>FAKULTAS {{ $surat['faculty_name'] }}</h2>
 
     <p>Nomor: {{ $surat['nomor'] }}</p>
     <p>Lampiran: {{ $surat['lampiran'] }}</p>
