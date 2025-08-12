@@ -10908,6 +10908,7 @@ class ReadController extends Controller
             // Data untuk Surat Keputusan
             $surat = [
                 'nomor' => $selection_intake->faculty_number,
+                'faculty_name' => $selection_intake->faculty_name,
                 'lampiran' => '1 berkas',
                 'periode' => Carbon::parse($selection_intake->publication_date)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('F Y'),
                 'jumlah_diterima' => count($detailed['Lulus']),
