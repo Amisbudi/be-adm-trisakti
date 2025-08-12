@@ -51,7 +51,7 @@
 
 <body>
 
-    <h2>SURAT KEPUTUSAN DEKAN<br>FAKULTAS SENI RUPA DAN DESAIN</h2>
+    <h2>SURAT KEPUTUSAN DEKAN<br>FAKULTAS {{ $surat['faculty_name'] }}</h2>
 
     <p>Nomor: {{ $surat['nomor'] }}</p>
     <p>Lampiran: {{ $surat['lampiran'] }}</p>
@@ -61,7 +61,7 @@
         <p>Dengan ini kami laporkan hasil seleksi lamaran <span
                 style="text-transform: capitalize">{{ $surat['jalur'] }}</span>,</p>
         <ul>
-            <li>Fakultas: SENI RUPA DAN DESAIN</li>
+            <li>Fakultas: {{ $surat['faculty_name'] }}</li>
             <li>Periode: {{ $surat['periode'] }}</li>
         </ul>
 
