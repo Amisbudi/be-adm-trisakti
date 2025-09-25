@@ -1513,10 +1513,13 @@ class CreateController extends Controller
 				'total_amount'  => $req->total_amount
 			]);
 
+			$trx = Transaction_Billing::where(['registration_number' => $req->registration_number])->first();
+
 			DB::connection('pgsql')->commit();
 			return response([
 				'status' => 'Success',
-				'message' => 'Data Tersimpan'
+				'message' => 'Data Tersimpan',
+				'data' => $trx
 			], 200);
 		} catch (\Exception $e) {
 			DB::connection('pgsql')->rollBack();

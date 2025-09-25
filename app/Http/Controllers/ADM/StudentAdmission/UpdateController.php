@@ -377,6 +377,17 @@ class UpdateController extends Controller
 				$data['origin_country'] = $req->origin_country;
 			}
 			if ($req->identify_number) {
+				$validate = Validator::make($req->all(), [
+					'identify_number' => 'unique:participants'
+				]);
+
+				if ($validate->fails()) {
+					return response([
+						'status' => 'Failed',
+						'message' => 'Mohon maaf, pendaftaran tidak berhasil. Nomor Identitas Sudah Terdaftar.'
+					], 200);
+				}
+
 				$data['identify_number'] = $req->identify_number;
 				$data['passport_number'] = null;
 				$data['passport_expiry_date'] = null;
@@ -1508,7 +1519,7 @@ class UpdateController extends Controller
 			if ($req->study_program_id) {
 				$data['study_program_id'] = $req->study_program_id;
 			}
-			
+
 			$data['updated_by'] = $by;
 
 			$update = Pin_Voucher::find($req->voucher)->update($data);
@@ -3179,7 +3190,7 @@ class UpdateController extends Controller
 				'description' => $req->description,
 
 			]);
-			
+
 			return response([
 				'status' => 'Success',
 				'message' => 'Data Tersimpan'
