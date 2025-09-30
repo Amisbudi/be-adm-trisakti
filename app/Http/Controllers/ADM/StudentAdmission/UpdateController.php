@@ -3359,12 +3359,14 @@ class UpdateController extends Controller
 				]);
 			}
 
-			$billing = Transaction_Billing::where('registration_number', $model->registration_number)->first();
+			$billing = Transaction_Billing::where('trx_id', $data_asli['trx_id'])->first();
 
 			if ($billing) {
-				Registration_Result::where('registration_number', $model->registration_number)->update(
+				Registration_Result::where('registration_number', $billing->registration_number)->update(
 					[
 						'payment_status' => "Lunas",
+						'payment_date' => Carbon::now(),
+						'payment_url' => "VA Callback",
 					]
 				);
 			}

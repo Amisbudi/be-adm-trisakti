@@ -4751,8 +4751,8 @@ class ReadController extends Controller
             ->where([$program, $selection_path, $nationality, $registration_number, $mapping_path_year_id, $payment_status_id])
             ->orderBy('registrations.registration_number')
             ->distinct()
-            ->paginate(20)
-            ->setPath(env('URL_ACCESS') . '/eec1e1868149149a1889a19ed56f0dc5');
+        ->paginate(20)
+        ->setPath(env('URL_ACCESS') . '/eec1e1868149149a1889a19ed56f0dc5');
 
         return $data;
     }
@@ -10960,7 +10960,7 @@ class ReadController extends Controller
             Storage::put($filenames, $content);
             return response()->json(['urls' => $path], 200);
 
-        // Render view blade dan generate PDF
+            // Render view blade dan generate PDF
             // return view('surat_dekan', compact('surat', 'lampiran'));
             // $pdf = PDF::loadView('surat_dekan', compact('surat', 'lampiran'));
             // return $pdf->stream('surat_keputusan_dekanr.pdf');
