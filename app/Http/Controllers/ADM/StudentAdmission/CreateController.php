@@ -3719,7 +3719,7 @@ class CreateController extends Controller
 			Kode Prodi ada yang 3 / 4 / 5 digit. Untuk prodi yang hanya
 			ada 3 atau 4 digit, sisanya diganti dengan angka 0
 			*/
-		$program_study = str_pad($data->program_study_id, 5, '0', STR_PAD_LEFT);
+		$program_study = str_pad($data->program_study_id, 4, '0', STR_PAD_LEFT);
 
 		/*
 			Tahun ajaran masuk
