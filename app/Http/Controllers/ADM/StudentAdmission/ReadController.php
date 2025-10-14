@@ -2736,6 +2736,8 @@ class ReadController extends Controller
             'registration_result.specialization_id',
             'registration_result.package_id',
             'registration_result.payment_status',
+            'registration_result.faculty_number',
+            'registration_result.reference_number',
             'tps.study_program_branding_name as transfer_program_study_name',
             'tps.faculty_name as transfer_faculty_name',
             'registration_result.program_study_id as study_program_id',
@@ -4712,7 +4714,7 @@ class ReadController extends Controller
             select max(graduate_year) as graduate_year, participant_id from participant_educations GROUP BY participant_id 
         ) as e on (a.participant_id = e.participant_id and e.graduate_year = a.graduate_year)) as d";
 
-        $data = Registration::select(
+        $query = Registration::select(
             'registrations.registration_number',
             'rs.step as registration_step',
             'sp.name as selection_path_name',
@@ -4750,9 +4752,10 @@ class ReadController extends Controller
             ->leftjoin(DB::raw($last_education), 'p.id', '=', 'd.participant_id')
             ->where([$program, $selection_path, $nationality, $registration_number, $mapping_path_year_id, $payment_status_id])
             ->orderBy('registrations.registration_number')
-            ->distinct()
-        ->paginate(20)
-        ->setPath(env('URL_ACCESS') . '/eec1e1868149149a1889a19ed56f0dc5');
+            ->distinct();
+        // ->paginate(20)
+        // ->setPath(env('URL_ACCESS') . '/eec1e1868149149a1889a19ed56f0dc5');
+        $data = $query->paginate(20)->appends($req->all());
 
         return $data;
     }
@@ -4894,7 +4897,7 @@ class ReadController extends Controller
             })
             ->orderBy('registrations.registration_number')
             ->distinct()
-            ->paginate(20)
+            // ->paginate(20)
             ->setPath(env('URL_ACCESS') . '/244bfa6bf8885ee2e637860fa6374981');
         return $data;
     }
@@ -5013,7 +5016,7 @@ class ReadController extends Controller
                 ->leftjoin('study_programs as tps', 'registration_result.transfer_program_study_id', '=', 'tps.classification_id')
                 ->where('ps.faculty_id', '=', $role->admin_faculty_id)
                 ->where([$selection_path, $registration_number, $participant_id, $mapping_path_year_id, $status])
-                ->paginate(20)
+                // ->paginate(20)
                 ->setPath(env('URL_ACCESS') . '/a2f9f8b8b19f9cefaf03477df54389ed');
         } else {
             $data = Registration::select(
@@ -5080,7 +5083,7 @@ class ReadController extends Controller
                 ->leftjoin('study_programs as ps', 'registration_result.program_study_id', '=', 'ps.classification_id')
                 ->leftjoin('study_programs as tps', 'registration_result.transfer_program_study_id', '=', 'tps.classification_id')
                 ->where([$selection_path, $registration_number, $participant_id, $mapping_path_year_id, $status])
-                ->paginate(20)
+                // ->paginate(20)
                 ->setPath(env('URL_ACCESS') . '/a2f9f8b8b19f9cefaf03477df54389ed');
         }
         return $data;
@@ -10505,7 +10508,7 @@ class ReadController extends Controller
             })
             ->orderBy('registration_result.registration_number')
             ->distinct()
-            ->paginate(20)
+            // ->paginate(20)
             ->setPath(env('URL_ACCESS') . '/244bfa6bf8885ee2e637860fa6374981');
         return $data;
     }
@@ -10880,7 +10883,7 @@ class ReadController extends Controller
                 ->leftjoin('study_programs as ps', 'registration_result.program_study_id', '=', 'ps.classification_id')
                 ->leftjoin('study_programs as tps', 'registration_result.transfer_program_study_id', '=', 'tps.classification_id')
                 ->where([$selection_path, $mapping_path_year_id, $faculty_number, $faculty_id])
-                ->paginate(20)
+                // ->paginate(20)
                 ->setPath(env('URL_ACCESS') . '/a2f9f8b8b19f9cefaf03477df54389ed');
 
             $grouped = [];
@@ -11075,7 +11078,7 @@ class ReadController extends Controller
             ->leftjoin('study_programs as tps', 'registration_result.transfer_program_study_id', '=', 'tps.classification_id')
             ->whereNotNull('reference_number')
             ->where([$selection_path, $mapping_path_year_id, $faculty_number, $faculty_id])
-            ->paginate(20)
+            // ->paginate(20)
             ->setPath(env('URL_ACCESS') . '/a2f9f8b8b19f9cefaf03477df54389ed');
 
         $intake = $data->first();
