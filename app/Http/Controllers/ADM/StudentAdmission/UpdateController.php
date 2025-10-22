@@ -378,7 +378,7 @@ class UpdateController extends Controller
 			}
 			if ($req->identify_number) {
 				$validate = Validator::make($req->all(), [
-					'identify_number' => 'unique:participants'
+					'identify_number' => 'unique:participants,identify_number,' . $id->id
 				]);
 
 				if ($validate->fails()) {
